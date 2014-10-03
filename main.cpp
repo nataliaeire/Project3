@@ -15,9 +15,9 @@ void calculateForcesAndEnergy(int numberOfBodies, vec positionAndVelocity,
 
 int main()
 {
-    int n = 1000;                  // Number of iterations
-    double T = 1;                  // Total time of simulation (yrs)
-    double h = T/n;                // Step size
+    int n = 50000;                  // Number of iterations
+    double T = 50;                  // Total time of simulation (yrs)
+    double h = T/n;                 // Step size
     int numberOfBodies = 2;
 
     // Create vector containting all positions and velocities
@@ -29,7 +29,7 @@ int main()
     positionAndVelocity(4) = 0;     // Initial x-position
     positionAndVelocity(5) = 0;     // Initial y-position
     positionAndVelocity(6) = 0;     // Initial vx-velocity
-    positionAndVelocity(7) = 0;     // Initial vy-velocity (2*1 AU*pi / 1 yr)
+    positionAndVelocity(7) = -M_PI*6e-6;     // Initial vy-velocity (from conservation of momentum)
 
     vec masses(numberOfBodies);
     masses(0) = 5.972*pow(10,24)/(1.9891*pow(10,30));
@@ -54,6 +54,7 @@ int main()
     // Closing files
     posVelOut.close();
     energyOut.close();
+
 
     return 0;
 }   // End of main function
