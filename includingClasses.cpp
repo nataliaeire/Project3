@@ -7,7 +7,7 @@
 using namespace std;
 using namespace arma;
 
-
+/*
 // ============================================== CLASS: CELESTIALBODY ============================================== //
 class CelestialBody{
 public:
@@ -140,14 +140,14 @@ void System::definingBodies(){
 }
 
 
-/*
+
 // This is what a function declaring a system with n bodies should look like.
 void System::nBodies(int n){
     for (int i=1..n)
         this->bodies[i].x = rand();
-}*/
+}
 
-/*
+
 vec System::diffEq(vec k, ofstream* enmom){
     // Function setting the differential equations
 
@@ -172,7 +172,7 @@ vec System::diffEq(vec k, ofstream* enmom){
 
     return dotPosVel;
 }   // End of diffEq-function
-*/
+
 // FUNCTION TO USE IN CASE YOU HAVE TO COMMENT AWAY DIFFEQ
 
 vec System::diffEq(vec, ofstream*){
@@ -203,7 +203,7 @@ void System::RK4(double h, ofstream* posvel, ofstream* enmom){
 
 }   // Ending RK4-function
 
-/*
+
 void calculateForcesAndEnergy(vec posVel, vec &Fx, vec &Fy){
     // Function calculating forces and energy (and angular momentum!) for the system
 
@@ -246,7 +246,7 @@ void calculateForcesAndEnergy(vec posVel, vec &Fx, vec &Fy){
     *enmom << setw(20) << setprecision(15) << energyAngMom.t();
 
 }   // Ending calculateForcesAndEnergy-function
-*/
+
 
 
 
@@ -266,3 +266,4 @@ int mainInClasses(){
 
     return 0;
 }
+*/

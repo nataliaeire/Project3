@@ -5,7 +5,8 @@ CONFIG -= qt
 SOURCES += \
     includingClasses.cpp \
     initialTwoBodySystem.cpp \
-    KeplerClasses.cpp
+    KeplerClasses.cpp \
+    main.cpp
 LIBS += -larmadillo -llapack -lblas
 
 QMAKE_CXXFLAGS += -Wall

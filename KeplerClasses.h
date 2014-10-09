@@ -14,16 +14,12 @@ using namespace arma;
 // ============================================== CLASS: CELESTIALBODY ============================================== //
 class CelestialBody{
 public:
-    double x;
-    double y;
-    double z;
-    double vx;
-    double vy;
-    double vz;
+    vec position;
+    vec velocity;
     double mass;
 
     CelestialBody();
-    CelestialBody(double x, double y, double z, double vx, double vy, double vz, double mass);
+    CelestialBody(vec position, vec velocity, double mass);
 };  // End of CelestialBody class declaration
 
 
@@ -31,10 +27,11 @@ public:
 class System {
 public:
     int nBodies;
-    CelestialBody* bodies;
+    CelestialBody bodies[200];
 
     // Initialization
-    System(int n);
+    System();
+    void addBody(vec position, vec velocity, double mass);
     vec defineSystem;
 
     // Initialization functions
