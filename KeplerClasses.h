@@ -26,22 +26,22 @@ public:
 // ============================================== CLASS: SYSTEM ===================================================== //
 class System {
 public:
-    int nBodies;
+    int     nBodies;
+    double  dt;
     CelestialBody bodies[200];
 
     // Initialization
     System();
     void addBody(vec position, vec velocity, double mass);
-    vec defineSystem;
-
-    // Initialization functions
-    void twoBodies();
-    void threeBodies();
     void definingBodies();
+    vec  defineSystem;
+    vec  energyAngMom;
 
     // Solving functions
-    void RK4(double h, ofstream* posvel, ofstream* enmom);
-    vec  diffEq(vec, ofstream*);
+    void solver(double nYears);
+    void RK4();
+    vec  diffEq(vec k);
+    void calculateForcesAndEnergy(vec posVel, vec &Fx, vec &Fy, vec &Fz);
 
 };  // End of System class declariation
 

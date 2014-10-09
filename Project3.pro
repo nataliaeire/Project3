@@ -5,11 +5,15 @@ CONFIG -= qt
 SOURCES += \
     includingClasses.cpp \
     initialTwoBodySystem.cpp \
-    KeplerClasses.cpp \
-    main.cpp
+    main.cpp \
+    rk4.cpp \
+    system.cpp \
+    celestialbody.cpp
 LIBS += -larmadillo -llapack -lblas
 
 QMAKE_CXXFLAGS += -Wall
 
 HEADERS += \
-    KeplerClasses.h
+    rk4.h \
+    system.h \
+    celestialbody.h
