@@ -13,7 +13,7 @@ void calculateForcesAndEnergy(int numberOfBodies, vec positionAndVelocity,
                               vec &energyAngMom, vec &Fx, vec &Fy, vec masses);
 //void energyAndAngMom(vec &positionAndVelocity, ofstream* file);
 
-int main()
+int mainInitial()
 {
     int n = 50000;                  // Number of iterations
     double T = 50;                  // Total time of simulation (yrs)

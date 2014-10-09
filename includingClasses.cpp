@@ -8,13 +8,16 @@ using namespace std;
 using namespace arma;
 
 
-// ============================================== CLASS: CelesitalBody ============================================== //
+// ============================================== CLASS: CELESTIALBODY ============================================== //
 class CelestialBody{
 public:
+    char*  name;
     double x;
     double y;
+    double z;
     double vx;
     double vy;
+    double vz;
     double mass;
 
     CelestialBody();
@@ -29,15 +32,18 @@ CelestialBody::CelestialBody(){
 CelestialBody::CelestialBody(double x, double y, double vx, double vy, double mass){
     // Function defines a celestial body by position, velocity and mass from the input parameters
 
+    //this->name = *name;
     this->x    = x;
     this->y    = y;
+    //this->z    = z;
     this->vx   = vx;
     this->vy   = vy;
+    //this->vz   = vz;
     this->mass = mass;
 }
 
 
-// ============================================== CLASS: SYSTEM ============================================== //
+// ============================================== CLASS: SYSTEM ===================================================== //
 class System {
 public:
     int nBodies;
@@ -70,25 +76,29 @@ System::System(int n){
     }
 }
 
-void System::twoBodies() {
+void System::twoBodies(){
     // Function defining a two-body system containing the Sun and the Earth
 
     // Sun
-    this->bodies[0].mass = 1.0;
+    //this->bodies[0].name = "Sun";
     this->bodies[0].x    = 0.0;
     this->bodies[0].y    = 0.0;
+    //this->bodies[0].z    = 0.0;
     this->bodies[0].vx   = 0.0;
     this->bodies[0].vy   = -M_PI*6e-6;      // Initial velocity to allow the total momentum of the system to be zero
+    //this->bodies[0].vz   = 0.0;
+    this->bodies[0].mass = 1.0;
 
     // Earth
-    this->bodies[1].mass = 3e-6;
+    //this->bodies[1].name = "Earth";
     this->bodies[1].x    = 1.0;
     this->bodies[1].y    = 0.0;
     this->bodies[1].vx   = 2*M_PI;
     this->bodies[1].vy   = 0.0;
+    this->bodies[1].mass = 3e-6;
 }
 
-void System::threeBodies() {
+void System::threeBodies(){
     // Function defining a three-body system containing the Sun, the Earth and Jupiter
 
     // Sun
@@ -137,7 +147,7 @@ void System::nBodies(int n){
         this->bodies[i].x = rand();
 }*/
 
-
+/*
 vec System::diffEq(vec k, ofstream* enmom){
     // Function setting the differential equations
 
@@ -162,14 +172,15 @@ vec System::diffEq(vec k, ofstream* enmom){
 
     return dotPosVel;
 }   // End of diffEq-function
-
+*/
 // FUNCTION TO USE IN CASE YOU HAVE TO COMMENT AWAY DIFFEQ
-/*
+
 vec System::diffEq(vec, ofstream*){
     vec hei = vec(3);
     return hei;
 }
-*/
+
+
 
 void System::RK4(double h, ofstream* posvel, ofstream* enmom){
     // Function performing the Runge-Kutta 4 method
@@ -192,7 +203,7 @@ void System::RK4(double h, ofstream* posvel, ofstream* enmom){
 
 }   // Ending RK4-function
 
-
+/*
 void calculateForcesAndEnergy(vec posVel, vec &Fx, vec &Fy){
     // Function calculating forces and energy (and angular momentum!) for the system
 
@@ -222,18 +233,20 @@ void calculateForcesAndEnergy(vec posVel, vec &Fx, vec &Fy){
         double pos = sqrt(pow(posVel[5*i+0],2) + pow(posVel[5*i+1],2)); // Radial vector/position in CoM frame
         double v2  = pow(posVel[5*i+2],2) + pow(posVel[5*i+3],2);       // Velocity squared of celestial object
 
-        // Updating energy (except potential energy) and angular momentum
+        // Updating kinetic energy and angular momentum
         energyAngMom(3) += masses(i)*pos*sqrt(v2);                      // Angular momentum
         energyAngMom(0) += 0.5*masses(i)*v2;                            // Kinetic energy
-        energyAngMom(2) += sqrt(pow(energyAngMom(0),2) + pow(energyAngMom(1),2));   // Total energy
-
-        // Writing energy and angular momentum to file
-        *enmom << setiosflags(ios::showpoint | ios:: uppercase);
-        *enmom << setw(20) << setprecision(15) << energyAngMom.t();
 
     }   // Ending for-loop going over all celestial bodies
-}   // Ending calculateForcesAndEnergy-function
 
+    energyAngMom(2) = sqrt(pow(energyAngMom(0),2) + pow(energyAngMom(1),2));   // Total energy
+
+    // Writing energy and angular momentum to file
+    *enmom << setiosflags(ios::showpoint | ios:: uppercase);
+    *enmom << setw(20) << setprecision(15) << energyAngMom.t();
+
+}   // Ending calculateForcesAndEnergy-function
+*/
 
 
 
