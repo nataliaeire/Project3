@@ -19,7 +19,10 @@ int main() {
 
     RK4 solver;
     CelestialBody &earth = solarSystem.bodies[0];
-    cout << "Earth position before simulation: [" << earth.position[0] << ", " << earth.position[1] << ", " << earth.position[2] << "]" << endl;
+    cout << "Earth position before simulation: ["
+         << earth.position[0] << ", "
+         << earth.position[1] << ", "
+         << earth.position[2] << "]" << endl;
     for(int i = 0; i < nSteps; i++) {
         solver.integrate(solarSystem, dt);
         // cout << "Total energy: " << solarSystem.totalEnergy() << endl;

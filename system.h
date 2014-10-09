@@ -4,20 +4,23 @@
 #include <celestialbody.h>
 #include <armadillo>
 
-class System {
+class System
+{
 public:
     std::vector<CelestialBody> bodies;
 
     // Initialization
     System();
-    void addBody(arma::vec position, arma::vec velocity, double mass);
-    void addBody(double x, double y, double z, double vx, double vy, double vz, double mass);
-    void calculateForcesAndEnergy();
-    int numberOfBodies();
-    double totalEnergy();
-    double potentialEnergy;
-    double kineticEnergy;
-    arma::vec    angularMomentum;
+    void        addBody(arma::vec position, arma::vec velocity, double mass);
+    void        addBody(double x, double y, double z, double vx, double vy, double vz, double mass);
+
+    // Calculated qualities of the system
+    void        calculateForcesAndEnergy();
+    int         numberOfBodies();
+    double      totalEnergy();
+    double      potentialEnergy;
+    double      kineticEnergy;
+    arma::vec   angularMomentum;
 
 };  // End of System class declariation
 
