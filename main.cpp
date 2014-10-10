@@ -13,8 +13,8 @@ using namespace arma;
 int main()
 {
     // Integration specifications
-    double dt       = 0.01;
-    double T        = 100;
+    double dt       = 0.001;
+    double T        = 1;
     double nSteps   = T/dt;
 
     // Qualities of the system we will be exploring
@@ -41,6 +41,26 @@ int main()
         if(counter == floor(0.25*nSteps))   cout << "25 % of the integration is performed" << endl;
         if(counter == floor(0.50*nSteps))   cout << "50 % of the integration is performed" << endl;
         if(counter == floor(0.75*nSteps))   cout << "75 % of the integration is performed" << endl;
+    }
+
+    // Verlet
+    // Qualities of the system we will be exploring
+    System solarSystemVerlet;
+    solarSystemVerlet.addBody(1, 0, 0, 0, 2*M_PI, 0, 3e-6);
+    solarSystemVerlet.addBody(0, 0, 0, 0, -M_PI*6e-6, 0, 1);
+
+    Integrator verletsolver;
+    CelestialBody &twobodies = solarSystemVerlet.bodies[0];
+
+    Printing printerv("Verlet");
+    printerv.printingPosition(solarSystemVerlet);
+
+    // Performing Verlet on the system
+    verletsolver.VerletInitialise(solarSystemVerlet, dt);
+
+    for(int i = 0; i < nSteps; i++){
+        verletsolver.Verlet(solarSystemVerlet, dt);
+        printerv.printingPosition(solarSystemVerlet);
     }
 
     return 0;
