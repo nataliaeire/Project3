@@ -22,6 +22,12 @@ void System::addBody(double x, double y, double z, double vx, double vy, double 
 } // End addBody-function
 
 
+void System::addBody(std::fstream &file)
+{ // Alternative way of adding a body, reading in initials from file
+    // THIS FUNCTION NEEDS TO ACTUALLY BE WRITTEN //
+} // End addBody-function
+
+
 int System::numberOfBodies()
 { // Simply returning the number of celestial bodies in the system
     return bodies.size();

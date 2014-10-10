@@ -3,7 +3,6 @@
 #include <fstream>
 #include <vector>
 #include <string>
-
 #include <vec3.h>
 #include <celestialbody.h>
 #include <system.h>

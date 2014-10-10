@@ -17,40 +17,31 @@ int main()
     double T        = 100;
     double nSteps   = T/dt;
 
-    // Creating file to write to
-    ofstream positionOut;
-    ofstream velocityOut;
-    ofstream energyAngMomOut;
-    positionOut.open("position.dat");
-    velocityOut.open("velocity.dat");
-    energyAngMomOut.open("energyangmom.dat");
-
     // Qualities of the system we will be exploring
-    System solarSystem;
-    solarSystem.addBody(1, 0, 0, 0, 2*M_PI, 0, 3e-6);
-    solarSystem.addBody(0, 0, 0, 0, -M_PI*6e-6, 0, 1);
+    System SunEarthSystem;
+    SunEarthSystem.addBody(0, 0, 0, 0, -M_PI*6e-6, 0, 1);
+    SunEarthSystem.addBody(1, 0, 0, 0, 2*M_PI, 0, 3e-6);
 
-    Integrator solver;
-    CelestialBody &earth = solarSystem.bodies[0];
+    Integrator solving;
 
-    cout << "Earth position before simulation: ["
-         << earth.position[0] << ", "
-         << earth.position[1] << ", "
-         << earth.position[2] << "]" << endl;
+    Printing printer("SunEarth");
+    printer.printingAll(SunEarthSystem);        // Printing intitial values to file
 
-    Printing printer("balle");
-    printer.printingPosition(solarSystem);
+    int counter = 1;                            // Counting parameter to print message to screen inside for-loop
+
+    fstream file("filename.dat",ios_base::in);  // THIS FUNCTION NEEDS TO ACTUALLY BE WRITTEN //
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
-        solver.RK4(solarSystem, dt);
-        printer.printingPosition(solarSystem);
-    }
+        solving.RK4(SunEarthSystem, dt);        // Solving the problem using the RK4-method
+        printer.printingAll(SunEarthSystem);    // Printing everything to file
+        counter ++;
 
-    cout << "Earth position after simulation: ["
-         << earth.position[0] << ", "
-         << earth.position[1] << ", "
-         << earth.position[2] << "]" << endl;
+        // Printing a message to screen to let the user know how far the program has come
+        if(counter == floor(0.25*nSteps))   cout << "25 % of the integration is performed" << endl;
+        if(counter == floor(0.50*nSteps))   cout << "50 % of the integration is performed" << endl;
+        if(counter == floor(0.75*nSteps))   cout << "75 % of the integration is performed" << endl;
+    }
 
     return 0;
 }
