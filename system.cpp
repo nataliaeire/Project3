@@ -17,10 +17,8 @@ void System::addBody(vec3 position, vec3 velocity, double mass)
 
 void System::addBody(double x, double y, double z, double vx, double vy, double vz, double mass)
 { // Alternative way of adding a body, which is more intuitive and easy from, for instance, a main function
-
-    // Using the former addBody-function to add a body to the system as before
+  // using the former addBody-function to add a body to the system as before
     addBody(vec3(x,y,z), vec3(vx, vy, vz), mass);
-
 } // End addBody-function
 
 
@@ -52,21 +50,21 @@ void System::calculateForcesAndEnergy()
             CelestialBody &body2 = bodies[j];
 
             // Variables simplifying the calculations
-            vec3    deltaRVector = body1.position - body2.position;          // Spatial separation in all three directions
-            double dr           = deltaRVector.length();    // Separation radius/length/distance
+            vec3   deltaRVector = body1.position - body2.position;          // Spatial separation in all three directions
+            double dr           = deltaRVector.length();                    // Separation radius/length/distance
             double factor       = G*body1.mass*body2.mass / pow(dr,3);      // Reoccuring factor
 
             // Updating gravitational force and potential energy experienced by celestial object
-            potentialEnergy += factor*dr;           // Definition of the potential energy
-
-            body1.force.addAndMultiply(deltaRVector, -factor); // Finding all components of the force using the law of gravity
-            body2.force.addAndMultiply(deltaRVector, factor); // Finding all components of the force on opposite object using N3
+            potentialEnergy += factor*dr;                                   // Definition of the potential energy
+            // Finding all components of the force
+            body1.force.addAndMultiply(deltaRVector, -factor);              // Law of gravity
+            body2.force.addAndMultiply(deltaRVector, factor);               // N3
         }   // Ending for-loop computing force and potential energy
 
         // Variables simplifying the calculations
-        vec3 momentum     = body1.velocity*body1.mass;                           // p = m*v
-        angularMomentum.add(body1.position.cross(momentum)); // L = r x p, updated for each body
-        kineticEnergy   += 0.5*body1.mass*body1.velocity.lengthSquared();  // k = mv^2/2, updated for each body
+        vec3 momentum   = body1.velocity*body1.mass;                        // p = m*v
+        angularMomentum.add(body1.position.cross(momentum));                // L = r x p, updated for each body
+        kineticEnergy  += 0.5*body1.mass*body1.velocity.lengthSquared();    // k = mv^2/2, updated for each body
     }   // Ending for-loop going over all celestial bodies
 
 } // Ending calculateForcesAndEnergy-function

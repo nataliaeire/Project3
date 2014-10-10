@@ -5,10 +5,10 @@
 class CelestialBody
 {
 public:
-    vec3 position;
-    vec3 velocity;
-    vec3 force;
-    double mass;
+    vec3    position;
+    vec3    velocity;
+    vec3    force;
+    double  mass;
 
     // Initialisation
     CelestialBody(vec3 position, vec3 velocity, double mass);

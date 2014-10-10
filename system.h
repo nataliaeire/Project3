@@ -20,7 +20,7 @@ public:
     double      totalEnergy();
     double      potentialEnergy;
     double      kineticEnergy;
-    vec3   angularMomentum;
+    vec3        angularMomentum;
 
 };  // End of System class declariation
 
