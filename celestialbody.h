@@ -6,8 +6,6 @@ class CelestialBody{
 public:
     arma::vec position;
     arma::vec velocity;
-    arma::vec positionDot;
-    arma::vec velocityDot;
     arma::vec force;
     double mass;
 
