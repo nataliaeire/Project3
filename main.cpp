@@ -13,8 +13,8 @@ using namespace arma;
 int main()
 {
     // Integration specifications
-    double dt       = 0.01;
-    double T        = 100;
+    double dt       = 0.001;
+    double T        = 1;
     double nSteps   = T/dt;
 
     // Creating file to write to
@@ -51,6 +51,26 @@ int main()
          << earth.position[0] << ", "
          << earth.position[1] << ", "
          << earth.position[2] << "]" << endl;
+
+    // Verlet
+    // Qualities of the system we will be exploring
+    System solarSystemVerlet;
+    solarSystemVerlet.addBody(1, 0, 0, 0, 2*M_PI, 0, 3e-6);
+    solarSystemVerlet.addBody(0, 0, 0, 0, -M_PI*6e-6, 0, 1);
+
+    Integrator verletsolver;
+    CelestialBody &twobodies = solarSystemVerlet.bodies[0];
+
+    Printing printerv("Verlet");
+    printerv.printingPosition(solarSystemVerlet);
+
+    // Performing Verlet on the system
+    verletsolver.VerletInitialise(solarSystemVerlet, dt);
+
+    for(int i = 0; i < nSteps; i++){
+        verletsolver.Verlet(solarSystemVerlet, dt);
+        printerv.printingPosition(solarSystemVerlet);
+    }
 
     return 0;
 }

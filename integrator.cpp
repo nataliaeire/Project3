@@ -1,5 +1,5 @@
 #include "integrator.h"
-
+#include <stdlib.h>
 Integrator::Integrator()
 {
 }
@@ -41,5 +41,38 @@ void Integrator::evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1,
         CelestialBody &body2 = system2.bodies[i];
         body1.position.addAndMultiply(body2.velocity, dt);
         body1.velocity.addAndMultiply(body2.force, dt/body2.mass);
+    }
+}
+
+void Integrator::VerletInitialise(System &system, double dt)
+{
+    k_old = system;
+    for(int i=0; i < k_old.numberOfBodies(); i++)
+    {
+        CelestialBody &body1 = k_old.bodies[i];
+        body1.position.addAndMultiply(body1.velocity, -dt);
+    }
+}
+
+
+void Integrator::Verlet(System &system, double dt)
+{
+    System next_old_system = system;
+    system.calculateForcesAndEnergy();
+    VerletEvolve(system, dt);
+    k_old = next_old_system;
+}
+
+void Integrator::VerletEvolve(System &system, double dt)
+{
+    for(int i=0; i < system.numberOfBodies(); i++)
+    {
+        CelestialBody &body1 = system.bodies[i];
+        CelestialBody &body2 = k_old.bodies[i];
+
+        body1.position.add(body1.position-body2.position);
+        body1.position.addAndMultiply(body1.force, dt*dt/body1.mass); // body1 is now the object at t+dt
+        body1.velocity.addAndMultiply(body1.position - body2.position, 1./(2*dt));
+
     }
 }
