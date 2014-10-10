@@ -1,17 +1,13 @@
 #include "celestialbody.h"
-using namespace arma;
 
-CelestialBody::CelestialBody(vec position, vec velocity, double mass)
+CelestialBody::CelestialBody(vec3 position, vec3 velocity, double mass)
 {
     this->position = position;
     this->velocity = velocity;
     this->mass = mass;
-    this->force = zeros(3);
-
-    resetForce();
 }
 
 void CelestialBody::resetForce()
 {
-    force.zeros();
+    force.setToZero();
 }

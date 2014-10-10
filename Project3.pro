@@ -8,7 +8,8 @@ SOURCES += \
     main.cpp \
     rk4.cpp \
     system.cpp \
-    celestialbody.cpp
+    celestialbody.cpp \
+    vec3.cpp
 LIBS += -larmadillo -llapack -lblas
 
 QMAKE_CXXFLAGS += -Wall
@@ -16,4 +17,5 @@ QMAKE_CXXFLAGS += -Wall
 HEADERS += \
     rk4.h \
     system.h \
-    celestialbody.h
+    celestialbody.h \
+    vec3.h

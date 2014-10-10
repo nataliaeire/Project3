@@ -11,7 +11,7 @@ using namespace arma;
 
 int main() {
     double dt = 0.01;
-    double T = 10;
+    double T = 100;
     double nSteps = T / dt;
     System solarSystem;
     solarSystem.addBody(1, 0, 0, 0, 2*M_PI, 0, 3e-6);
@@ -19,7 +19,10 @@ int main() {
 
     RK4 solver;
     CelestialBody &earth = solarSystem.bodies[0];
-    cout << "Earth position before simulation: [" << earth.position[0] << ", " << earth.position[1] << ", " << earth.position[2] << "]" << endl;
+    cout << "Earth position before simulation: ["
+         << earth.position[0] << ", "
+         << earth.position[1] << ", "
+         << earth.position[2] << "]" << endl;
     for(int i = 0; i < nSteps; i++) {
         solver.integrate(solarSystem, dt);
         // cout << "Total energy: " << solarSystem.totalEnergy() << endl;

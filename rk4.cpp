@@ -27,8 +27,8 @@ void RK4::integrate(System &system, double dt)
 
     for(int i=0; i<system.numberOfBodies(); i++) {
         CelestialBody &body = system.bodies[i];
-        body.position += 1.0/6*dt*(k1.bodies[i].velocity + 2*k2.bodies[i].velocity + 2*k3.bodies[i].velocity + k4.bodies[i].velocity);
-        body.velocity += 1.0/6*dt*(k1.bodies[i].force + 2*k2.bodies[i].force + 2*k3.bodies[i].force + k4.bodies[i].force)/body.mass;
+        body.position.addAndMultiply(k1.bodies[i].velocity + k2.bodies[i].velocity + k2.bodies[i].velocity + k3.bodies[i].velocity + k3.bodies[i].velocity + k4.bodies[i].velocity, dt/6);
+        body.velocity.addAndMultiply(k1.bodies[i].force + k2.bodies[i].force + k2.bodies[i].force + k3.bodies[i].force + k3.bodies[i].force + k4.bodies[i].force, 1.0/6*dt/body.mass);
     }
 
     system.calculateForcesAndEnergy();
@@ -39,7 +39,7 @@ void RK4::evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1, System
     for(int i=0; i<system1.numberOfBodies(); i++) {
         CelestialBody &body1 = system1.bodies[i];
         CelestialBody &body2 = system2.bodies[i];
-        body1.position += body2.velocity*dt;
-        body1.velocity += body2.force/body2.mass*dt;
+        body1.position.addAndMultiply(body2.velocity, dt);
+        body1.velocity.addAndMultiply(body2.force, dt/body2.mass);
     }
 }

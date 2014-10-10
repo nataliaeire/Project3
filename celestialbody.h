@@ -1,18 +1,19 @@
 #ifndef CELESTIALBODY_H
 #define CELESTIALBODY_H
-#include <armadillo>
+#include "vec3.h"
 
-class CelestialBody{
+class CelestialBody
+{
 public:
-    arma::vec position;
-    arma::vec velocity;
-    arma::vec force;
+    vec3 position;
+    vec3 velocity;
+    vec3 force;
     double mass;
 
-    CelestialBody(arma::vec position, arma::vec velocity, double mass);
+    // Initialisation
+    CelestialBody(vec3 position, vec3 velocity, double mass);
     void resetForce();
 
 };  // End of CelestialBody class declaration
-
 
 #endif // CELESTIALBODY_H
