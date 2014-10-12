@@ -50,13 +50,12 @@ int main()
     solarSystemVerlet.addBody(0, 0, 0, 0, -M_PI*6e-6, 0, 1);
 
     Integrator verletsolver;
-    CelestialBody &twobodies = solarSystemVerlet.bodies[0];
+    //CelestialBody &twobodies = solarSystemVerlet.bodies[0];
 
     Printing printerv("Verlet");
     printerv.printingPosition(solarSystemVerlet);
 
     // Performing Verlet on the system
-    verletsolver.VerletInitialise(solarSystemVerlet, dt);
 
     for(int i = 0; i < nSteps; i++){
         verletsolver.Verlet(solarSystemVerlet, dt);
