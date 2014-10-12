@@ -7,7 +7,7 @@ class Integrator
 {
 private:
     System old_system;
-    int counter;
+    int counter;        // Variable for accessing VerletInitialise
     void evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1, System &system2, double dt);
     void VerletInitialise(System &system, double dt);
     void VerletEvolve(System &system1, double dt);

@@ -46,8 +46,8 @@ int main()
     // Verlet
     // Qualities of the system we will be exploring
     System solarSystemVerlet;
-    solarSystemVerlet.addBody(1, 0, 0, 0, 2*M_PI, 0, 3e-6);
     solarSystemVerlet.addBody(0, 0, 0, 0, -M_PI*6e-6, 0, 1);
+    solarSystemVerlet.addBody(1, 0, 0, 0, 2*M_PI, 0, 3e-6);
 
     Integrator verletsolver;
     //CelestialBody &twobodies = solarSystemVerlet.bodies[0];
