@@ -29,7 +29,7 @@ int main()
 
     int counter = 1;                            // Counting parameter to print message to screen inside for-loop
 
-    fstream file("filename.dat",ios_base::in);  // THIS FUNCTION NEEDS TO ACTUALLY BE WRITTEN //
+    //fstream file("filename.dat",ios_base::in);  // THIS FUNCTION NEEDS TO ACTUALLY BE WRITTEN //
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
@@ -61,6 +61,25 @@ int main()
         verletsolver.Verlet(solarSystemVerlet, dt);
         printerv.printingPosition(solarSystemVerlet);
     }
+
+    // For testing the read-from-file version of addBody:
+
+    fstream file("hei.txt",ios_base::in);
+
+    System readtest;
+    readtest.addBody(file);
+
+    Integrator readtestsolve;
+
+    Printing readtestprint("readingtest");
+    readtestprint.printingAll(readtest);
+
+    for(int i = 0; i < nSteps; i++){
+        readtestsolve.RK4(readtest, dt);
+        readtestprint.printingPosition(readtest);
+    }
+
+
 
     return 0;
 }
