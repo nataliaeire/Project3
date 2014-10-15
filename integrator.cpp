@@ -45,40 +45,36 @@ void Integrator::evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1,
     }
 }
 
-void Integrator::VerletInitialise(System &system, double dt)// Creates the system at time -dt. This system
-{                                                           // is used the first time the Verlet algorithm is run
-    old_system = system;
-    for(int i=0; i < old_system.numberOfBodies(); i++)      // Loop changing all positions to what they were
-    {                                                       // at time -dt.
-        CelestialBody &body1 = old_system.bodies[i];
+void Integrator::VerletInitialise(System &system, double dt)
+{ // Creates the system at time -dt. This system is used the first time the Verlet algorithm is run
+    oldSystem = system;
+    for(int i=0; i < oldSystem.numberOfBodies(); i++){  // Loop changing all positions to what they were at time -dt
+        CelestialBody &body1 = oldSystem.bodies[i];
         body1.position.addAndMultiply(body1.velocity, -dt);
     }
-    counter = 1;                                            // The counter is changed to avoid calling
-}                                                           // VerletInitialise the next time Verlet is run
-
+    // Changing counter to avoid calling VerletInitialise next time Verlet is run
+    counter = 1;
+} // End VerletInitialise-function
 
 void Integrator::Verlet(System &system, double dt)
 {
-    if (counter == 0)                                      // The first time Verlet() is run,
-    {                                                      // VerletInitialise() is called
-        VerletInitialise(system, dt);
-    }
-    System next_old_system = system;                       // Copying the system at time t to update old_system later on
-    system.calculateForcesAndEnergy();                     // Calculates the forces on the bodies
-    VerletEvolve(system, dt);                              // Evolving the system according to the Verlet algorithm
-    old_system = next_old_system;                          // Updating old_system
+    // The first time Verlet() is run, VerletInitialise() is called
+    if (counter == 0)   VerletInitialise(system, dt);
+
+    System nextOldSystem = system;                      // Copying the system at time t to update old_system later on
+    system.calculateForcesAndEnergy();                  // Calculates the forces on the bodies
+    VerletEvolve(system, dt);                           // Evolving the system according to the Verlet algorithm
+    oldSystem = nextOldSystem;                          // Updating oldSystem
 }
 
 void Integrator::VerletEvolve(System &system, double dt)
 {
-    for(int i=0; i < system.numberOfBodies(); i++)         // Looping over all bodies
-    {
-        CelestialBody &body = system.bodies[i];            // the body at time t
-        CelestialBody &body_old = old_system.bodies[i];    // the body at time t-dt
+    for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
+        CelestialBody &body = system.bodies[i];         // the body at time t
+        CelestialBody &bodyOld = oldSystem.bodies[i];   // the body at time t-dt
 
-        body.position.add(body.position-body_old.position);
-        body.position.addAndMultiply(body.force, dt*dt/body.mass); // body.position is now at t+dt
-        body.velocity.addAndMultiply(body.position - body_old.position, 1./(2*dt)); // Calculating the velocity
-
-    }
-}
+        body.position.add(body.position-bodyOld.position);
+        body.position.addAndMultiply(body.force, dt*dt/body.mass);                  // body.position is now at t+dt
+        body.velocity.addAndMultiply(body.position - bodyOld.position, 1./(2*dt));  // Calculating the velocity
+    } // Ending for-loop
+} // Ending VerletEvolve-function

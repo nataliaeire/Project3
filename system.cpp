@@ -23,8 +23,8 @@ void System::addBody(double x, double y, double z, double vx, double vy, double 
 } // End addBody-function
 
 
-void System::addBody(std::fstream &file)
-{ // Alternative way of adding a body, reading in initials from file
+void System::addSystem(std::fstream &file)
+{ // Alternative way of adding an entire system, reading in initials from file
     int valuesPerBody = 7;                          // For keeping track of which numbers belong to which object
     arma::vec values(valuesPerBody);                // Vector for storing values defining one body
     values.zeros(valuesPerBody);                    // Initialising vector

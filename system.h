@@ -14,7 +14,7 @@ public:
     System();
     void    addBody(vec3 position, vec3 velocity, double mass);
     void    addBody(double x, double y, double z, double vx, double vy, double vz, double mass);
-    void addBody(std::fstream &file);
+    void    addSystem(std::fstream &file);
 
     // Calculated qualities of the system
     void    calculateForcesAndEnergy();

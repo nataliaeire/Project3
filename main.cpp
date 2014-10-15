@@ -17,19 +17,19 @@ int main()
     double T        = 1;
     double nSteps   = T/dt;
 
-    // Qualities of the system we will be exploring
-    System SunEarthSystem;
-    SunEarthSystem.addBody(0, 0, 0, 0, -M_PI*6e-6, 0, 1);
-    SunEarthSystem.addBody(1, 0, 0, 0, 2*M_PI, 0, 3e-6);
+    // Qualities of the system we will be exploring are read from file
+    // Note that file directory has to be changed accordingly for every computer
+    fstream file("C:\\Users\\Nat\\Documents\\GitHub\\Project3\\hei.txt",ios_base::in);
 
-    Integrator solving;
+    // Intialisation
+    System SunEarthSystem;                      // Preparing system
+    Integrator solving;                         // Preparing for allowing the system to develop
+    Printing printer("SunEarth");               // Preparing for printing details about system to file
 
-    Printing printer("SunEarth");
+    SunEarthSystem.addSystem(file);             // Creating system
     printer.printingAll(SunEarthSystem);        // Printing intitial values to file
 
     int counter = 1;                            // Counting parameter to print message to screen inside for-loop
-
-    //fstream file("filename.dat",ios_base::in);  // THIS FUNCTION NEEDS TO ACTUALLY BE WRITTEN //
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
@@ -43,7 +43,7 @@ int main()
         if(counter == floor(0.75*nSteps))   cout << "75 % of the integration is performed" << endl;
     }
 
-    // Verlet
+    // Exploring the system using the Verlet integrator
     // Qualities of the system we will be exploring
     System solarSystemVerlet;
     solarSystemVerlet.addBody(0, 0, 0, 0, -M_PI*6e-6, 0, 1);
@@ -60,24 +60,6 @@ int main()
         verletsolver.Verlet(solarSystemVerlet, dt);
         printerv.printingPosition(solarSystemVerlet);
     }
-
-    // For testing the read-from-file version of addBody:
-    fstream file("C:\\Users\\Nat\\Documents\\GitHub\\Project3\\hei.txt",ios_base::in);
-
-    System readtest;
-    readtest.addBody(file);
-
-    Integrator readtestsolve;
-
-    Printing readtestprint("readingtest");
-    readtestprint.printingAll(readtest);
-
-    for(int i = 0; i < nSteps; i++){
-        readtestsolve.RK4(readtest, dt);
-        readtestprint.printingPosition(readtest);
-    }
-
-
 
     return 0;
 }
