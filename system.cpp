@@ -25,30 +25,21 @@ void System::addBody(double x, double y, double z, double vx, double vy, double 
 
 void System::addBody(std::fstream &file)
 { // Alternative way of adding a body, reading in initials from file
-    // THIS FUNCTION NEEDS TO ACTUALLY BE WRITTEN //
+    int valuesPerBody = 7;                          // For keeping track of which numbers belong to which object
+    arma::vec values(valuesPerBody);                // Vector for storing values defining one body
+    values.zeros(valuesPerBody);                    // Initialising vector
 
-    std::cout << "In addBody" << std::endl;       // Going swimmingly so far :)
+    double a;                                       // Input from file
+    int i = 0;                                      // Counter variable
 
-    int valuesPerBody;
-    valuesPerBody = 7;                            // For keeping track of which numbers belong to which object
-    arma::vec values(valuesPerBody);              // Vector for storing values belonging to one body
-    values.zeros(valuesPerBody);
-
-    double a;
-    std::cout << "In addBody" << std::endl;       // We made it here as well :)
-    while(file >> a)                              // This should work, but apparently doesn't :(
-    {
-        std::cout << "In while-loop" << std::endl; // ...because this won't print
-        for(int i=0; i<valuesPerBody; i++)         // Idea: Looping over values belongig to one body
-        {                                          // so we won't get a lot of indices to keep track of
-            values(i) = a;
-            if(i==valuesPerBody-1)                 // If-test for printing one body
-            {
-                // Adding said body:
-                addBody(values(0), values(1), values(2), values(3), values(4), values(5), values(6));
-            }
-        }
-    }
+    while(file >> a){                               // Looping over all numbers in the file
+        values(i) = a;                              // Storing details about a planet in a vector
+        i++;
+        if(i==valuesPerBody){                     // If-test for adding a body to the system
+            addBody(values(0), values(1), values(2), values(3), values(4), values(5), values(6));
+            i = 0;                                  // Re-initialising counter to start filling in a new vector
+        } // End if-statement
+    } // End while-loop
 } // End addBody-function
 
 

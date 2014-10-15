@@ -56,15 +56,13 @@ int main()
     printerv.printingPosition(solarSystemVerlet);
 
     // Performing Verlet on the system
-
     for(int i = 0; i < nSteps; i++){
         verletsolver.Verlet(solarSystemVerlet, dt);
         printerv.printingPosition(solarSystemVerlet);
     }
 
     // For testing the read-from-file version of addBody:
-
-    fstream file("hei.txt",ios_base::in);
+    fstream file("C:\\Users\\Nat\\Documents\\GitHub\\Project3\\hei.txt",ios_base::in);
 
     System readtest;
     readtest.addBody(file);
