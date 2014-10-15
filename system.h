@@ -18,6 +18,7 @@ public:
 
     // Calculated qualities of the system
     void    calculateForcesAndEnergy();
+    void    calculateForcesUsingGR();
     int     numberOfBodies();
     double  totalEnergy();
     double  potentialEnergy;

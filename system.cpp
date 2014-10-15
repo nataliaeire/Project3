@@ -91,6 +91,46 @@ void System::calculateForcesAndEnergy()
 } // Ending calculateForcesAndEnergy-function
 
 
+void System::calculateForcesUsingGR()
+{ // Function calculating forces for the system taking into account GR
+    // THIS FUNCTION IS NOT FINISHED!! //
+
+    // Initialising values
+    double G = 4*M_PI*M_PI;     // Defining the gravitational constant in appropriate units
+    double c = 63239.7263;      // Defining the speed of light in units [AU/year]
+
+    // Remembering to reset forces before we calculate new ones
+    for(int i=0; i<numberOfBodies(); i++){
+        CelestialBody &body = bodies[i];
+        body.resetForce();
+    }
+
+    for(int i = 0; i < numberOfBodies(); i++){
+        CelestialBody &body1 = bodies[i];
+
+        for(int j=i+1; j < numberOfBodies(); j++){
+            CelestialBody &body2 = bodies[j];
+
+            // Variables simplifying the calculations
+            vec3   deltaRVector     = body1.position - body2.position;          // Spatial separation in all three directions
+            double dr               = deltaRVector.length();                    // Separation radius/length/distance
+            double NewtonianFactor  = G*body1.mass*body2.mass / pow(dr,3);      // Reoccuring factor
+            vec3   momentum         = body1.velocity*body1.mass;                // p = m*v
+            vec3   angMom           = body1.position.cross(momentum);           // L = r x p, updated for each body
+            double GRFactor         = 1+(3*angMom.lengthSquared())/(dr*dr*c*c); // Reoccuring factor
+            double factor           = NewtonianFactor*GRFactor;
+
+            // Updating gravitational force experienced by celestial object
+            // Finding all components of the force
+            body1.force.addAndMultiply(deltaRVector, -factor);                  // Law of gravity
+            body2.force.addAndMultiply(deltaRVector, factor);                   // N3
+        }   // Ending for-loop computing force and potential energy
+
+    }   // Ending for-loop going over all celestial bodies
+
+} // Ending calculateForcesAndEnergy-function
+
+
 double System::totalEnergy()
 { // Simply calculating the total energy of the system
     return potentialEnergy + kineticEnergy;
