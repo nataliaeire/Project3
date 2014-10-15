@@ -64,7 +64,7 @@ int main()
 
     // For testing the read-from-file version of addBody:
 
-    fstream file("hei.txt",ios_base::in);
+    fstream file("hei.dat",ios_base::in);
 
     System readtest;
     readtest.addBody(file);

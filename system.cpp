@@ -29,24 +29,24 @@ void System::addBody(std::fstream &file)
 
     std::cout << "In addBody" << std::endl;       // Going swimmingly so far :)
 
-    int valuesPerBody;
-    valuesPerBody = 7;                            // For keeping track of which numbers belong to which object
-    arma::vec values(valuesPerBody);              // Vector for storing values belonging to one body
-    values.zeros(valuesPerBody);
+    int valuesPerBody = 7;                            // For keeping track of which numbers belong to which object
+    arma::vec values = arma::zeros(valuesPerBody);              // Vector for storing values belonging to one body
 
-    double a;
     std::cout << "In addBody" << std::endl;       // We made it here as well :)
-    while(file >> a)                              // This should work, but apparently doesn't :(
+
+
+    for (int j=0; j< 2*valuesPerBody-1; j++)       // This needs to be modified
     {
         std::cout << "In while-loop" << std::endl; // ...because this won't print
         for(int i=0; i<valuesPerBody; i++)         // Idea: Looping over values belongig to one body
         {                                          // so we won't get a lot of indices to keep track of
-            values(i) = a;
+            file >> values(i);
             if(i==valuesPerBody-1)                 // If-test for printing one body
             {
                 // Adding said body:
                 addBody(values(0), values(1), values(2), values(3), values(4), values(5), values(6));
             }
+
         }
     }
 } // End addBody-function
