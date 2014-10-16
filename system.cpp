@@ -49,6 +49,25 @@ int System::numberOfBodies()
 } // End of numberOfBodies-function
 
 
+void System::conserveMomentum()
+{ // Function to find the momentum of the planets and changing the Sun's momentum to ensure
+  // the total momentum of the system is conserved
+    vec3 momentumTemp;
+    momentumTemp.setToZero();
+    momentum.setToZero();
+
+    // Finding the total momentum of all bodies except the Sun
+    for(int i=1; i<numberOfBodies(); i++){
+        CelestialBody &body = bodies[i];
+        momentumTemp = body.velocity*body.mass;
+        momentum.add(momentumTemp);
+    }
+
+    CelestialBody &sun = bodies[0];
+    sun.velocity = momentum/sun.mass;
+}
+
+
 void System::calculateForcesAndEnergy()
 { // Function calculating forces and energy (and angular momentum!) for the system
 

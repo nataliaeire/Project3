@@ -20,13 +20,15 @@ int main()
     // Qualities of the system we will be exploring are read from file
     // Note that file directory has to be changed accordingly for every computer
     fstream file("/uio/hume/student-u81/natales/Project3/Project3/hei.txt",ios_base::in);
+    fstream file2("/uio/hume/student-u81/natales/Project3/Project3/hei.txt",ios_base::in);
 
     // Intialisation
-    System SunEarthSystem;                      // Preparing system
-    Integrator solving;                         // Preparing for allowing the system to develop
-    Printing printer("SunEarth");               // Preparing for printing details about system to file
+    System      SunEarthSystem;                 // Preparing system
+    Integrator  solving;                        // Preparing for allowing the system to develop
+    Printing    printer("SunEarth");            // Preparing for printing details about system to file
 
     SunEarthSystem.addSystem(file);             // Creating system
+    SunEarthSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
     printer.printingAll(SunEarthSystem);        // Printing intitial values to file
 
     int counter = 1;                            // Counting parameter to print message to screen inside for-loop
@@ -46,19 +48,16 @@ int main()
     // Exploring the system using the Verlet integrator
     // Qualities of the system we will be exploring
     System solarSystemVerlet;
-    solarSystemVerlet.addBody(0, 0, 0, 0, -M_PI*6e-6, 0, 1);
-    solarSystemVerlet.addBody(1, 0, 0, 0, 2*M_PI, 0, 3e-6);
-
     Integrator verletsolver;
-    //CelestialBody &twobodies = solarSystemVerlet.bodies[0];
-
     Printing printerv("Verlet");
-    printerv.printingPosition(solarSystemVerlet);
+
+    solarSystemVerlet.addSystem(file2);
+    printerv.printingAll(solarSystemVerlet);
 
     // Performing Verlet on the system
     for(int i = 0; i < nSteps; i++){
         verletsolver.Verlet(solarSystemVerlet, dt);
-        printerv.printingPosition(solarSystemVerlet);
+        printerv.printingAll(solarSystemVerlet);
     }
 
     return 0;

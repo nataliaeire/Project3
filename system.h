@@ -17,6 +17,7 @@ public:
     void    addSystem(std::fstream &file);
 
     // Calculated qualities of the system
+    void    conserveMomentum();
     void    calculateForcesAndEnergy();
     void    calculateForcesUsingGR();
     int     numberOfBodies();
@@ -24,6 +25,7 @@ public:
     double  potentialEnergy;
     double  kineticEnergy;
     vec3    angularMomentum;
+    vec3    momentum;
 };  // End of System class declariation
 
 #endif // SYSTEM_H
