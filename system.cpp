@@ -35,7 +35,7 @@ void System::addSystem(std::fstream &file)
     while(file >> a){                               // Looping over all numbers in the file
         values(i) = a;                              // Storing details about a planet in a vector
         i++;
-        if(i==valuesPerBody){                     // If-test for adding a body to the system
+        if(i==valuesPerBody){                       // If-test for adding a body to the system
             addBody(values(0), values(1), values(2), values(3), values(4), values(5), values(6));
             i = 0;                                  // Re-initialising counter to start filling in a new vector
         } // End if-statement
@@ -112,8 +112,6 @@ void System::calculateForcesAndEnergy()
 
 void System::calculateForcesUsingGR()
 { // Function calculating forces for the system taking into account GR
-    // THIS FUNCTION IS NOT FINISHED!! //
-
     // Initialising values
     double G = 4*M_PI*M_PI;     // Defining the gravitational constant in appropriate units
     double c = 63239.7263;      // Defining the speed of light in units [AU/year]
