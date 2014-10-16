@@ -15,6 +15,7 @@ private:
 public:
     Integrator();
     void    RK4(System &system, double dt);
+    void    RK4GR(System &system, double dt);
     void    Verlet(System &system, double dt);
 
 };

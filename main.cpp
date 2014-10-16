@@ -13,10 +13,12 @@ using namespace arma;
 int main()
 {
     // Integration specifications
-    double dt       = 0.001;
-    double T        = 1;
+    double dt       = 0.000001;
+    double T        = 10;
     double nSteps   = T/dt;
 
+
+    /*
     // Qualities of the system we will be exploring are read from file
     // Note that file directory has to be changed accordingly for every computer
     fstream file("/uio/hume/student-u81/natales/Project3/Project3/hei.txt",ios_base::in);
@@ -52,12 +54,41 @@ int main()
     Printing printerv("Verlet");
 
     solarSystemVerlet.addSystem(file2);
+    solarSystemVerlet.conserveMomentum();
     printerv.printingAll(solarSystemVerlet);
 
     // Performing Verlet on the system
     for(int i = 0; i < nSteps; i++){
         verletsolver.Verlet(solarSystemVerlet, dt);
         printerv.printingAll(solarSystemVerlet);
+    }
+    */
+
+
+    // ============================== MERCURY ============================== //
+    fstream MercuryFile("/uio/hume/student-u81/natales/Project3/Project3/MercuryInitials.txt",ios_base::in);
+
+    // Intialisation
+    System      MercurySystem;                      // Preparing system
+    Integrator  solvingMercury;                     // Preparing for allowing the system to develop
+    Printing    printerMercury("Mercury");          // Preparing for printing details about system to file
+
+    MercurySystem.addSystem(MercuryFile);           // Creating system
+    MercurySystem.conserveMomentum();               // Ensuring momentum is conserved for the system
+    printerMercury.printingAll(MercurySystem);      // Printing intitial values to file
+
+    int counterM = 1;                               // Counting parameter to print message to screen inside for-loop
+
+    // Performing RK4 on the system
+    for(int i = 0; i < nSteps; i++){
+        solvingMercury.RK4GR(MercurySystem, dt);    // Solving the problem using the RK4-method
+        printerMercury.printingAll(MercurySystem);  // Printing everything to file
+        counterM ++;
+
+        // Printing a message to screen to let the user know how far the program has come
+        if(counterM == floor(0.25*nSteps))   cout << "25 % of the integration is performed" << endl;
+        if(counterM == floor(0.50*nSteps))   cout << "50 % of the integration is performed" << endl;
+        if(counterM == floor(0.75*nSteps))   cout << "75 % of the integration is performed" << endl;
     }
 
     return 0;
