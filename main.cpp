@@ -19,7 +19,7 @@ int main()
 
     // Qualities of the system we will be exploring are read from file
     // Note that file directory has to be changed accordingly for every computer
-    fstream file("C:\\Users\\Nat\\Documents\\GitHub\\Project3\\hei.txt",ios_base::in);
+    fstream file("/uio/hume/student-u81/natales/Project3/Project3/hei.txt",ios_base::in);
 
     // Intialisation
     System SunEarthSystem;                      // Preparing system
