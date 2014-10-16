@@ -64,7 +64,7 @@ void System::conserveMomentum()
     }
 
     CelestialBody &sun = bodies[0];
-    sun.velocity = momentum/sun.mass;
+    sun.velocity = momentum/(-1*sun.mass);
 }
 
 

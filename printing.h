@@ -26,6 +26,7 @@ public:
     void printingVelocity(System &system);
     void printingEnergyAngMom(System &system);
     void printingAll(System &system);
+    void printingPositionVector(vec3 position);
 };
 
 

@@ -8,37 +8,37 @@
 #include <printing.h>
 
 using namespace std;
-using namespace arma;
 
+//TODO
 int main()
 {
     // Integration specifications
-    double dt       = 0.000001;
-    double T        = 10;
+    double dt       = 1e-6;
+    double T        = 2;
     double nSteps   = T/dt;
 
 
-    /*
+/*
     // Qualities of the system we will be exploring are read from file
     // Note that file directory has to be changed accordingly for every computer
-    fstream file("/uio/hume/student-u81/natales/Project3/Project3/hei.txt",ios_base::in);
-    fstream file2("/uio/hume/student-u81/natales/Project3/Project3/hei.txt",ios_base::in);
+    fstream file("/uio/hume/student-u81/natales/Project3/Project3/solarsystemNASA.txt",ios_base::in);
+    fstream file2("/uio/hume/student-u81/natales/Project3/Project3/solarsystemNASA.txt",ios_base::in);
 
     // Intialisation
-    System      SunEarthSystem;                 // Preparing system
+    System      SolarSystem;                 // Preparing system
     Integrator  solving;                        // Preparing for allowing the system to develop
-    Printing    printer("SunEarth");            // Preparing for printing details about system to file
+    Printing    printer("SolarSystem");            // Preparing for printing details about system to file
 
-    SunEarthSystem.addSystem(file);             // Creating system
-    SunEarthSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
-    printer.printingAll(SunEarthSystem);        // Printing intitial values to file
+    SolarSystem.addSystem(file);             // Creating system
+    SolarSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
+    printer.printingAll(SolarSystem);        // Printing intitial values to file
 
     int counter = 1;                            // Counting parameter to print message to screen inside for-loop
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
-        solving.RK4(SunEarthSystem, dt);        // Solving the problem using the RK4-method
-        printer.printingAll(SunEarthSystem);    // Printing everything to file
+        solving.RK4(SolarSystem, dt);        // Solving the problem using the RK4-method
+        printer.printingAll(SolarSystem);    // Printing everything to file
         counter ++;
 
         // Printing a message to screen to let the user know how far the program has come
@@ -62,11 +62,11 @@ int main()
         verletsolver.Verlet(solarSystemVerlet, dt);
         printerv.printingAll(solarSystemVerlet);
     }
-    */
+*/
 
 
     // ============================== MERCURY ============================== //
-    fstream MercuryFile("/uio/hume/student-u81/natales/Project3/Project3/MercuryInitials.txt",ios_base::in);
+    fstream MercuryFile("/uio/hume/student-u81/natales/Project3/Project3/MercuryInitialsNASA.txt",ios_base::in);
 
     // Intialisation
     System      MercurySystem;                      // Preparing system
@@ -75,21 +75,28 @@ int main()
 
     MercurySystem.addSystem(MercuryFile);           // Creating system
     MercurySystem.conserveMomentum();               // Ensuring momentum is conserved for the system
-    printerMercury.printingAll(MercurySystem);      // Printing intitial values to file
 
-    int counterM = 1;                               // Counting parameter to print message to screen inside for-loop
+    vec3 old(1.,1.,1.);
+    vec3 superold(0.5,0.5,0.5);
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
         solvingMercury.RK4GR(MercurySystem, dt);    // Solving the problem using the RK4-method
-        printerMercury.printingAll(MercurySystem);  // Printing everything to file
-        counterM ++;
+        CelestialBody Mercury = MercurySystem.bodies[1];
+
+        // Print previous position to file, if the system was at perihelion at the previous step
+        if( old.length() < Mercury.position.length() && old.length() < superold.length() ){
+            printerMercury.printingPositionVector(old);
+        } // End if-statement
+
+        superold = old;
+        old = Mercury.position;
 
         // Printing a message to screen to let the user know how far the program has come
-        if(counterM == floor(0.25*nSteps))   cout << "25 % of the integration is performed" << endl;
-        if(counterM == floor(0.50*nSteps))   cout << "50 % of the integration is performed" << endl;
-        if(counterM == floor(0.75*nSteps))   cout << "75 % of the integration is performed" << endl;
-    }
+        if(i % 100000 == 0)     cout << 100*((double)i) / nSteps << " % of the integration is performed" << endl;
+
+    } // Ending for-loop
+
 
     return 0;
 }
