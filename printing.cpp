@@ -78,15 +78,16 @@ void Printing::closeAllFiles()
 } // End closeAllFiles-function
 
 
-void Printing::printingPositionVector(vec3 position)
+void Printing::printing3Vector(vec3 vector, std::string filenameEnding)
 { // Printing position only
-    if(!positionFile.is_open()){                                        // Open position file if it's not open
-        char *filename = new char[1000];                                // File name can have max 1000 characters
-        sprintf(filename, "%s_positions.txt", filenamePrefix.c_str() ); // Create filname with prefix and ending
-        positionFile.open(filename);
+    this->filenameEnding = filenameEnding;
+    if(!vectorFile.is_open()){                                                              // Open position file if it's not open
+        char *filename = new char[1000];                                                    // File name can have max 1000 characters
+        sprintf(filename, "%s_%s.txt", filenamePrefix.c_str(), filenameEnding.c_str() );    // Create filname with prefix and ending
+        vectorFile.open(filename);
         delete filename;
     } // End if-statement opening a position file
 
-    positionFile << position << " ";
-    positionFile << std::endl;                                          // Insert a new line when finished
+    vectorFile << vector << " ";
+    vectorFile << std::endl;                                            // Insert a new line when finished
 } // End printingPosition-function

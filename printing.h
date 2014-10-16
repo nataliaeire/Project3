@@ -11,10 +11,12 @@ using std::ofstream; using std::string;
 class Printing
 {
 public:
+    ofstream    vectorFile;
     ofstream    positionFile;
     ofstream    velocityFile;
     ofstream    energyAngMomFile;
     string      filenamePrefix;
+    string      filenameEnding;
 
     // Intitialisation and destructor
     Printing(string filenamePrefix);
@@ -26,7 +28,7 @@ public:
     void printingVelocity(System &system);
     void printingEnergyAngMom(System &system);
     void printingAll(System &system);
-    void printingPositionVector(vec3 position);
+    void printing3Vector(vec3 vector, string filenameEnding);
 };
 
 

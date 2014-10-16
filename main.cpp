@@ -14,7 +14,7 @@ int main()
 {
     // Integration specifications
     double dt       = 1e-6;
-    double T        = 2;
+    double T        = 100;
     double nSteps   = T/dt;
 
 
@@ -26,14 +26,14 @@ int main()
 
     // Intialisation
     System      SolarSystem;                 // Preparing system
-    Integrator  solving;                        // Preparing for allowing the system to develop
-    Printing    printer("SolarSystem");            // Preparing for printing details about system to file
+    Integrator  solving;                     // Preparing for allowing the system to develop
+    Printing    printer("SolarSystem");      // Preparing for printing details about system to file
 
     SolarSystem.addSystem(file);             // Creating system
     SolarSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);        // Printing intitial values to file
 
-    int counter = 1;                            // Counting parameter to print message to screen inside for-loop
+    int counter = 1;                         // Counting parameter to print message to screen inside for-loop
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
@@ -66,7 +66,7 @@ int main()
 
 
     // ============================== MERCURY ============================== //
-    fstream MercuryFile("/uio/hume/student-u81/natales/Project3/Project3/MercuryInitialsNASA.txt",ios_base::in);
+    fstream MercuryFile("C:\\Users\\Nat\\Documents\\GitHub\\Project3\\MercuryInitials.txt",ios_base::in);
 
     // Intialisation
     System      MercurySystem;                      // Preparing system
@@ -78,6 +78,7 @@ int main()
 
     vec3 old(1.,1.,1.);
     vec3 superold(0.5,0.5,0.5);
+    //vec3 oldvelocity(0.,0.,0.);
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
@@ -86,14 +87,16 @@ int main()
 
         // Print previous position to file, if the system was at perihelion at the previous step
         if( old.length() < Mercury.position.length() && old.length() < superold.length() ){
-            printerMercury.printingPositionVector(old);
+            printerMercury.printing3Vector(old,"position");
+            //cout << oldvelocity << endl;
         } // End if-statement
 
         superold = old;
         old = Mercury.position;
+        //oldvelocity = Mercury.velocity;
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % 100000 == 0)     cout << 100*((double)i) / nSteps << " % of the integration is performed" << endl;
+        if(i % 10000 == 0)     cout << 100*((double)i) / nSteps << " % of the integration is performed" << endl;
 
     } // Ending for-loop
 
