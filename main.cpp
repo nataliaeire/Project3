@@ -14,15 +14,15 @@ int main()
 {
     // Integration specifications
     double dt       = 1e-6;
-    double T        = 100;
+    double T        = 20;
     double nSteps   = T/dt;
 
 
-/*
+
     // Qualities of the system we will be exploring are read from file
     // Note that file directory has to be changed accordingly for every computer
-    fstream file("/uio/hume/student-u81/natales/Project3/Project3/solarsystemNASA.txt",ios_base::in);
-    fstream file2("/uio/hume/student-u81/natales/Project3/Project3/solarsystemNASA.txt",ios_base::in);
+    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthJupiterNASA.txt",ios_base::in);
+    fstream file2("/home/ubu/FYS3150/projects/Project3/SunEarthJupiterNASA.txt",ios_base::in);
 
     // Intialisation
     System      SolarSystem;                 // Preparing system
@@ -34,17 +34,17 @@ int main()
     printer.printingAll(SolarSystem);        // Printing intitial values to file
 
     int counter = 1;                         // Counting parameter to print message to screen inside for-loop
+    int print_n_frames = 1e3;                // Printing only each n'th frame
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
         solving.RK4(SolarSystem, dt);        // Solving the problem using the RK4-method
-        printer.printingAll(SolarSystem);    // Printing everything to file
+        printer.printingAll(SolarSystem, counter, print_n_frames);    // Printing everything to file
         counter ++;
 
         // Printing a message to screen to let the user know how far the program has come
-        if(counter == floor(0.25*nSteps))   cout << "25 % of the integration is performed" << endl;
-        if(counter == floor(0.50*nSteps))   cout << "50 % of the integration is performed" << endl;
-        if(counter == floor(0.75*nSteps))   cout << "75 % of the integration is performed" << endl;
+        if(i % 10000 == 0)     cout << 100*((double)i) / nSteps << " % of the integration is performed" << endl;
+
     }
 
     // Exploring the system using the Verlet integrator
@@ -60,9 +60,9 @@ int main()
     // Performing Verlet on the system
     for(int i = 0; i < nSteps; i++){
         verletsolver.Verlet(solarSystemVerlet, dt);
-        printerv.printingAll(solarSystemVerlet);
+        printerv.printingAll(solarSystemVerlet, i, print_n_frames);
     }
-*/
+/*
 
 
     // ============================== MERCURY ============================== //
@@ -100,6 +100,6 @@ int main()
 
     } // Ending for-loop
 
-
+*/
     return 0;
 }

@@ -69,6 +69,13 @@ void Printing::printingAll(System &system)
     printingEnergyAngMom(system);
 } // End printingAll-function
 
+void Printing::printingAll(System &system, int counter, int n)
+{ // Function printing only each n'th position, velocity, energy and angular momentum to file using previously created functions
+    if (counter % n == 0){
+        printingAll(system);
+    }
+} // End printingAll-function
+
 
 void Printing::closeAllFiles()
 { // Function closing all open files
