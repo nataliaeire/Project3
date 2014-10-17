@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iomanip>
 #include <vec3.h>
 
 vec3::vec3()
@@ -105,5 +106,5 @@ void vec3::set(double x, double y, double z)
 }
 
 std::ostream& operator<<(std::ostream &stream, vec3 &vec) {
-    return stream << vec.x() << " " << vec.y() << " " << vec.z();
+    return stream << std::setprecision(15) << vec.x() << " " << vec.y() << " " << vec.z();
 }

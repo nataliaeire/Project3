@@ -66,7 +66,7 @@ int main()
 
 
     // ============================== MERCURY ============================== //
-    fstream MercuryFile("C:\\Users\\Nat\\Documents\\GitHub\\Project3\\MercuryInitials.txt",ios_base::in);
+    fstream MercuryFile("/home/ubu/FYS3150/projects/Project3/MercuryInitials.txt",ios_base::in);
 
     // Intialisation
     System      MercurySystem;                      // Preparing system
