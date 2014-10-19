@@ -33,25 +33,22 @@ int main()
     SolarSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);        // Printing intitial values to file
 
-    int counter = 1;                         // Counting parameter to print message to screen inside for-loop
-    int print_n_frames = 1e3;                // Printing only each n'th frame
+    int print_n_frames = 1e3;                // Counter for printing only each n'th frame
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
         solving.RK4(SolarSystem, dt);        // Solving the problem using the RK4-method
-        printer.printingAll(SolarSystem, counter, print_n_frames);    // Printing everything to file
-        counter ++;
+        printer.printingAll(SolarSystem, i, print_n_frames);    // Printing everything to file
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % 10000 == 0)     cout << 100*((double)i) / nSteps << " % of the integration is performed" << endl;
-
+        if(i % 1000 == 0)     cout << 100*((double)i) / nSteps << " % of the RK4 integration is performed" << endl;
     }
 
     // Exploring the system using the Verlet integrator
     // Qualities of the system we will be exploring
-    System solarSystemVerlet;
-    Integrator verletsolver;
-    Printing printerv("Verlet");
+    System      solarSystemVerlet;
+    Integrator  verletsolver;
+    Printing    printerv("Verlet");
 
     solarSystemVerlet.addSystem(file2);
     solarSystemVerlet.conserveMomentum();
@@ -61,6 +58,9 @@ int main()
     for(int i = 0; i < nSteps; i++){
         verletsolver.Verlet(solarSystemVerlet, dt);
         printerv.printingAll(solarSystemVerlet, i, print_n_frames);
+
+        // Printing a message to screen to let the user know how far the program has come
+        if(i % 1000 == 0)     cout << 100*((double)i) / nSteps << " % of the Verlet integration is performed" << endl;
     }
 /*
 

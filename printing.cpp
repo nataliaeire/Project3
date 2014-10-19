@@ -56,7 +56,7 @@ void Printing::printingEnergyAngMom(System &system)
 
     for(int i=0; i < system.numberOfBodies(); i++){                         // Print the position of each body
         CelestialBody &body = system.bodies[i];
-        energyAngMomFile << body.velocity << " ";
+        energyAngMomFile << system.totalEnergy() << " " << system.angularMomentum.length() << " ";
     } // End the for-loop printing the energy and angular momentum of each body
     energyAngMomFile << std::endl;                                          // Insert a new line when finished
 } // End printingEnergyAngMom-function
@@ -71,9 +71,7 @@ void Printing::printingAll(System &system)
 
 void Printing::printingAll(System &system, int counter, int n)
 { // Function printing only each n'th position, velocity, energy and angular momentum to file using previously created functions
-    if (counter % n == 0){
-        printingAll(system);
-    }
+    if (counter % n == 0)           printingAll(system);
 } // End printingAll-function
 
 
