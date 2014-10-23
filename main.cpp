@@ -14,27 +14,27 @@ int main()
 {
     // Integration specifications
     double dt       = 1e-6;
-    double T        = 20;
+    double T        = 100;
     double nSteps   = T/dt;
 
 
 
     // Qualities of the system we will be exploring are read from file
     // Note that file directory has to be changed accordingly for every computer
-    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthJupiterNASA.txt",ios_base::in);
-    fstream file2("/home/ubu/FYS3150/projects/Project3/SunEarthJupiterNASA.txt",ios_base::in);
+    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarth100xJupiterNASA.txt",ios_base::in);
+    fstream file2("/home/ubu/FYS3150/projects/Project3/SunEarth100xJupiterNASA.txt",ios_base::in);
 
     // Intialisation
     System      SolarSystem;                 // Preparing system
     Integrator  solving;                     // Preparing for allowing the system to develop
-    Printing    printer("SolarSystem");      // Preparing for printing details about system to file
+    Printing    printer("SunEarth100xJupiterNASA100years20pointsperyear");      // Preparing for printing details about system to file
 
     SolarSystem.addSystem(file);             // Creating system
     SolarSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);        // Printing intitial values to file
 
     int counter = 1;                         // Counting parameter to print message to screen inside for-loop
-    int print_n_frames = 1e3;                // Printing only each n'th frame
+    int print_n_frames = 5e4;                // Printing only each n'th frame
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
@@ -51,7 +51,7 @@ int main()
     // Qualities of the system we will be exploring
     System solarSystemVerlet;
     Integrator verletsolver;
-    Printing printerv("Verlet");
+    Printing printerv("VerletSunEarth100xJupiterNASA100years20pointsperyear");
 
     solarSystemVerlet.addSystem(file2);
     solarSystemVerlet.conserveMomentum();
