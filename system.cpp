@@ -95,7 +95,7 @@ void System::calculateForcesAndEnergy()
             double factor       = G*body1.mass*body2.mass / pow(dr,3);      // Reoccuring factor
 
             // Updating gravitational force and potential energy experienced by celestial object
-            potentialEnergy += factor*dr;                                   // Definition of the potential energy
+            potentialEnergy -= factor*dr*dr;                                   // Definition of the potential energy
             // Finding all components of the force
             body1.force.addAndMultiply(deltaRVector, -factor);              // Law of gravity
             body2.force.addAndMultiply(deltaRVector, factor);               // N3

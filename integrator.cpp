@@ -107,6 +107,6 @@ void Integrator::VerletEvolve(System &system, double dt)
 
         body.position.add(body.position-bodyOld.position);
         body.position.addAndMultiply(body.force, dt*dt/body.mass);                  // body.position is now at t+dt
-        body.velocity.addAndMultiply(body.position - bodyOld.position, 1./(2*dt));  // Calculating the velocity
+        body.velocity = (body.position - bodyOld.position)*1./(2*dt);  // Calculating the velocity
     } // Ending for-loop
 } // Ending VerletEvolve-function

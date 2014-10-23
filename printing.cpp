@@ -54,10 +54,7 @@ void Printing::printingEnergyAngMom(System &system)
         delete filename;
     } // End if-statement opening an energy and angular momentum file
 
-    for(int i=0; i < system.numberOfBodies(); i++){                         // Print the position of each body
-        CelestialBody &body = system.bodies[i];
-        energyAngMomFile << system.totalEnergy() << " " << system.angularMomentum.length() << " ";
-    } // End the for-loop printing the energy and angular momentum of each body
+    energyAngMomFile << system.totalEnergy() << " " << system.angularMomentum.length() << " ";
     energyAngMomFile << std::endl;                                          // Insert a new line when finished
 } // End printingEnergyAngMom-function
 
