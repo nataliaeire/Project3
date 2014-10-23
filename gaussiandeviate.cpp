@@ -42,31 +42,46 @@ double ran2(long *idum)
   static long    iv[NTAB];
   double         temp;
 
-  if(*idum <= 0) {
-    if(-(*idum) < 1) *idum = 1;
-    else             *idum = -(*idum);
+  if(*idum <= 0){
+    if(-(*idum) < 1)    *idum = 1;
+    else                *idum = -(*idum);
+
     idum2 = (*idum);
+
     for(j = NTAB + 7; j >= 0; j--) {
       k     = (*idum)/IQ1;
       *idum = IA1*(*idum - k*IQ1) - k*IR1;
-      if(*idum < 0) *idum +=  IM1;
-      if(j < NTAB)  iv[j]  = *idum;
-    }
+
+      if(*idum < 0)     *idum +=  IM1;
+      if(j < NTAB)      iv[j]  = *idum;
+
+    } // End for-loop
+
     iy=iv[0];
-  }
+
+  } // End if-statement
+
   k     = (*idum)/IQ1;
   *idum = IA1*(*idum - k*IQ1) - k*IR1;
-  if(*idum < 0) *idum += IM1;
+
+  if(*idum < 0)         *idum += IM1;
+
   k     = idum2/IQ2;
   idum2 = IA2*(idum2 - k*IQ2) - k*IR2;
-  if(idum2 < 0) idum2 += IM2;
+
+  if(idum2 < 0)         idum2 += IM2;
+
   j     = iy/NDIV;
   iy    = iv[j] - idum2;
   iv[j] = *idum;
-  if(iy < 1) iy += IMM1;
-  if((temp = AM*iy) > RNMX) return RNMX;
+
+  if(iy < 1)            iy += IMM1;
+
+  if((temp = AM*iy) > RNMX)         return RNMX;
   else return temp;
-}
+
+} // End ran2-function
+
 #undef IM1
 #undef IM2
 #undef AM
@@ -93,21 +108,27 @@ double gaussian_deviate(long * idum)
   static double gset;
   double fac, rsq, v1, v2;
 
-  if ( idum < 0) iset =0;
-  if (iset == 0) {
-    do {
-      v1 = 2.*ran2(idum) -1.0;
-      v2 = 2.*ran2(idum) -1.0;
-      rsq = v1*v1+v2*v2;
+  if ( idum < 0)        iset = 0;
+  if (iset == 0){
+
+    do{
+        v1  = 2.*ran2(idum) -1.0;
+        v2  = 2.*ran2(idum) -1.0;
+        rsq = v1*v1+v2*v2;
     } while (rsq >= 1.0 || rsq == 0.);
-    fac = sqrt(-2.*log(rsq)/rsq);
+
+    fac  = sqrt(-2.*log(rsq)/rsq);
     gset = v1*fac;
     iset = 1;
     return v2*fac;
-  } else {
+
+  }else{
+
     iset =0;
     return gset;
-  }
+
+  } // End if-statement
+
 } // end function for gaussian deviates
 
 
