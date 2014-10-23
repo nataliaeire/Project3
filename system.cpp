@@ -62,8 +62,8 @@ void System::conserveMomentum()
         momentumTemp = body.velocity*body.mass;
         momentum.add(momentumTemp);
     }
-
-    CelestialBody &sun = bodies[0];
+    std::cout << "Count: " << bodies.size() << std::endl;
+    CelestialBody &sun = bodies.at(0);
     sun.velocity = momentum/(-1*sun.mass);
 }
 

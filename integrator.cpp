@@ -110,3 +110,30 @@ void Integrator::VerletEvolve(System &system, double dt)
         body.velocity = (body.position - bodyOld.position)*1./(2*dt);  // Calculating the velocity
     } // Ending for-loop
 } // Ending VerletEvolve-function
+
+void Integrator::VelocityVerlet(System &system, double dt)
+{
+    // The first time Verlet() is run, VerletInitialise() is called
+    if (counter == 0)   VerletInitialise(system, dt);
+
+    System nextOldSystem = system;                      // Copying the system at time t to update old_system later on
+    system.calculateForcesAndEnergy();                  // Calculates the forces on the bodies
+    VelocityVerletEvolve(system, dt);                           // Evolving the system according to the Verlet algorithm
+    oldSystem = nextOldSystem;                          // Updating oldSystem
+}
+
+void Integrator::VelocityVerletEvolve(System &system, double dt)
+{
+    for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
+        CelestialBody &body = system.bodies[i];         // the body at time t
+        CelestialBody &bodyOld = oldSystem.bodies[i];   // the body at time t-dt
+        vec3 velocity_dt_2;
+
+        // Calculating the velocity
+        velocity_dt_2 = body.velocity + body.force/body.mass*dt/2.;
+        body.position = body.position + velocity_dt_2*dt;              // Calculating the position
+        system.calculateForcesAndEnergy();
+        body.velocity = velocity_dt_2 + body.force/body.mass*dt/2;  // Calculating the velocity
+    } // Ending for-loop
+} // Ending VerletEvolve-function
+
