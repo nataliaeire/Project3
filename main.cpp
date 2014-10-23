@@ -6,9 +6,11 @@
 #include <system.h>
 #include <integrator.h>
 #include <printing.h>
+#include "time.h"
 
 using namespace std;
 
+// Functions possible to include in main function
 void findError();
 void regularSystemRK4(double dt, double nSteps);
 void regularSystemVV(double dt, double nSteps);
@@ -21,8 +23,8 @@ int main()
     // findError();
 
     // Integration specifications
-    double dt       = 1e-6;
-    double T        = 5;
+    double dt       = 1./20;
+    double T        = 500;
     double nSteps   = T/dt;
 
     // Running the code for special cases
@@ -63,10 +65,13 @@ void findError()
     double      dtChanging = 1e-7;
     double      changingNSteps;
 
+    initialSystem.calculateForcesAndEnergy();
+    double      initialEnergy = initialSystem.totalEnergy();
+
     // Computing error for different time step values
     for(int i = 0; i<7; i++){
         dtChanging     *= 10;
-        changingNSteps  = 1/dtChanging;
+        changingNSteps  = 1./dtChanging;
 
         System changingSystemRK4 = initialSystem;
         System changingSystemVV  = initialSystem;
@@ -93,8 +98,11 @@ void findError()
         // Computing the error
         errorVecRK4 = rTrueRK4 - rDtRK4;
         errorVecVV  = rTrueVV  - rDtVV;
-        errorRK4(i) = errorVecRK4.length();
-        errorVV(i)  = errorVecVV.length();
+        //errorRK4(i) = errorVecRK4.length();
+        //errorVV(i)  = errorVecVV.length();
+        errorRK4(i) = changingSystemRK4.totalEnergy() - initialEnergy;
+        errorVV(i)  = changingSystemVV.totalEnergy()  - initialEnergy;
+
     } // Ending for-loop
 
     // Printing error tofile
@@ -102,8 +110,7 @@ void findError()
     errorFile << errorVV.t() << endl;
 
     errorFile.close();
-
-    exit(0);        // Shut down the rest of the main function
+    exit(0);            // Shut down the rest of the main function
 } // End of findError-function
 
 
@@ -121,16 +128,21 @@ void regularSystemRK4(double dt, double nSteps)
     SolarSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);        // Printing intitial values to file
 
-    int printNFrames = 1e3;                  // Counter for printing only each n'th frame
+    int printNFrames = 1;                  // Counter for printing only each n'th frame
 
+    double start = clock();
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
         solving.RK4(SolarSystem, dt);        // Solving the problem using the RK4-method
         printer.printingAll(SolarSystem, i, printNFrames);    // Printing everything to file
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % 100000 == 0)     cout << 100*((double)i) / nSteps << " % of the RK4 integration is performed" << endl;
+        if(i % int(1e3) == 0)     cout << 100*((double)i) / nSteps << " % of the RK4 integration is performed" << endl;
     }
+    double finish = clock();
+    double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
+    cout << "Operation time pr. RK4 time step: " << operationTime << " s" << endl;
+
 } // End of regularSystemRK4-function
 
 
@@ -148,16 +160,21 @@ void regularSystemVV(double dt, double nSteps)
     solarSystemVerlet.conserveMomentum();
     printerv.printingAll(solarSystemVerlet);
 
-    int printNFrames = 1e3;                 // Counter for printing only each n'th frame
+    int printNFrames = 1;                 // Counter for printing only each n'th frame
 
+    double start = clock();
     // Performing Verlet on the system
     for(int i = 0; i < nSteps; i++){
         verletsolver.Verlet(solarSystemVerlet, dt);
         printerv.printingAll(solarSystemVerlet, i, printNFrames);
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % 100000 == 0)     cout << 100*((double)i) / nSteps << " % of the Verlet integration is performed" << endl;
+        if(i % int(1e3) == 0)     cout << 100*((double)i) / nSteps << " % of the Verlet integration is performed" << endl;
     }
+    double finish = clock();
+    double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
+    cout << "Operation time pr. Verlet time step: " << operationTime << " s" << endl;
+
 } // End of regularSystemVV-function
 
 
@@ -194,7 +211,7 @@ void Mercury(double dt, double nSteps)
         //oldvelocity = Mercury.velocity;
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % 10000 == 0)     cout << 100*((double)i) / nSteps << " % of the integration is performed" << endl;
+        if(i % int(1e5) == 0)     cout << 100*((double)i) / nSteps << " % of the integration is performed" << endl;
 
     } // Ending for-loop
 } // End of Mercury-function

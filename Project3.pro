@@ -10,7 +10,8 @@ SOURCES += \
     celestialbody.cpp \
     vec3.cpp \
     printing.cpp \
-    integrator.cpp
+    integrator.cpp \
+    gaussiandeviate.cpp
 #LIBS += -larmadillo -llapack -lblas
 
 QMAKE_CXXFLAGS += -Wall
