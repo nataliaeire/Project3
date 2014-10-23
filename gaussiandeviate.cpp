@@ -1,11 +1,11 @@
-
+/*
 // ran2 for uniform deviates, initialize with negative seed.
 double ran2(long *);
 
 // function for gaussian random numbers
 double gaussian_deviate(long *);
 
-/*
+
 ** The function 
 **         ran2()
 ** is a long periode (> 2 x 10^18) random number generator of 
@@ -16,7 +16,6 @@ double gaussian_deviate(long *);
 ** that is less than 1.
 ** The function returns a uniform deviate between 0.0 and 1.0
 ** (exclusive of end-point values).
-*/
 
 #define IM1 2147483563
 #define IM2 2147483399
@@ -131,7 +130,7 @@ double gaussian_deviate(long * idum)
 
 } // end function for gaussian deviates
 
-
+*/
 
 
 
