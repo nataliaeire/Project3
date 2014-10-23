@@ -11,7 +11,7 @@ SOURCES += \
     vec3.cpp \
     printing.cpp \
     integrator.cpp \
-    gaussiandeviate.cpp
+#    gaussiandeviate.cpp
 #LIBS += -larmadillo -llapack -lblas
 
 QMAKE_CXXFLAGS += -Wall

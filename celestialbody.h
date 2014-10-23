@@ -7,9 +7,10 @@
 class CelestialBody
 {
 public:
-    int     planetIndex;
+    int     index;
     vec3    position;
     vec3    velocity;
+    vec3    acceleration;
     vec3    force;
     double  mass;
 

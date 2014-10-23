@@ -105,16 +105,17 @@ double gaussian_deviate(long * idum)
 {
   static int iset = 0;
   static double gset;
-  double fac, rsq, v1, v2;
+  double fac, v1, v2;
+  double rsq = 0.;      // Initial value set simply to start the while-loop
 
-  if ( idum < 0)        iset = 0;
-  if (iset == 0){
+  if(idum < 0)          iset = 0;
+  if(iset == 0){
 
-    do{
+    while(rsq >= 1.0 || rsq == 0.){
         v1  = 2.*ran2(idum) -1.0;
         v2  = 2.*ran2(idum) -1.0;
         rsq = v1*v1+v2*v2;
-    } while (rsq >= 1.0 || rsq == 0.);
+    }
 
     fac  = sqrt(-2.*log(rsq)/rsq);
     gset = v1*fac;
@@ -123,7 +124,7 @@ double gaussian_deviate(long * idum)
 
   }else{
 
-    iset =0;
+    iset = 0;
     return gset;
 
   } // End if-statement

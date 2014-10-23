@@ -24,7 +24,7 @@ int main()
     // findError();
 
     // Integration specifications
-    double dt       = 1./20;
+    double dt       = 0.05;
     double T        = 500;
     double nSteps   = T/dt;
 
@@ -33,8 +33,8 @@ int main()
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
     regularSystemRK4(dt, nSteps);       // Running the code using RK4
-    regularSystemV(dt, nSteps);        // Running the code using Verlet
-    regularSystemVelocityV(dt, nSteps); // Running the code using Verlet
+    regularSystemV(dt, nSteps);         // Running the code using Verlet
+    regularSystemVelocityV(dt, nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
 
     return 0;
@@ -125,8 +125,7 @@ void findError()
 void regularSystemRK4(double dt, double nSteps)
 {
     // Qualities of the system we will be exploring are read from file
-
-    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file("/uio/hume/student-u81/natales/Project3/Project3/solarsystemNASA.txt",ios_base::in);
     if(!file.is_open()) {
         cout << "Could not find file: " << endl;
         exit(1);
@@ -140,7 +139,9 @@ void regularSystemRK4(double dt, double nSteps)
     SolarSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);        // Printing intitial values to file
 
-    int printNFrames = 1;                  // Counter for printing only each n'th frame
+    SolarSystem.sortBodiesIntoGroups();
+
+    int printNFrames = 1;                    // Counter for printing only each n'th frame
 
     double start = clock();
     // Performing RK4 on the system
