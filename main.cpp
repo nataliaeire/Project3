@@ -23,7 +23,7 @@ int main()
     // findError();
 
     // Integration specifications
-    double dt       = 1./20;
+    double dt       = 0.05;
     double T        = 500;
     double nSteps   = T/dt;
 
@@ -32,7 +32,7 @@ int main()
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
     regularSystemRK4(dt, nSteps);       // Running the code using RK4
-    regularSystemVV(dt, nSteps);        // Running the code using VV
+    // regularSystemVV(dt, nSteps);        // Running the code using VV
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
 
     return 0;
@@ -117,7 +117,7 @@ void findError()
 void regularSystemRK4(double dt, double nSteps)
 {
     // Qualities of the system we will be exploring are read from file
-    fstream file("/uio/hume/student-u81/natales/Project3/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file("/uio/hume/student-u81/natales/Project3/Project3/solarsystemNASA.txt",ios_base::in);
 
     // Initialisation
     System      SolarSystem;                 // Preparing system
@@ -128,7 +128,9 @@ void regularSystemRK4(double dt, double nSteps)
     SolarSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);        // Printing intitial values to file
 
-    int printNFrames = 1;                  // Counter for printing only each n'th frame
+    SolarSystem.sortBodiesIntoGroups();
+
+    int printNFrames = 1;                    // Counter for printing only each n'th frame
 
     double start = clock();
     // Performing RK4 on the system
