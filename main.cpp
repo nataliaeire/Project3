@@ -21,24 +21,19 @@ int main()
 
     // Qualities of the system we will be exploring are read from file
     // Note that file directory has to be changed accordingly for every computer
-    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarth100xJupiterNASA.txt",ios_base::in);
-    fstream file2("/home/ubu/FYS3150/projects/Project3/SunEarth100xJupiterNASA.txt",ios_base::in);
+    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file2("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
 
     // Intialisation
     System      SolarSystem;                 // Preparing system
     Integrator  solving;                     // Preparing for allowing the system to develop
-    Printing    printer("SunEarth100xJupiterNASA100years20pointsperyear");      // Preparing for printing details about system to file
+    Printing    printer("SunEarthNASA100years100pointsperyear");      // Preparing for printing details about system to file
 
     SolarSystem.addSystem(file);             // Creating system
     SolarSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);        // Printing intitial values to file
 
-<<<<<<< HEAD
-    int counter = 1;                         // Counting parameter to print message to screen inside for-loop
-    int print_n_frames = 5e4;                // Printing only each n'th frame
-=======
-    int print_n_frames = 1e3;                // Counter for printing only each n'th frame
->>>>>>> 61ae9b8bfd3582af8ab684abc70ad7d8caace701
+    int print_n_frames = 1e4;                // Counter for printing only each n'th frame
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
@@ -51,15 +46,10 @@ int main()
 
     // Exploring the system using the Verlet integrator
     // Qualities of the system we will be exploring
-<<<<<<< HEAD
+
     System solarSystemVerlet;
     Integrator verletsolver;
-    Printing printerv("VerletSunEarth100xJupiterNASA100years20pointsperyear");
-=======
-    System      solarSystemVerlet;
-    Integrator  verletsolver;
-    Printing    printerv("Verlet");
->>>>>>> 61ae9b8bfd3582af8ab684abc70ad7d8caace701
+    Printing printerv("VerletSunEarthNASA100years100pointsperyear");
 
     solarSystemVerlet.addSystem(file2);
     solarSystemVerlet.conserveMomentum();
