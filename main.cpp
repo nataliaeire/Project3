@@ -13,7 +13,8 @@ using namespace std;
 // Functions possible to include in main function
 void findError();
 void regularSystemRK4(double dt, double nSteps);
-void regularSystemVV(double dt, double nSteps);
+void regularSystemV(double dt, double nSteps);
+void regularSystemVelocityV(double dt, double nSteps);
 void Mercury(double dt, double nSteps);
 
 int main()
@@ -32,7 +33,8 @@ int main()
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
     regularSystemRK4(dt, nSteps);       // Running the code using RK4
-    // regularSystemVV(dt, nSteps);        // Running the code using VV
+    regularSystemV(dt, nSteps);         // Running the code using Verlet
+    regularSystemVelocityV(dt, nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
 
     return 0;
@@ -46,7 +48,13 @@ void findError()
     errorFile.open("Error.txt");
 
     // Preparing system
-    fstream     changingFile("/uio/hume/student-u81/natales/Project3/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream     changingFile("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
+
+    if(!changingFile.is_open()) {
+        cout << "Could not find file: " << endl;
+        exit(1);
+    }
+
     System      initialSystem;
     initialSystem.addSystem(changingFile);
     initialSystem.conserveMomentum();
@@ -118,11 +126,14 @@ void regularSystemRK4(double dt, double nSteps)
 {
     // Qualities of the system we will be exploring are read from file
     fstream file("/uio/hume/student-u81/natales/Project3/Project3/solarsystemNASA.txt",ios_base::in);
-
+    if(!file.is_open()) {
+        cout << "Could not find file: " << endl;
+        exit(1);
+    }
     // Initialisation
     System      SolarSystem;                 // Preparing system
     Integrator  solving;                     // Preparing for allowing the system to develop
-    Printing    printer("SolarSystemRK4");   // Preparing for printing details about system to file
+    Printing    printer("SunEarthNASARK4");   // Preparing for printing details about system to file
 
     SolarSystem.addSystem(file);             // Creating system
     SolarSystem.conserveMomentum();          // Ensuring momentum is conserved for the system
@@ -148,15 +159,20 @@ void regularSystemRK4(double dt, double nSteps)
 } // End of regularSystemRK4-function
 
 
-void regularSystemVV(double dt, double nSteps)
+void regularSystemV(double dt, double nSteps)
 {
     // Qualities of the system we will be exploring are read from file
-    fstream file("/uio/hume/student-u81/natales/Project3/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
+
+    if(!file.is_open()) {
+        cout << "Could not find file: " << endl;
+        exit(1);
+    }
 
     // Initialisation
     System      solarSystemVerlet;
     Integrator  verletsolver;
-    Printing    printerv("SolarSystemVV");
+    Printing    printerv("SunEarthNASAV");
 
     solarSystemVerlet.addSystem(file);
     solarSystemVerlet.conserveMomentum();
@@ -177,13 +193,54 @@ void regularSystemVV(double dt, double nSteps)
     double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
     cout << "Operation time pr. Verlet time step: " << operationTime << " s" << endl;
 
-} // End of regularSystemVV-function
+} // End of regularSystemV-function
+
+void regularSystemVelocityV(double dt, double nSteps)
+{
+    // Qualities of the system we will be exploring are read from file
+    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
+
+    if(!file.is_open()) {
+        cout << "Could not find file: " << endl;
+        exit(1);
+    }
+
+    // Initialisation
+    System      solarSystemVelocityVerlet;
+    Integrator  velocityverletsolver;
+    Printing    printervv("SunEarthNASAVV");
+
+    solarSystemVelocityVerlet.addSystem(file);
+    solarSystemVelocityVerlet.conserveMomentum();
+    printervv.printingAll(solarSystemVelocityVerlet);
+
+    int printNFrames = 1;                 // Counter for printing only each n'th frame
+
+    double start = clock();
+    // Performing Verlet on the system
+    for(int i = 0; i < nSteps; i++){
+        velocityverletsolver.VelocityVerlet(solarSystemVelocityVerlet, dt);
+        printervv.printingAll(solarSystemVelocityVerlet, i, printNFrames);
+
+        // Printing a message to screen to let the user know how far the program has come
+        if(i % int(1e3) == 0)     cout << 100*((double)i) / nSteps << " % of the Velocity Verlet integration is performed" << endl;
+    }
+    double finish = clock();
+    double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
+    cout << "Operation time pr. Velocity Verlet time step: " << operationTime << " s" << endl;
+
+} // End of regularSystemV-function
 
 
 void Mercury(double dt, double nSteps)
 {
     // Qualities of the system we will be exploring are read from file
     fstream MercuryFile("/home/ubu/FYS3150/projects/Project3/MercuryInitials.txt",ios_base::in);
+
+    if(!MercuryFile.is_open()) {
+        cout << "Could not find file: " << endl;
+        exit(1);
+    }
 
     // Intialisation
     System      MercurySystem;                      // Preparing system
@@ -195,7 +252,6 @@ void Mercury(double dt, double nSteps)
 
     vec3 old(1.,1.,1.);
     vec3 superold(0.5,0.5,0.5);
-    //vec3 oldvelocity(0.,0.,0.);
 
     // Performing RK4 on the system
     for(int i = 0; i < nSteps; i++){
@@ -205,12 +261,10 @@ void Mercury(double dt, double nSteps)
         // Print previous position to file, if the system was at perihelion at the previous step
         if( old.length() < Mercury.position.length() && old.length() < superold.length() ){
             printerMercury.printing3Vector(old,"position");
-            //cout << oldvelocity << endl;
         } // End if-statement
 
         superold = old;
         old = Mercury.position;
-        //oldvelocity = Mercury.velocity;
 
         // Printing a message to screen to let the user know how far the program has come
         if(i % int(1e5) == 0)     cout << 100*((double)i) / nSteps << " % of the integration is performed" << endl;

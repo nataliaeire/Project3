@@ -11,8 +11,7 @@ System::System()
 
 void System::addBody(vec3 position, vec3 velocity, double mass)
 { // Adding a celestial body, defined according to the CelestialBody-class to a system bodies
-    int index = bodies.size();
-    bodies.push_back( CelestialBody(index, position, velocity, mass) );
+    bodies.push_back( CelestialBody(position, velocity, mass) );
     //bodies.push_back adds a CelestialBody-object to the end of the object bodies //
 } // End addBody-function
 
@@ -63,8 +62,8 @@ void System::conserveMomentum()
         momentumTemp = body.velocity*body.mass;
         momentum.add(momentumTemp);
     }
-
-    CelestialBody &sun = bodies[0];
+    std::cout << "Count: " << bodies.size() << std::endl;
+    CelestialBody &sun = bodies.at(0);
     sun.velocity = momentum/(-1*sun.mass);
 }
 

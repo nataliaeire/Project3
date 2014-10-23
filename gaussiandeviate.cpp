@@ -81,6 +81,7 @@ double ran2(long *idum)
   else return temp;
 
 } // End ran2-function
+
 #undef IM1
 #undef IM2
 #undef AM
