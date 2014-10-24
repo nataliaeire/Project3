@@ -1,7 +1,11 @@
 #include "system.h"
+#include <gaussiandeviate.h>
 #include <cmath>
 #include <armadillo>
 
+
+
+// =================================== INITIALISING ================================== //
 System::System()
 { // Initialising some qualities when creating a system, regardless of number of particles
     potentialEnergy = 0;
@@ -9,6 +13,71 @@ System::System()
 } // End constructor
 
 
+void System::conserveMomentum()
+{ // Function to find the momentum of the planets and changing the Sun's momentum to ensure
+  // the total momentum of the system is conserved
+    vec3 momentumTemp;
+    momentumTemp.setToZero();
+    momentum.setToZero();
+
+    // Finding the total momentum of all bodies except the Sun
+    for(int i=1; i<numberOfBodies(); i++){
+        CelestialBody &body = bodies[i];
+        momentumTemp = body.velocity*body.mass;
+        momentum.add(momentumTemp);
+    } // Ending for-loop
+    CelestialBody &sun = bodies.at(0);
+    sun.velocity = momentum/(-1*sun.mass);
+} // End of conserveMomentum-function
+
+
+void System::sortBodiesIntoGroups()
+{
+    calculateForcesAndEnergy();
+    arma::vec accelerations;
+    accelerations.zeros(numberOfBodies());
+
+    for(int i=0; i < numberOfBodies(); i++){
+        CelestialBody &body = bodies[i];
+        body.acceleration   = body.force/body.mass;
+        accelerations[i]    = log(body.acceleration.length());
+    } // End for-loop
+
+    // Sorting the accelerations
+    double maxAcc   = arma::max(accelerations);
+    double minAcc   = arma::min(accelerations);
+    double deltaAcc = 0.25*(maxAcc - minAcc);
+
+    // Initializing body groups
+    bodies1.clear();
+    bodies2.clear();
+    bodies3.clear();
+    bodies4.clear();
+
+    // Looping over bodies to put them into separate groups
+    for(int i = 0; i < numberOfBodies(); i++){
+        CelestialBody &body  = bodies[i];
+        if(log(body.acceleration.length()) < minAcc + deltaAcc){
+            bodies1.push_back(&body);
+        }else if(log(body.acceleration.length()) >= minAcc + deltaAcc && log(body.acceleration.length()) < minAcc + 2*deltaAcc){
+            bodies2.push_back(&body);
+        }else if(log(body.acceleration.length()) >= minAcc + 2*deltaAcc && log(body.acceleration.length()) < minAcc + 3*deltaAcc){
+            bodies3.push_back(&body);
+        }else{
+            bodies4.push_back(&body);
+        } // Ending if-statement
+
+    } // Ending for-loop
+
+    std::cout << "Number of elements in bodies1: " << bodies1.size() << std::endl
+              << "Number of elements in bodies2: " << bodies2.size() << std::endl
+              << "Number of elements in bodies3: " << bodies3.size() << std::endl
+              << "Number of elements in bodies4: " << bodies4.size() << std::endl << std::endl;
+
+} // End sortBodiesIntoGroups-function
+
+
+// =================================== CREATING SYSTEM ================================== //
 void System::addBody(vec3 position, vec3 velocity, double mass)
 { // Adding a celestial body, defined according to the CelestialBody-class to a system bodies
     bodies.push_back( CelestialBody(numberOfBodies(), position, velocity, mass) );
@@ -43,30 +112,58 @@ void System::addSystem(std::fstream &file)
 } // End addBody-function
 
 
+void System::addRandomSystem(int numberOfObjects, int sphereRadius)
+{ // Adding system using random number generators
+    double u, v, w, r, theta, phi, x, y, z, vx, vy, vz, massDeviation, mass;
+    long int seed = 3;  // Seed to start random number generator
+
+    // Loop to generate numberOfObjects celestial objects with random positions and mass
+    for(int i = 0; i < numberOfObjects; i++){
+        // Use that r^2 sin theta dr dtheta dphi = A du dv dw => r = R0(u)^(1/3), theta = arccos(1-2v), phi = 2pi w
+        // x = r sin theta cos phi, y = r sin theta sin phi, z = r cos theta
+        // Thus, generating random u, v & w will allow to get a uniform, spherical distribution
+
+        // Generating random numbers (uniform distribution)
+        u = ran2(&seed);
+        v = ran2(&seed);
+        w = ran2(&seed);
+
+        // Calculating random spherical coordinates
+        r       = sphereRadius*pow(u,1./3);
+        theta   = acos(1.-2.*v);
+        phi     = 2*M_PI*w;
+
+        // Calculating random cartesian coordinates
+        x = r*sin(theta)*cos(phi);
+        y = r*sin(theta)*sin(phi);
+        z = r*cos(theta);
+
+        // Starting the system at rest
+        vx = vy = vz = 0;
+
+        // Generating random mass (normal distribution)
+        massDeviation = gaussian_deviate(&seed);    // mean = 0, std = 1
+        mass = 10. + massDeviation;                 // 10 solar masses + randomly drawn gaussian deviation
+
+        // Adding body to system using previously created function
+        addBody(x, y, z, vx, vy, vz, mass);
+    } // Ending for-loop
+} // End of addRandomSystem-function
+
+
+// ===================================== PROPERTIES OF SYSTEM ========================================= //
 int System::numberOfBodies()
 { // Simply returning the number of celestial bodies in the system
     return bodies.size();
 } // End of numberOfBodies-function
 
-
-void System::conserveMomentum()
-{ // Function to find the momentum of the planets and changing the Sun's momentum to ensure
-  // the total momentum of the system is conserved
-    vec3 momentumTemp;
-    momentumTemp.setToZero();
-    momentum.setToZero();
-
-    // Finding the total momentum of all bodies except the Sun
-    for(int i=1; i<numberOfBodies(); i++){
-        CelestialBody &body = bodies[i];
-        momentumTemp = body.velocity*body.mass;
-        momentum.add(momentumTemp);
-    } // Ending for-loop
-    CelestialBody &sun = bodies.at(0);
-    sun.velocity = momentum/(-1*sun.mass);
-}
+double System::totalEnergy()
+{ // Simply calculating the total energy of the system
+    return potentialEnergy + kineticEnergy;
+} // End of totalEnergy-system
 
 
+// =================================== CALCULATING FORCES & ENERGY ===================================== //
 void System::calculateForcesAndEnergy()
 { // Function calculating forces and energy (and angular momentum!) for the system
 
@@ -146,52 +243,6 @@ void System::calculateForcesUsingGR()
 } // Ending calculateForcesAndEnergy-function
 
 
-void System::sortBodiesIntoGroups()
-{
-    calculateForcesAndEnergy();
-    arma::vec accelerations;
-    accelerations.zeros(numberOfBodies());
-
-    for(int i=0; i < numberOfBodies(); i++){
-        CelestialBody &body = bodies[i];
-        body.acceleration   = body.force/body.mass;
-        accelerations[i]    = log(body.acceleration.length());
-    } // End for-loop
-
-    // Sorting the accelerations
-    double maxAcc   = arma::max(accelerations);
-    double minAcc   = arma::min(accelerations);
-    double deltaAcc = 0.25*(maxAcc - minAcc);
-
-    // Initializing body groups
-    bodies1.clear();
-    bodies2.clear();
-    bodies3.clear();
-    bodies4.clear();
-
-    // Looping over bodies to put them into separate groups
-    for(int i = 0; i < numberOfBodies(); i++){
-        CelestialBody &body  = bodies[i];
-        if(log(body.acceleration.length()) < minAcc + deltaAcc){
-            bodies1.push_back(&body);
-        }else if(log(body.acceleration.length()) >= minAcc + deltaAcc && log(body.acceleration.length()) < minAcc + 2*deltaAcc){
-            bodies2.push_back(&body);
-        }else if(log(body.acceleration.length()) >= minAcc + 2*deltaAcc && log(body.acceleration.length()) < minAcc + 3*deltaAcc){
-            bodies3.push_back(&body);
-        }else{
-            bodies4.push_back(&body);
-        } // Ending if-statement
-
-    } // Ending for-loop
-
-    std::cout << "Number of elements in bodies1: " << bodies1.size() << std::endl
-              << "Number of elements in bodies2: " << bodies2.size() << std::endl
-              << "Number of elements in bodies3: " << bodies3.size() << std::endl
-              << "Number of elements in bodies4: " << bodies4.size() << std::endl << std::endl;
-
-} // End sortBodiesIntoGroups-function
-
-
 void System::calculateForcesAdaptively(int n)
 { // Function calculating forces and energy (and angular momentum!) for the system
     // Remembering to reset forces before we calculate new ones
@@ -257,10 +308,4 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
         } // Ending if-statement
     }// Ending for-loop
 } // Ending actuallyCalculatingForces-function
-
-
-double System::totalEnergy()
-{ // Simply calculating the total energy of the system
-    return potentialEnergy + kineticEnergy;
-} // End of totalEnergy-system
 

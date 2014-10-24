@@ -19,6 +19,7 @@ public:
     void    addBody(vec3 position, vec3 velocity, double mass);
     void    addBody(double x, double y, double z, double vx, double vy, double vz, double mass);
     void    addSystem(std::fstream &file);
+    void    addRandomSystem(int numberOfObjects, int sphereRadius);
 
     // Initialization of system
     void    conserveMomentum();
