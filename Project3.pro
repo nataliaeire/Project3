@@ -11,7 +11,7 @@ SOURCES += \
     vec3.cpp \
     printing.cpp \
     integrator.cpp \
-#    gaussiandeviate.cpp
+    gaussiandeviate.cpp
 #LIBS += -larmadillo -llapack -lblas
 
 QMAKE_CXXFLAGS += -Wall
@@ -21,4 +21,5 @@ HEADERS += \
     celestialbody.h \
     vec3.h \
     integrator.h \
-    printing.h
+    printing.h \
+    gaussiandeviate.h

@@ -6,6 +6,7 @@
 #include <system.h>
 #include <integrator.h>
 #include <printing.h>
+#include <gaussiandeviate.h>
 #include "time.h"
 
 using namespace std;
@@ -28,6 +29,11 @@ int main()
     double dt       = 0.05;
     double T        = 500;
     double nSteps   = T/dt;
+    int    numberOfObjects = 100;      // Number of celestial bodies for a random generation of a system
+    double sphereRadius    = 20;       // ly
+
+    // tCrunch = sqrt(3*pi/32Grho0) = 1
+    // GM = v^2r = (2pi*r)^2*r/t^2  => G = pi^2R0^3/2Nmu, using typical radius r = R0/2
 
     // Running the code for special cases
     // Note that these functions were moved outside the main function simply to obtain a pretty, short main function,
@@ -38,6 +44,12 @@ int main()
     //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
     regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
+
+    System system;
+    system.addRandomSystem(numberOfObjects,sphereRadius);
+    for(int i=0; i < system.numberOfBodies(); i++){
+        cout << system.bodies[i].position << endl;
+    }
 
     return 0;
 }
