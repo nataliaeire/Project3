@@ -119,7 +119,7 @@ void System::calculateForcesUsingGR()
     for(int i=0; i<numberOfBodies(); i++){
         CelestialBody &body = bodies[i];
         body.resetForce();
-    }
+    } // Ending for-loop
 
     for(int i = 0; i < numberOfBodies(); i++){
         CelestialBody &body1 = bodies[i];
@@ -153,7 +153,7 @@ void System::sortBodiesIntoGroups()
     accelerations.zeros(numberOfBodies());
 
     for(int i=0; i < numberOfBodies(); i++){
-        CelestialBody &body  = bodies[i];
+        CelestialBody &body = bodies[i];
         body.acceleration   = body.force/body.mass;
         accelerations[i]    = log(body.acceleration.length());
     } // End for-loop
@@ -180,9 +180,9 @@ void System::sortBodiesIntoGroups()
             bodies3.push_back(&body);
         }else{
             bodies4.push_back(&body);
-        } // End if-statement
+        } // Ending if-statement
 
-    } // End for-loop
+    } // Ending for-loop
 
     std::cout << "Number of elements in bodies1: " << bodies1.size() << std::endl
               << "Number of elements in bodies2: " << bodies2.size() << std::endl
@@ -194,44 +194,69 @@ void System::sortBodiesIntoGroups()
 
 void System::calculateForcesAdaptively(int n)
 { // Function calculating forces and energy (and angular momentum!) for the system
+    // Remembering to reset forces before we calculate new ones
+    for(int i=0; i<numberOfBodies(); i++){
+        CelestialBody &body = bodies[i];
+        body.resetForce();
+    } // Ending for-loop
 
+    if(n == 8){
+        for(int i = 0; i < int(bodies4.size()); i++){
+        CelestialBody *body4 = bodies4[i];
+        actuallyCalculatingForces(*body4, n);
+        } // Ending for-loop
+    } // Ending if-statement
+    if(n == 8 || n == 4){
+        for(int i = 0; i < int(bodies3.size()); i++){
+        CelestialBody *body3 = bodies3[i];
+        actuallyCalculatingForces(*body3, n);
+        } // Ending for-loop
+    } // Ending if-statement
+    if(n == 8 || n == 6 || n == 4 || n == 2){
+        for(int i = 0; i < int(bodies2.size()); i++){
+        CelestialBody *body2 = bodies2[i];
+        actuallyCalculatingForces(*body2, n);
+        } // Ending for-loop
+    } // Ending if-statement
+    for(int i = 0; i < int(bodies1.size()); i++){
+    CelestialBody *body1 = bodies1[i];
+    actuallyCalculatingForces(*body1, n);
+    } // Ending for-loop
+
+} // Ending calculateForcesAndEnergy-function
+
+
+void System::actuallyCalculatingForces(CelestialBody &body, int n)
+{ // Function finding the forces between
     // Initialising values
     double G = 4*M_PI*M_PI;     // Defining the gravitational constant in appropriate units
     potentialEnergy = 0;
     kineticEnergy   = 0;
     angularMomentum.setToZero();
 
-    // Remembering to reset forces before we calculate new ones
-    for(int i=0; i<numberOfBodies(); i++){
-        CelestialBody &body = bodies[i];
-        body.resetForce();
-    }
-
     for(int i = 0; i < numberOfBodies(); i++){
-        CelestialBody &body1 = bodies[i];
+        CelestialBody &allBodies = bodies[i];
 
-        for(int j=i+1; j < numberOfBodies(); j++){
-            CelestialBody &body2 = bodies[j];
-
+        // Only calculate forces between different celestial bodies
+        if(body.index != allBodies.index){
             // Variables simplifying the calculations
-            vec3   deltaRVector = body1.position - body2.position;          // Spatial separation in all three directions
+            vec3   deltaRVector = allBodies.position - body.position;       // Spatial separation in all three directions
             double dr           = deltaRVector.length();                    // Separation radius/length/distance
-            double factor       = G*body1.mass*body2.mass / pow(dr,3);      // Reoccuring factor
+            double factor       = G*allBodies.mass*body.mass / pow(dr,3);   // Reoccuring factor
 
             // Updating gravitational force and potential energy experienced by celestial object
-            potentialEnergy -= factor*dr*dr;                                // Definition of the potential energy
-            // Finding all components of the force
-            body1.force.addAndMultiply(deltaRVector, -factor);              // Law of gravity
-            body2.force.addAndMultiply(deltaRVector, factor);               // N3
-        }   // Ending for-loop computing force and potential energy
+            body.force.addAndMultiply(deltaRVector, factor);                // N3
 
-        // Variables simplifying the calculations
-        vec3 momentum   = body1.velocity*body1.mass;                        // p = m*v
-        angularMomentum.add(body1.position.cross(momentum));                // L = r x p, updated for each body
-        kineticEnergy  += 0.5*body1.mass*body1.velocity.lengthSquared();    // k = mv^2/2, updated for each body
-    }   // Ending for-loop going over all celestial bodies
-
-} // Ending calculateForcesAndEnergy-function
+            if(n == 8){     // Calculate energy if a time step has passed for all bodies
+            // Variables simplifying the calculations
+            vec3 momentum    = allBodies.velocity*allBodies.mass;                       // p = m*v
+            angularMomentum.add(allBodies.position.cross(momentum));                    // L = r x p, updated for each body
+            kineticEnergy   += 0.5*allBodies.mass*allBodies.velocity.lengthSquared();   // k = mv^2/2, updated for each body
+            potentialEnergy -= factor*dr*dr;                                            // Definition of the potential energy
+            } // Ending if-statement
+        } // Ending if-statement
+    }// Ending for-loop
+} // Ending actuallyCalculatingForces-function
 
 
 double System::totalEnergy()
