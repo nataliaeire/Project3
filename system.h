@@ -28,6 +28,7 @@ public:
     void    calculateForcesAndEnergy();
     void    calculateForcesUsingGR();
     void    calculateForcesAdaptively(int n);
+    void    actuallyCalculatingForces(CelestialBody &body, int n);
     int     numberOfBodies();
     double  totalEnergy();
     double  potentialEnergy;

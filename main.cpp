@@ -33,8 +33,8 @@ int main()
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
     regularSystemRK4(dt, nSteps);       // Running the code using RK4
-    regularSystemV(dt, nSteps);         // Running the code using Verlet
-    regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
+    //regularSystemV(dt, nSteps);         // Running the code using Verlet
+    //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
 
     return 0;
@@ -140,6 +140,7 @@ void regularSystemRK4(double dt, double nSteps)
     printer.printingAll(SolarSystem);               // Printing intitial values to file
 
     SolarSystem.sortBodiesIntoGroups();
+    SolarSystem.calculateForcesAdaptively(8);
 
     int printNFrames = 1;                           // Counter for printing only each n'th frame
 
