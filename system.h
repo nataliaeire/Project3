@@ -25,17 +25,23 @@ public:
     void    conserveMomentum();
     void    sortBodiesIntoGroups();
 
-    // Calculated qualities of the system
+    // Qualities of system
+    int     numberOfBodies();
+    double  G;
+    double  totalMass;
+    double  density;
+    vec3    angularMomentum;
+    vec3    momentum;
+    double  totalEnergy();
+    double  potentialEnergy;
+    double  kineticEnergy;
+
+    // Calculating qualities of the system
+    void    setG(bool cluster);
     void    calculateForcesAndEnergy();
     void    calculateForcesUsingGR();
     void    calculateForcesAdaptively(int n);
     void    actuallyCalculatingForces(CelestialBody &body, int n);
-    int     numberOfBodies();
-    double  totalEnergy();
-    double  potentialEnergy;
-    double  kineticEnergy;
-    vec3    angularMomentum;
-    vec3    momentum;
 };  // End of System class declariation
 
 #endif // SYSTEM_H

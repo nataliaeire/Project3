@@ -10,7 +10,22 @@ System::System()
 { // Initialising some qualities when creating a system, regardless of number of particles
     potentialEnergy = 0;
     kineticEnergy   = 0;
+    totalMass       = 0;
+    density         = 0;
 } // End constructor
+
+
+/*
+void System::setG(bool cluster)
+{ // Setting gravitational constant G based on the type of system
+    if(cluster == 1){
+        meanMass = 10*1.989e-30;
+        G = M_PI*M_PI*pow(sphereRadius,3) / (2*N*meanMass);
+    }else{
+        G = 4*M_PI*M_PI;
+    } // End if-statement
+} // End setG-function
+*/
 
 
 void System::conserveMomentum()
@@ -116,6 +131,7 @@ void System::addRandomSystem(int numberOfObjects, int sphereRadius)
 { // Adding system using random number generators
     double u, v, w, r, theta, phi, x, y, z, vx, vy, vz, massDeviation, mass;
     long int seed = 3;  // Seed to start random number generator
+    totalMass = density = 0;
 
     // Loop to generate numberOfObjects celestial objects with random positions and mass
     for(int i = 0; i < numberOfObjects; i++){
@@ -144,10 +160,14 @@ void System::addRandomSystem(int numberOfObjects, int sphereRadius)
         // Generating random mass (normal distribution)
         massDeviation = gaussian_deviate(&seed);    // mean = 0, std = 1
         mass = 10. + massDeviation;                 // 10 solar masses + randomly drawn gaussian deviation
+        totalMass += mass;                          // updating the total mass of the system
 
         // Adding body to system using previously created function
         addBody(x, y, z, vx, vy, vz, mass);
     } // Ending for-loop
+
+    density = 3*totalMass / (4*M_PI*pow(sphereRadius,3));   // Density of the system
+
 } // End of addRandomSystem-function
 
 
