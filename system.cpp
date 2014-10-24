@@ -8,6 +8,7 @@
 // =================================== INITIALISING ================================== //
 System::System()
 { // Initialising some qualities when creating a system, regardless of number of particles
+    setG(false);
     potentialEnergy = 0;
     kineticEnergy   = 0;
     totalMass       = 0;
@@ -19,13 +20,11 @@ System::System()
 void System::setG(bool cluster)
 { // Setting gravitational constant G based on the type of system
     if(cluster == 1){
-        meanMass = 10;
-        G = M_PI*M_PI*pow(sphereRadius,3) / (8*N*meanMass);
+        G = 3*M_PI / (32*density);              // t^2 = 3pi/32Grho, but t == 1
     }else{
         G = 4*M_PI*M_PI;
     } // End if-statement
 } // End setG-function
-
 
 
 void System::conserveMomentum()
@@ -44,6 +43,7 @@ void System::conserveMomentum()
     CelestialBody &sun = bodies.at(0);
     sun.velocity = momentum/(-1*sun.mass);
 } // End of conserveMomentum-function
+
 
 void System::sortBodiesIntoGroups()
 {
@@ -166,6 +166,7 @@ void System::addRandomSystem(int numberOfObjects, int sphereRadius)
     } // Ending for-loop
 
     density = 3*totalMass / (4*M_PI*pow(sphereRadius,3));   // Density of the system
+    setG(true);
 
 } // End of addRandomSystem-function
 

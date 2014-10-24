@@ -32,9 +32,6 @@ int main()
     int    numberOfObjects = 100;      // Number of celestial bodies for a random generation of a system
     double sphereRadius    = 20;       // ly
 
-    // tCrunch = sqrt(3*pi/32Grho0) = 1
-    // GM = v^2r = (2pi*r)^2*r/t^2  => G = pi^2R0^3/2Nmu, using typical radius r = R0/2
-
     // Running the code for special cases
     // Note that these functions were moved outside the main function simply to obtain a pretty, short main function,
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
@@ -50,7 +47,6 @@ int main()
     for(int i=0; i < system.numberOfBodies(); i++){
         cout << system.bodies[i].position << endl;
     }
-    system.setG(1);
 
 
     return 0;
