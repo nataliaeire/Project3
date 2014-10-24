@@ -11,7 +11,7 @@ System::System()
 
 void System::addBody(vec3 position, vec3 velocity, double mass)
 { // Adding a celestial body, defined according to the CelestialBody-class to a system bodies
-    bodies.push_back( CelestialBody(position, velocity, mass) );
+    bodies.push_back( CelestialBody(numberOfBodies(), position, velocity, mass) );
     //bodies.push_back adds a CelestialBody-object to the end of the object bodies //
 } // End addBody-function
 
@@ -61,8 +61,7 @@ void System::conserveMomentum()
         CelestialBody &body = bodies[i];
         momentumTemp = body.velocity*body.mass;
         momentum.add(momentumTemp);
-    }
-    std::cout << "Count: " << bodies.size() << std::endl;
+    } // Ending for-loop
     CelestialBody &sun = bodies.at(0);
     sun.velocity = momentum/(-1*sun.mass);
 }
@@ -81,7 +80,7 @@ void System::calculateForcesAndEnergy()
     for(int i=0; i<numberOfBodies(); i++){
         CelestialBody &body = bodies[i];
         body.resetForce();
-    }
+    } // Ending for-loop
 
     for(int i = 0; i < numberOfBodies(); i++){
         CelestialBody &body1 = bodies[i];
@@ -192,7 +191,7 @@ void System::sortBodiesIntoGroups()
 
 } // End sortBodiesIntoGroups-function
 
-/*
+
 void System::calculateForcesAdaptively(int n)
 { // Function calculating forces and energy (and angular momentum!) for the system
 
@@ -233,7 +232,6 @@ void System::calculateForcesAdaptively(int n)
     }   // Ending for-loop going over all celestial bodies
 
 } // Ending calculateForcesAndEnergy-function
-*/
 
 
 double System::totalEnergy()
