@@ -173,13 +173,13 @@ void System::sortBodiesIntoGroups()
     for(int i = 0; i < numberOfBodies(); i++){
         CelestialBody &body  = bodies[i];
         if(log(body.acceleration.length()) < minAcc + deltaAcc){
-            bodies1.push_back(&body);
-        }else if(log(body.acceleration.length()) >= minAcc + deltaAcc && log(body.acceleration.length()) < minAcc + 2*deltaAcc){
-            bodies2.push_back(&body);
-        }else if(log(body.acceleration.length()) >= minAcc + 2*deltaAcc && log(body.acceleration.length()) < minAcc + 3*deltaAcc){
-            bodies3.push_back(&body);
-        }else{
             bodies4.push_back(&body);
+        }else if(log(body.acceleration.length()) >= minAcc + deltaAcc && log(body.acceleration.length()) < minAcc + 2*deltaAcc){
+            bodies3.push_back(&body);
+        }else if(log(body.acceleration.length()) >= minAcc + 2*deltaAcc && log(body.acceleration.length()) < minAcc + 3*deltaAcc){
+            bodies2.push_back(&body);
+        }else{
+            bodies1.push_back(&body);
         } // Ending if-statement
 
     } // Ending for-loop
@@ -197,30 +197,35 @@ void System::calculateForcesAdaptively(int n)
     // Remembering to reset forces before we calculate new ones
     for(int i=0; i<numberOfBodies(); i++){
         CelestialBody &body = bodies[i];
-        body.resetForce();
+
     } // Ending for-loop
 
     if(n == 8){
         for(int i = 0; i < int(bodies4.size()); i++){
         CelestialBody *body4 = bodies4[i];
+        body4->resetForce();
         actuallyCalculatingForces(*body4, n);
         } // Ending for-loop
     } // Ending if-statement
     if(n == 8 || n == 4){
         for(int i = 0; i < int(bodies3.size()); i++){
         CelestialBody *body3 = bodies3[i];
+        body3->resetForce();
         actuallyCalculatingForces(*body3, n);
         } // Ending for-loop
     } // Ending if-statement
     if(n == 8 || n == 6 || n == 4 || n == 2){
         for(int i = 0; i < int(bodies2.size()); i++){
         CelestialBody *body2 = bodies2[i];
+        body2->resetForce();
         actuallyCalculatingForces(*body2, n);
         } // Ending for-loop
     } // Ending if-statement
     for(int i = 0; i < int(bodies1.size()); i++){
-    CelestialBody *body1 = bodies1[i];
-    actuallyCalculatingForces(*body1, n);
+        CelestialBody *body1 = bodies1[i];
+        body1->resetForce();
+        actuallyCalculatingForces(*body1, n);
+
     } // Ending for-loop
 
 } // Ending calculateForcesAndEnergy-function
@@ -257,7 +262,6 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
         } // Ending if-statement
     }// Ending for-loop
 } // Ending actuallyCalculatingForces-function
-
 
 double System::totalEnergy()
 { // Simply calculating the total energy of the system

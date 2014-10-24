@@ -15,6 +15,7 @@ void findError();
 void regularSystemRK4(double dt, double nSteps);
 void regularSystemV(double dt, double nSteps);
 void regularSystemVV(double dt, double nSteps);
+void regularSystemVVadaptive(double nSteps);
 void Mercury(double dt, double nSteps);
 
 int main()
@@ -32,9 +33,10 @@ int main()
     // Note that these functions were moved outside the main function simply to obtain a pretty, short main function,
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
-    regularSystemRK4(dt, nSteps);       // Running the code using RK4
+    //regularSystemRK4(dt, nSteps);       // Running the code using RK4
     //regularSystemV(dt, nSteps);         // Running the code using Verlet
     //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
+    regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
 
     return 0;
@@ -125,7 +127,7 @@ void findError()
 void regularSystemRK4(double dt, double nSteps)
 { // Function analysing the given system using RK4
     // Qualities of the system we will be exploring are read from file
-    fstream file("/uio/hume/student-u81/natales/Project3/Project3/solarsystemNASA.txt",ios_base::in);
+    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -139,7 +141,7 @@ void regularSystemRK4(double dt, double nSteps)
     SolarSystem.conserveMomentum();                 // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);               // Printing intitial values to file
 
-    SolarSystem.sortBodiesIntoGroups();
+    //SolarSystem.sortBodiesIntoGroups();
     SolarSystem.calculateForcesAdaptively(8);
 
     int printNFrames = 1;                           // Counter for printing only each n'th frame
@@ -163,7 +165,7 @@ void regularSystemRK4(double dt, double nSteps)
 void regularSystemV(double dt, double nSteps)
 { // Function analysing the given system using Verlet
     // Qualities of the system we will be exploring are read from file
-    fstream file("/uio/hume/student-u81/natales/Project3/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -198,7 +200,7 @@ void regularSystemV(double dt, double nSteps)
 void regularSystemVV(double dt, double nSteps)
 { // Function analysing the given system using Velocity Verlet
     // Qualities of the system we will be exploring are read from file
-    fstream file("/uio/hume/student-u81/natales/Project3/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "CCould not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -207,7 +209,7 @@ void regularSystemVV(double dt, double nSteps)
     // Initialisation
     System      solarSystemVelocityVerlet;
     Integrator  velocityverletsolver;
-    Printing    printervv("SunEarthNASAVV");
+    Printing    printervv("solarsystemNASAVV");
 
     solarSystemVelocityVerlet.addSystem(file);
     solarSystemVelocityVerlet.conserveMomentum();
@@ -228,13 +230,49 @@ void regularSystemVV(double dt, double nSteps)
     double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
     cout << "Operation time pr. Velocity Verlet time step: " << operationTime << " s" << endl << endl;
 
-} // End of regularSystemV-function
+} // End of regularSystemVV-function
+
+
+void regularSystemVVadaptive( double nSteps)
+{ // Function analysing the given system using Velocity Verlet
+    // Qualities of the system we will be exploring are read from file
+    fstream file("/home/ubu/FYS3150/projects/Project3/solarsystemNASA.txt",ios_base::in);
+    if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
+        cout << "CCould not find file to open." << endl;
+        exit(1);                                    // Cancelling the rest of the program
+    }
+
+    // Initialisation
+    System      solarSystemVelocityVerlet;
+    Integrator  velocityverletsolver;
+    Printing    printervv("solarsystemNASAVV");
+
+    solarSystemVelocityVerlet.addSystem(file);
+    solarSystemVelocityVerlet.conserveMomentum();
+    printervv.printingAll(solarSystemVelocityVerlet);
+
+    int printNFrames = 1;                           // Counter for printing only each n'th frame
+
+    double start = clock();
+    // Performing Verlet on the system
+    for(int i = 0; i < nSteps; i++){
+        velocityverletsolver.adaptiveVelocityVerlet(solarSystemVelocityVerlet, i);
+        printervv.printingAll(solarSystemVelocityVerlet, i, printNFrames);
+
+        // Printing a message to screen to let the user know how far the program has come
+        if(i % int(1e3) == 0)     cout << 100*((double)i) / nSteps << " % of the Velocity Verlet integration is performed" << endl;
+    }
+    double finish = clock();
+    double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
+    cout << "Operation time pr. Velocity Verlet time step: " << operationTime << " s" << endl << endl;
+
+} // End of regularSystemVV-function
 
 
 void Mercury(double dt, double nSteps)
 { // Function performing the evolution of Mercury using a GR contribution
     // Qualities of the system we will be exploring are read from file
-    fstream MercuryFile("/uio/hume/student-u81/natales/Project3/Project3/MercuryInitials.txt",ios_base::in);
+    fstream MercuryFile("/home/ubu/FYS3150/projects/Project3/Mercury.txt",ios_base::in);
     if(!MercuryFile.is_open()) {    // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
