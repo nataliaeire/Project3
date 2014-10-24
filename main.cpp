@@ -50,6 +50,8 @@ int main()
     for(int i=0; i < system.numberOfBodies(); i++){
         cout << system.bodies[i].position << endl;
     }
+    system.setG(1);
+
 
     return 0;
 }

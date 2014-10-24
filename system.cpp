@@ -15,17 +15,17 @@ System::System()
 } // End constructor
 
 
-/*
+
 void System::setG(bool cluster)
 { // Setting gravitational constant G based on the type of system
     if(cluster == 1){
-        meanMass = 10*1.989e-30;
-        G = M_PI*M_PI*pow(sphereRadius,3) / (2*N*meanMass);
+        meanMass = 10;
+        G = M_PI*M_PI*pow(sphereRadius,3) / (8*N*meanMass);
     }else{
         G = 4*M_PI*M_PI;
     } // End if-statement
 } // End setG-function
-*/
+
 
 
 void System::conserveMomentum()
@@ -269,21 +269,21 @@ void System::calculateForcesAdaptively(int n)
 
     } // Ending for-loop
 
-    if(n == 8){
+    if(n % 8 == 0){
         for(int i = 0; i < int(bodies4.size()); i++){
         CelestialBody *body4 = bodies4[i];
         body4->resetForce();
         actuallyCalculatingForces(*body4, n);
         } // Ending for-loop
     } // Ending if-statement
-    if(n == 8 || n == 4){
+    if(n % 4 == 0){
         for(int i = 0; i < int(bodies3.size()); i++){
         CelestialBody *body3 = bodies3[i];
         body3->resetForce();
         actuallyCalculatingForces(*body3, n);
         } // Ending for-loop
     } // Ending if-statement
-    if(n == 8 || n == 6 || n == 4 || n == 2){
+    if(n % 2 == 0){
         for(int i = 0; i < int(bodies2.size()); i++){
         CelestialBody *body2 = bodies2[i];
         body2->resetForce();

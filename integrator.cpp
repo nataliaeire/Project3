@@ -188,19 +188,19 @@ void Integrator::moveBodiesLinearly(CelestialBody &body){
 }
 
 void Integrator::adaptiveVelocityVerletEvolve(System &system){
-    if(n == 8){
+    if(n % 8 == 0){
         for(int i = 0; i < int(system.bodies4.size()); i++){
         CelestialBody *body4 = system.bodies4[i];
         evolveRightBodies(system, *body4);
         } // Ending for-loop
     } // Ending if-statement
-    if(n == 8 || n == 4){
+    if(n % 4 == 0){
         for(int i = 0; i < int(system.bodies3.size()); i++){
         CelestialBody *body3 = system.bodies3[i];
         evolveRightBodies(system, *body3);
         } // Ending for-loop
     } // Ending if-statement
-    if(n == 8 || n == 6 || n == 4 || n == 2){
+    if(n % 2 == 0){
         for(int i = 0; i < int(system.bodies2.size()); i++){
         CelestialBody *body2 = system.bodies2[i];
         evolveRightBodies(system, *body2);
