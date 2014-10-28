@@ -17,6 +17,7 @@ void regularSystemRK4(double dt, double nSteps);
 void regularSystemV(double dt, double nSteps);
 void regularSystemVV(double dt, double nSteps);
 void regularSystemVVadaptive(double nSteps);
+void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, double runningTime);
 void Mercury(double dt, double nSteps);
 
 int main()
@@ -39,8 +40,10 @@ int main()
     //regularSystemRK4(dt, nSteps);       // Running the code using RK4
     //regularSystemV(dt, nSteps);         // Running the code using Verlet
     //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
-    regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
+    //regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
+    randomSystem(100, 20, 0.1, 3);
+
 
     System system;
     system.addRandomSystem(numberOfObjects,sphereRadius);
@@ -317,3 +320,24 @@ void Mercury(double dt, double nSteps)
 
     } // Ending for-loop
 } // End of Mercury-function
+
+
+void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, double runningTime)
+{
+    // Initialisation
+    System      system;
+    Integrator  solvingSystem;
+    Printing    printingSystem("RandomSystem");
+
+    system.addRandomSystem(numberOfObjects,sphereRadius);
+    printingSystem.printingPositionXYZ(system);
+    double n = runningTime/timeStep;
+
+    for(int i = 0; i < n; i++){
+        solvingSystem.adaptiveVelocityVerlet(system,i);
+        printingSystem.printingPositionXYZ(system);
+
+        // Printing a message to screen to let the user know how far the program has come
+        if(i % int(10) == 0)     cout << 100*((double)i) / n << " % of the Velocity Verlet integration is performed" << endl;
+    }
+} // End of randomSystem-function

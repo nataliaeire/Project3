@@ -126,7 +126,7 @@ void System::addSystem(std::fstream &file)
 } // End addBody-function
 
 
-void System::addRandomSystem(int numberOfObjects, int sphereRadius)
+void System::addRandomSystem(int numberOfObjects, double sphereRadius)
 { // Adding system using random number generators
     double u, v, w, r, theta, phi, x, y, z, vx, vy, vz, massDeviation, mass;
     long int seed = 3;  // Seed to start random number generator
@@ -186,9 +186,7 @@ double System::totalEnergy()
 // =================================== CALCULATING FORCES & ENERGY ===================================== //
 void System::calculateForcesAndEnergy()
 { // Function calculating forces and energy (and angular momentum!) for the system
-
     // Initialising values
-    double G = 4*M_PI*M_PI;     // Defining the gravitational constant in appropriate units
     potentialEnergy = 0;
     kineticEnergy   = 0;
     angularMomentum.setToZero();
@@ -228,8 +226,6 @@ void System::calculateForcesAndEnergy()
 
 void System::calculateForcesUsingGR()
 { // Function calculating forces for the system taking into account GR
-    // Initialising values
-    double G = 4*M_PI*M_PI;     // Defining the gravitational constant in appropriate units
     double c = 63239.7263;      // Defining the speed of light in units [AU/year]
 
     // Remembering to reset forces before we calculate new ones
@@ -267,7 +263,6 @@ void System::calculateForcesAdaptively(int n)
     // Remembering to reset forces before we calculate new ones
     for(int i=0; i<numberOfBodies(); i++){
         CelestialBody &body = bodies[i];
-
     } // Ending for-loop
 
     if(n % 8 == 0){
@@ -304,7 +299,6 @@ void System::calculateForcesAdaptively(int n)
 void System::actuallyCalculatingForces(CelestialBody &body, int n)
 { // Function finding the forces between
     // Initialising values
-    double G = 4*M_PI*M_PI;     // Defining the gravitational constant in appropriate units
     potentialEnergy = 0;
     kineticEnergy   = 0;
     angularMomentum.setToZero();
