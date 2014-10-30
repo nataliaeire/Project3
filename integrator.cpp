@@ -145,18 +145,25 @@ void Integrator::adaptiveVelocityVerlet(System &system, int i){
             CelestialBody *body = system.bodies1[j];
             bodyacc = body->acceleration;
             temp_acceleration = bodyacc.length();
-            std::cout << "acceleration:" << temp_acceleration << std::endl;
             if(temp_acceleration > max_acc) max_acc = temp_acceleration;
-        }
-        adaptive_dt = 5/max_acc;
-        std::cout << "Time step:" << adaptive_dt << std::endl;
-    }
+        } // End for-loop
 
-    system.calculateForcesAdaptively(n);                 // Calculates the forces on the bodies
+        adaptive_dt = 5/max_acc;
+        if(adaptive_dt < 1e-4)     adaptive_dt = 1e-4;
+
+    } // End if-statement
+
+    system.calculateForcesAdaptively(n, smoothing);                 // Calculates the forces on the bodies
     moveBodies(system);
     adaptiveVelocityVerletEvolve(system);            // Evolving the system according to the Verlet algorithm
     if(n==8)  n=0;
     n += 1;
+}
+
+
+double Integrator::adaptiveDt()
+{
+    return adaptive_dt;
 }
 
 
@@ -212,12 +219,12 @@ void Integrator::adaptiveVelocityVerletEvolve(System &system){
     for(int i = 0; i < int(system.bodies1.size()); i++){
         CelestialBody *body1 = system.bodies1[i];
         evolveRightBodies(system, *body1);
-    }
-}
+    } // Ending for-loop
+} // Ending adaptiveVelocityVerletEvolve-function
 
 
 void Integrator::evolveRightBodies(System &system, CelestialBody &body)
-{
+{ // Moving bodies according to their forces
     vec3 velocity_dt_2;
 
     // Calculating the velocity

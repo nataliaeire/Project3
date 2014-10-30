@@ -17,7 +17,7 @@ void regularSystemRK4(double dt, double nSteps);
 void regularSystemV(double dt, double nSteps);
 void regularSystemVV(double dt, double nSteps);
 void regularSystemVVadaptive(double nSteps);
-void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, double runningTime);
+void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, double runningTime, bool smoothing);
 void Mercury(double dt, double nSteps);
 
 int main()
@@ -42,7 +42,7 @@ int main()
     //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
-    randomSystem(2, sphereRadius, 0.0670464, 5);
+    randomSystem(250, sphereRadius, 0.01, 5, true);
 
     /*
     System system;
@@ -321,7 +321,7 @@ void Mercury(double dt, double nSteps)
 } // End of Mercury-function
 
 
-void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, double runningTime)
+void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, double runningTime, bool smoothing)
 {
     // Initialisation
     System      system;
@@ -329,19 +329,30 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
     Printing    printingSystem("RandomSystem");
 
     system.addRandomSystem(numberOfObjects,sphereRadius);
+    system.smoothing = smoothing;
     printingSystem.printingPositionXYZ(system);
-    double n = runningTime/timeStep;
 
-    for(int i = 0; i < n; i++){
-        solvingSystem.VelocityVerlet(system,timeStep);
-        printingSystem.printingPositionXYZ(system,i+1);
+    double time = 0;
+    double nextPrintTime = 0;
 
+    while(time < runningTime){
+        solvingSystem.adaptiveVelocityVerlet(system,timeStep,true);
+
+
+        time += solvingSystem.adaptiveDt();
+
+        if(time > nextPrintTime){
+            printingSystem.printingPositionXYZ(system);
+            nextPrintTime += runningTime/500;
+        } // Ending if-statement
+
+        /*
         CelestialBody body1 = system.bodies[0];
         CelestialBody body2 = system.bodies[1];
         cout << body1.mass << "     " << body2.mass << endl;
         cout << body1.force << endl;
         cout << body2.force << endl << endl;
-
+        */
         if((i+1) % 8 == 0)      printingSystem.printingEnergyAngMom(system);
 
         // Printing a message to screen to let the user know how far the program has come

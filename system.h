@@ -10,6 +10,7 @@ class System
 private:
     void    setG(bool cluster);
     void    actuallyCalculatingForces(CelestialBody &body, int n);
+    void    actuallyCalculatingForcesSmoothing(CelestialBody &body, int n);
 
 public:
     std::vector<CelestialBody> bodies;
@@ -17,6 +18,7 @@ public:
     std::vector<CelestialBody*> bodies2;
     std::vector<CelestialBody*> bodies3;
     std::vector<CelestialBody*> bodies4;
+    bool    smoothing;
 
     // Adding system
     System();
@@ -41,10 +43,9 @@ public:
     double  kineticEnergy;
 
     // Calculating qualities of the system
-    //void    setG(bool cluster);
     void    calculateForcesAndEnergy();
     void    calculateForcesUsingGR();
-    void    calculateForcesAdaptively(int n);  
+    void    calculateForcesAdaptively(int n);
 };  // End of System class declariation
 
 #endif // SYSTEM_H

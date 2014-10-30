@@ -27,6 +27,7 @@ public:
     void    Verlet(System &system, double dt);
     void    VelocityVerlet(System &system, double dt);
     void    adaptiveVelocityVerlet(System &system, int i);
+    double  adaptiveDt();
 
 };
 
