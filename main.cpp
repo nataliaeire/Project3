@@ -268,7 +268,7 @@ void regularSystemVVadaptive( double nSteps)
     double start = clock();
     // Performing Verlet on the system
     for(int i = 0; i < nSteps; i++){
-        velocityverletsolver.adaptiveVelocityVerlet(solarSystemVelocityVerlet, i);
+        velocityverletsolver.adaptiveVelocityVerlet(solarSystemVelocityVerlet);
         printervv.printingAll(solarSystemVelocityVerlet, i, printNFrames);
 
         // Printing a message to screen to let the user know how far the program has come
@@ -334,9 +334,10 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
 
     double time = 0;
     double nextPrintTime = 0;
+    int i = 0;    // Variable for printing
 
     while(time < runningTime){
-        solvingSystem.adaptiveVelocityVerlet(system,timeStep,true);
+        solvingSystem.adaptiveVelocityVerlet(system);
 
 
         time += solvingSystem.adaptiveDt();
@@ -356,6 +357,7 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
         if((i+1) % 8 == 0)      printingSystem.printingEnergyAngMom(system);
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % int(10) == 0)     cout << 100*((double)i) / n << " % of the Velocity Verlet integration is performed" << endl;
+        if(i % int(10) == 0)     cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed" << endl;
+        i += 1;
     }
 } // End of randomSystem-function

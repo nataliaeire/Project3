@@ -7,9 +7,10 @@ class Integrator
 {
 private:
     System  oldSystem;
-    int     counter;        // Variable for accessing VerletInitialise
-    int     n;              // Counter which choose which groups to calculate forces on
-    double  adaptive_dt;    // Variable used by adaptiveVelocityVerlet
+    int     counter;          // Variable for accessing VerletInitialise
+    int     adaptive_counter; // Counter to reorder the groups of bodies every now and then
+    int     n;                // Counter to choose which groups to calculate forces on
+    double  adaptive_dt;      // Variable used by adaptiveVelocityVerlet
     void    evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1, System &system2, double dt);
     void    VerletInitialise(System &system, double dt);
     void    VerletEvolve(System &system1, double dt);
@@ -26,7 +27,7 @@ public:
     void    RK4GR(System &system, double dt);
     void    Verlet(System &system, double dt);
     void    VelocityVerlet(System &system, double dt);
-    void    adaptiveVelocityVerlet(System &system, int i);
+    void    adaptiveVelocityVerlet(System &system);
     double  adaptiveDt();
 
 };

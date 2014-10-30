@@ -3,7 +3,8 @@
 Integrator::Integrator()
 {
     counter = 0; // Variable for accessing VerletInitialise
-    n = 1;
+    adaptive_counter = 0;
+    n = 0;
 }
 
 void Integrator::RK4(System &system, double dt)
@@ -133,12 +134,12 @@ void Integrator::VelocityVerletEvolve(System &system, double dt)
 } // Ending VerletEvolve-function
 
 
-void Integrator::adaptiveVelocityVerlet(System &system, int i){
-    vec3 bodyacc;
-    double temp_acceleration;
-    double max_acc;
+void Integrator::adaptiveVelocityVerlet(System &system){
+    vec3 bodyacc;              // Variable for easily accessing the acceleration vector of a body
+    double temp_acceleration;  // Variable for easily accessing the acceleration of a body
+    double max_acc;            // Variable for storing the largest acceleration
 
-    if(i % int(1e3) == 0){
+    if(adaptive_counter % int(1e3) == 0){
         max_acc = 1e-7;
         system.sortBodiesIntoGroups();  // Updates bodies1, bodies2, etc.
         for(int j=0; j<system.bodies1.size();j++){
@@ -148,17 +149,18 @@ void Integrator::adaptiveVelocityVerlet(System &system, int i){
             if(temp_acceleration > max_acc) max_acc = temp_acceleration;
         } // End for-loop
 
-        adaptive_dt = 5/max_acc;
+        adaptive_dt = 5/max_acc;        // Finds the time-step from the smallest acceleration in the system
         if(adaptive_dt < 1e-4)     adaptive_dt = 1e-4;
-
     } // End if-statement
 
-    system.calculateForcesAdaptively(n, smoothing);                 // Calculates the forces on the bodies
-    moveBodies(system);
-    adaptiveVelocityVerletEvolve(system);            // Evolving the system according to the Verlet algorithm
-    if(n==8)  n=0;
-    n += 1;
-}
+    for(n=1; n < 9; n++){
+        system.calculateForcesAdaptively(n);  // Calculating the forces on the bodies
+        moveBodies(system);
+        adaptiveVelocityVerletEvolve(system);            // Evolving the system according to the Verlet algorithm
+    } // End foor-loop
+
+    adaptive_counter += 1;
+} // End adaptiveVelocityVerlet
 
 
 double Integrator::adaptiveDt()
