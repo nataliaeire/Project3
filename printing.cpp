@@ -87,6 +87,24 @@ void Printing::printingPositionXYZ(System &system)
 } // End printingPosition-function
 
 
+void Printing::printingPositionXYZ(System &system, int counter)
+{ // Printing position only
+    if(!positionFile.is_open()){                                        // Open position file if it's not open
+        char *filename = new char[1000];                                // File name can have max 1000 characters
+        sprintf(filename, "%s_positions.xyz", filenamePrefix.c_str() ); // Create filname with prefix and ending
+        positionFile.open(filename);
+        delete filename;
+    } // End if-statement opening a position file
+
+    positionFile << system.numberOfBodies() << std::endl;
+    positionFile << "Time step " << counter << "." << std::endl;
+    for(int i=0; i < system.numberOfBodies(); i++){                     // Print the position of each body
+        CelestialBody &body = system.bodies[i];
+        positionFile << "Ar " << body.position[0] << " " << body.position[1] << " " << body.position[2] << std::endl;
+    } // End the for-loop printing the position of each body
+} // End printingPosition-function
+
+
 void Printing::printingAll(System &system, int counter, int n)
 { // Function printing only each n'th position, velocity, energy and angular momentum to file using previously created functions
     if (counter % n == 0)           printingAll(system);

@@ -148,12 +148,12 @@ void Integrator::adaptiveVelocityVerlet(System &system, int i){
             std::cout << "acceleration:" << temp_acceleration << std::endl;
             if(temp_acceleration > max_acc) max_acc = temp_acceleration;
         }
-        adaptive_dt = 2.11/max_acc;
+        adaptive_dt = 5/max_acc;
         std::cout << "Time step:" << adaptive_dt << std::endl;
     }
 
     system.calculateForcesAdaptively(n);                 // Calculates the forces on the bodies
-    moveBodies(system); // Where should this be?
+    moveBodies(system);
     adaptiveVelocityVerletEvolve(system);            // Evolving the system according to the Verlet algorithm
     if(n==8)  n=0;
     n += 1;
@@ -183,9 +183,12 @@ void Integrator::moveBodies(System &system)
       } // Ending if-statement
     } // Ending calculateForcesAndEnergy-function
 
-void Integrator::moveBodiesLinearly(CelestialBody &body){
-    body.position = body.velocity*adaptive_dt;
-}
+
+void Integrator::moveBodiesLinearly(CelestialBody &body)
+{ // Moving bodies according to their velocity
+    body.position.add(body.velocity*adaptive_dt);
+} // Ending moveBodiesLinearly
+
 
 void Integrator::adaptiveVelocityVerletEvolve(System &system){
     if(n % 8 == 0){
@@ -209,8 +212,9 @@ void Integrator::adaptiveVelocityVerletEvolve(System &system){
     for(int i = 0; i < int(system.bodies1.size()); i++){
         CelestialBody *body1 = system.bodies1[i];
         evolveRightBodies(system, *body1);
+    }
 }
-}
+
 
 void Integrator::evolveRightBodies(System &system, CelestialBody &body)
 {

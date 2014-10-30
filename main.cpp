@@ -42,14 +42,7 @@ int main()
     //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
-    randomSystem(100, 20, 0.1, 3);
-
-
-    System system;
-    system.addRandomSystem(numberOfObjects,sphereRadius);
-    for(int i=0; i < system.numberOfBodies(); i++){
-        cout << system.bodies[i].position << endl;
-    }
+    randomSystem(100, 20, 0.01, 5);
 
 
     return 0;
@@ -334,8 +327,8 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
     double n = runningTime/timeStep;
 
     for(int i = 0; i < n; i++){
-        solvingSystem.adaptiveVelocityVerlet(system,i);
-        printingSystem.printingPositionXYZ(system);
+        solvingSystem.VelocityVerlet(system,i);
+        printingSystem.printingPositionXYZ(system,i+1);
 
         // Printing a message to screen to let the user know how far the program has come
         if(i % int(10) == 0)     cout << 100*((double)i) / n << " % of the Velocity Verlet integration is performed" << endl;
