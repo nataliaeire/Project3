@@ -30,7 +30,7 @@ int main()
     double dt       = 0.05;
     double T        = 500;
     double nSteps   = T/dt;
-    int    numberOfObjects = 100;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects = 250;      // Number of celestial bodies for a random generation of a system
     double sphereRadius    = 20;       // ly
 
     // Running the code for special cases
@@ -42,14 +42,7 @@ int main()
     //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
-    randomSystem(250, sphereRadius, 0.01, 5, true);
-
-    /*
-    System system;
-    Printing printing("initialpositions");
-    system.addRandomSystem(1000,20);
-    printing.printingPositionXYZ(system);
-    */
+    randomSystem(numberOfObjects, sphereRadius, 0.01, 1, true);
 
     return 0;
 }
@@ -322,42 +315,30 @@ void Mercury(double dt, double nSteps)
 
 
 void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, double runningTime, bool smoothing)
-{
+{ // Doing calculations for a randomly generated system
     // Initialisation
     System      system;
     Integrator  solvingSystem;
     Printing    printingSystem("RandomSystem");
 
-    system.addRandomSystem(numberOfObjects,sphereRadius);
     system.smoothing = smoothing;
+    system.addRandomSystem(numberOfObjects,sphereRadius);
     printingSystem.printingPositionXYZ(system);
 
     double time = 0;
     double nextPrintTime = 0;
-    int i = 0;    // Variable for printing
 
     while(time < runningTime){
-        solvingSystem.adaptiveVelocityVerlet(system);
+        solvingSystem.VelocityVerlet(system,timeStep);
+        printingSystem.printingEnergyAngMom(system);
 
-
-        time += solvingSystem.adaptiveDt();
+        //time += 8.*solvingSystem.adaptiveDt();
+        time += timeStep;
 
         if(time > nextPrintTime){
             printingSystem.printingPositionXYZ(system);
             nextPrintTime += runningTime/500;
+            cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed" << endl;
         } // Ending if-statement
-
-        /*
-        CelestialBody body1 = system.bodies[0];
-        CelestialBody body2 = system.bodies[1];
-        cout << body1.mass << "     " << body2.mass << endl;
-        cout << body1.force << endl;
-        cout << body2.force << endl << endl;
-        */
-        if((i+1) % 8 == 0)      printingSystem.printingEnergyAngMom(system);
-
-        // Printing a message to screen to let the user know how far the program has come
-        if(i % int(10) == 0)     cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed" << endl;
-        i += 1;
-    }
+    } // End while-loop
 } // End of randomSystem-function

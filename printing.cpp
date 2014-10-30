@@ -56,8 +56,8 @@ void Printing::printingEnergyAngMom(System &system)
         delete filename;
     } // End if-statement opening an energy and angular momentum file
 
-    energyAngMomFile << system.totalEnergy() << " " << system.angularMomentum.length() << " ";
-    energyAngMomFile << std::endl;                                          // Insert a new line when finished
+    energyAngMomFile << system.kineticEnergy << " " << system.potentialEnergy << " "
+                     << system.totalEnergy() << " " << system.angularMomentum.length() << std::endl;                                          // Insert a new line when finished
 } // End printingEnergyAngMom-function
 
 

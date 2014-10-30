@@ -261,11 +261,7 @@ void System::calculateForcesUsingGR()
 
 void System::calculateForcesAdaptively(int n)
 { // Function calculating forces and energy (and angular momentum!) for the system
-    // Remembering to reset forces before we calculate new ones
-    for(int i=0; i<numberOfBodies(); i++){
-        CelestialBody &body = bodies[i];
-    } // Ending for-loop
-
+    // Remembering to reset forces on the ones we calculate new forces on
     if(n % 8 == 0){
         for(int i = 0; i < int(bodies4.size()); i++){
         CelestialBody *body4 = bodies4[i];
@@ -291,7 +287,6 @@ void System::calculateForcesAdaptively(int n)
         CelestialBody *body1 = bodies1[i];
         body1->resetForce();
         actuallyCalculatingForces(*body1, n);
-
     } // Ending for-loop
 
 } // Ending calculateForcesAndEnergy-function
@@ -312,18 +307,28 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
             // Variables simplifying the calculations
             vec3   deltaRVector = allBodies.position - body.position;       // Spatial separation in all three directions
             double dr           = deltaRVector.length();                    // Separation radius/length/distance
-            double factor       = G*allBodies.mass*body.mass / pow(dr,3);   // Reoccuring factor
+            double factor;
+
+            // Reoccuring factor
+            if(smoothing == false){
+                // No smoothing
+                factor = G*allBodies.mass*body.mass / pow(dr,3);
+            }else{
+                // Smoothing
+                double epsilon = 0.1;
+                factor = G*allBodies.mass*body.mass / ((dr*dr + epsilon*epsilon)*dr);
+            } // Ending if-statement
 
             // Updating gravitational force and potential energy experienced by celestial object
             body.force.addAndMultiply(deltaRVector, factor);                // Gravitational law
 
-            if(n == 8){     // Calculate energy if a time step has passed for all bodies
-            // Variables simplifying the calculations
+            if(n == 8){ // Calculate energy if a time step has passed for all bodies
             vec3 momentum    = allBodies.velocity*allBodies.mass;                       // p = m*v
             angularMomentum.add(allBodies.position.cross(momentum));                    // L = r x p, updated for each body
             kineticEnergy   += 0.5*allBodies.mass*allBodies.velocity.lengthSquared();   // k = mv^2/2, updated for each body
             potentialEnergy -= factor*dr*dr;                                            // Definition of the potential energy
             } // Ending if-statement
+
         } // Ending if-statement
     }// Ending for-loop
 } // Ending actuallyCalculatingForces-function

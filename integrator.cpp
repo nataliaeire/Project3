@@ -79,6 +79,7 @@ void Integrator::evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1,
     }
 }
 
+
 void Integrator::VerletInitialise(System &system, double dt)
 { // Creates the system at time -dt. This system is used the first time the Verlet algorithm is run
     oldSystem = system;
@@ -101,6 +102,7 @@ void Integrator::Verlet(System &system, double dt)
     oldSystem = nextOldSystem;                          // Updating oldSystem
 }
 
+
 void Integrator::VerletEvolve(System &system, double dt)
 {
     for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
@@ -113,11 +115,13 @@ void Integrator::VerletEvolve(System &system, double dt)
     } // Ending for-loop
 } // Ending VerletEvolve-function
 
+
 void Integrator::VelocityVerlet(System &system, double dt)
 {
     system.calculateForcesAndEnergy();                  // Calculates the forces on the bodies
     VelocityVerletEvolve(system, dt);                   // Evolving the system according to the Verlet algorithm
 }
+
 
 void Integrator::VelocityVerletEvolve(System &system, double dt)
 {
@@ -164,9 +168,9 @@ void Integrator::adaptiveVelocityVerlet(System &system){
 
 
 double Integrator::adaptiveDt()
-{
+{ // Simply returning the time step
     return adaptive_dt;
-}
+} // Ending adaptiveDt-function
 
 
 void Integrator::moveBodies(System &system)
