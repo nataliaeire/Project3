@@ -314,7 +314,7 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
             double factor       = G*allBodies.mass*body.mass / pow(dr,3);   // Reoccuring factor
 
             // Updating gravitational force and potential energy experienced by celestial object
-            body.force.addAndMultiply(deltaRVector, factor);                // N3
+            body.force.addAndMultiply(deltaRVector, factor);                // Gravitational law
 
             if(n == 8){     // Calculate energy if a time step has passed for all bodies
             // Variables simplifying the calculations
