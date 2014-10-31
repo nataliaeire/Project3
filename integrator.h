@@ -15,11 +15,11 @@ private:
     void    VerletInitialise(System &system, double dt);
     void    VerletEvolve(System &system1, double dt);
     void    VelocityVerletEvolve(System &system1, double dt);
-    void    evolveRightBodies(System &system, CelestialBody &body);
-    void    adaptiveVelocityVerletEvolve(System &system);
-    void    moveBodiesLinearly(CelestialBody &body);
     void    moveBodies(System &system);
-
+    void    calculateForcesAdaptively(System &system);
+    void    afterKick(System &system);
+    void    halfKick(std::vector<CelestialBody*> &bodies, double dt);
+    bool    debugmode;
 
 public:
     Integrator();
