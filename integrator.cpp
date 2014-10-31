@@ -8,7 +8,6 @@ Integrator::Integrator()
     counter = 0; // Variable for accessing VerletInitialise
     adaptive_counter = 0;
     n = 0;
-    debugmode = false;
 }
 
 
@@ -159,6 +158,7 @@ void Integrator::adaptiveVelocityVerlet(System &system){
     double temp_acceleration;  // Variable for easily accessing the acceleration of a body
     double max_acc;            // Variable for storing the largest acceleration
 
+    if(adaptive_counter == 0)   initialiseAdaptiveVelocityVerlet(system);
     if(adaptive_counter % int(5) == 0){ // Sort bodies every 1000nd step
         max_acc = 1e-7;                 // Sets an initial, very low acceleration
         system.sortBodiesIntoGroups();  // Updates bodies1, bodies2, etc.
@@ -171,82 +171,67 @@ void Integrator::adaptiveVelocityVerlet(System &system){
         } // End for-loop
 
         adaptive_dt = 1/max_acc;        // Finds the time-step from the smallest acceleration in the system
-        if(debugmode) cout << "dt=" << adaptive_dt << std::endl;
+        if(adaptive_dt < 1e-6) adaptive_dt = 1e-6;
 
     } // End if-statement
 
     for(n=0; n < 8; n++){
-        if(debugmode) cout << "n=" << n << endl;
-        calculateForcesAdaptively(system);
+        halfKickAdaptively(system);
         moveBodies(system);
         afterKick(system);
-        if(debugmode) cout << endl << endl;
     } // End foor-loop
 
     adaptive_counter++;
 } // End adaptiveVelocityVerlet
 
 
-void Integrator::calculateForcesAdaptively(System &system)
+void Integrator::initialiseAdaptiveVelocityVerlet(System &system)
+{
+    for(int i = 0; i < int(system.numberOfBodies()); i++){
+        CelestialBody &body = system.bodies[i];
+        body.resetForce();
+        system.actuallyCalculatingForces(body, n);
+    }
+}
+
+
+void Integrator::halfKickAdaptively(System &system)
 { // Function calculating forces and energy (and angular momentum!) for the system
     // Remembering to reset forces on the ones we calculate new forces on
     double dt;
     if(n % 8 == 0){
-        for(int i = 0; i < int(system.bodies4.size()); i++){
-            CelestialBody *body4 = system.bodies4[i];
-            body4->resetForce();
-            system.actuallyCalculatingForces(*body4, n);
-        } // Ending for-loop
-
-        if(debugmode) cout << "G4.F" << endl;
         dt = 8*adaptive_dt;
-        if(debugmode) cout << "G4.v" << endl;
         halfKick(system.bodies4, dt);
-
     } // Ending if-statement
+
     if(n % 4 == 0){
-        for(int i = 0; i < int(system.bodies3.size()); i++){
-            CelestialBody *body3 = system.bodies3[i];
-            body3->resetForce();
-            system.actuallyCalculatingForces(*body3, n);
-        } // Ending for-loop
-
-        if(debugmode) cout << "G3.F" << endl;
         dt = 4*adaptive_dt;
-        if(debugmode) cout << "G3.v" << endl;
         halfKick(system.bodies3, dt);
-
     } // Ending if-statement
+
     if(n % 2 == 0){
-        for(int i = 0; i < int(system.bodies2.size()); i++){
-            CelestialBody *body2 = system.bodies2[i];
-            body2->resetForce();
-            system.actuallyCalculatingForces(*body2, n);
-        } // Ending for-loop
-
-        if(debugmode) cout << "G2.F" << endl;
         dt = 2*adaptive_dt;
-        if(debugmode) cout << "G2.v" << endl;
         halfKick(system.bodies2, dt);
-
     } // Ending if-statement
-    for(int i = 0; i < int(system.bodies1.size()); i++){
-        CelestialBody *body1 = system.bodies1[i];
-        body1->resetForce();
-        system.actuallyCalculatingForces(*body1, n);
-    } // Ending for-loop
 
-    if(debugmode) cout << "G1.F" << endl;
     dt = adaptive_dt;
-    if(debugmode) cout << "G1.v" << endl;
     halfKick(system.bodies1, dt);
 
 } // Ending calculateForcesAndEnergy-function
 
 
+void Integrator::calculateForcesForGroup(System &system, std::vector<CelestialBody*> &bodies)
+{
+    for(int i = 0; i < int(bodies.size()); i++){
+        CelestialBody *body = bodies[i];
+        body->resetForce();
+        system.actuallyCalculatingForces(*body, n);
+    } // Ending for-loop
+}
+
+
 void Integrator::moveBodies(System &system)
 { // Moving bodies according to their velocity
-    if(debugmode)   cout << "A.m" << endl;
     for(int i=0; i<int(system.bodies.size()); i++){
         CelestialBody &body = system.bodies[i];
         body.position.add(body.velocity*adaptive_dt);
@@ -256,28 +241,28 @@ void Integrator::moveBodies(System &system)
 
 void Integrator::afterKick(System &system)
 {
-    int dt;
+    double dt;
 
     if((n+1) % 8 == 0){
         dt = 8*adaptive_dt;
-        if(debugmode) cout << "G4.v" << endl;
+        calculateForcesForGroup(system, system.bodies4);
         halfKick(system.bodies4, dt);
     } // Ending if-statement
 
     if((n+1) % 4 == 0){
         dt = 4*adaptive_dt;
-        if(debugmode) cout << "G3.v" << endl;
+        calculateForcesForGroup(system, system.bodies3);
         halfKick(system.bodies3, dt);
     } // Ending if-statement
 
     if((n+1) % 2 == 0){
         dt = 2*adaptive_dt;
-        if(debugmode) cout << "G2.v" << endl;
+        calculateForcesForGroup(system, system.bodies2);
         halfKick(system.bodies2, dt);
     } // Ending if-statement
 
     dt = adaptive_dt;
-    if(debugmode) cout << "G1.v" << endl;
+    calculateForcesForGroup(system, system.bodies1);
     halfKick(system.bodies1,dt);
 } // Ending afterKick-function
 

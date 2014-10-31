@@ -13,13 +13,14 @@ private:
     double  adaptive_dt;      // Variable used by adaptiveVelocityVerlet
     void    evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1, System &system2, double dt);
     void    VerletInitialise(System &system, double dt);
+    void    initialiseAdaptiveVelocityVerlet(System &system);
     void    VerletEvolve(System &system1, double dt);
     void    VelocityVerletEvolve(System &system1, double dt);
     void    moveBodies(System &system);
-    void    calculateForcesAdaptively(System &system);
+    void    halfKickAdaptively(System &system);
     void    afterKick(System &system);
     void    halfKick(std::vector<CelestialBody*> &bodies, double dt);
-    bool    debugmode;
+    void    calculateForcesForGroup(System &system, std::vector<CelestialBody*> &bodies);
 
 public:
     Integrator();
