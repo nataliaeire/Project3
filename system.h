@@ -9,8 +9,6 @@ class System
 {
 private:
     void    setG(bool cluster);
-    void    actuallyCalculatingForces(CelestialBody &body, int n);
-    void    actuallyCalculatingForcesSmoothing(CelestialBody &body, int n);
 
 public:
     std::vector<CelestialBody> bodies;
@@ -45,7 +43,7 @@ public:
     // Calculating qualities of the system
     void    calculateForcesAndEnergy();
     void    calculateForcesUsingGR();
-    void    calculateForcesAdaptively(int n);
+    void    actuallyCalculatingForces(CelestialBody &body, int n);
 };  // End of System class declariation
 
 #endif // SYSTEM_H

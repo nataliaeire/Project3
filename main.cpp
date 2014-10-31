@@ -42,7 +42,7 @@ int main()
     //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
-    randomSystem(3, sphereRadius, 0.001, 0.25, true);
+    randomSystem(numberOfObjects, sphereRadius, 0.005, 1, true);
 
     return 0;
 }
@@ -147,7 +147,8 @@ void regularSystemRK4(double dt, double nSteps)
     printer.printingAll(SolarSystem);               // Printing intitial values to file
 
     //SolarSystem.sortBodiesIntoGroups();
-    SolarSystem.calculateForcesAdaptively(8);
+    //SolarSystem.calculateForcesAdaptively(8);
+    // NNNNNNNNNNNNNNNNNNNNNBBBBBBBBBBBBBBBBBBBBBBB!
 
     int printNFrames = 1;                           // Counter for printing only each n'th frame
 
@@ -328,18 +329,20 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
     double  time = 0;
     double  nextPrintTime = 0;
     int     counter = 1;
-
+    int numberOfTimestepsComputed = 0;
     while(time < runningTime){
+        numberOfTimestepsComputed++;
         solvingSystem.VelocityVerlet(system,timeStep);
         printingSystem.printingEnergyAngMom(system);
 
         //time += 8.*solvingSystem.adaptiveDt();
         time += timeStep;
 
+
         if(time > nextPrintTime){
             printingSystem.printingPositionXYZ(system, counter);
             nextPrintTime += runningTime/500;
-            cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed" << endl;
+            cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed, currently at " << numberOfTimestepsComputed << "timesteps." << endl;
             counter++;
         } // Ending if-statement
     } // End while-loop

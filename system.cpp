@@ -30,7 +30,7 @@ void System::setG(bool cluster)
 
 void System::conserveMomentum()
 { // Function to find the momentum of the planets and changing the Sun's momentum to ensure
-  // the total momentum of the system is conserved
+    // the total momentum of the system is conserved
     vec3 momentumTemp;
     momentumTemp.setToZero();
     momentum.setToZero();
@@ -54,8 +54,7 @@ void System::sortBodiesIntoGroups()
 
     for(int i=0; i < numberOfBodies(); i++){
         CelestialBody &body = bodies[i];
-        body.acceleration   = body.force/body.mass;
-        accelerations[i]    = log(body.acceleration.length());
+        accelerations[i]    = log(body.acceleration().length());
     } // End for-loop
 
     // Sorting the accelerations
@@ -72,11 +71,11 @@ void System::sortBodiesIntoGroups()
     // Looping over bodies to put them into separate groups
     for(int i = 0; i < numberOfBodies(); i++){
         CelestialBody &body  = bodies[i];
-        if(log(body.acceleration.length()) < minAcc + deltaAcc){
+        if(log(body.acceleration().length()) < minAcc + deltaAcc){
             bodies4.push_back(&body);
-        }else if(log(body.acceleration.length()) >= minAcc + deltaAcc && log(body.acceleration.length()) < minAcc + 2*deltaAcc){
+        }else if(log(body.acceleration().length()) >= minAcc + deltaAcc && log(body.acceleration().length()) < minAcc + 2*deltaAcc){
             bodies3.push_back(&body);
-        }else if(log(body.acceleration.length()) >= minAcc + 2*deltaAcc && log(body.acceleration.length()) < minAcc + 3*deltaAcc){
+        }else if(log(body.acceleration().length()) >= minAcc + 2*deltaAcc && log(body.acceleration().length()) < minAcc + 3*deltaAcc){
             bodies2.push_back(&body);
         }else{
             bodies1.push_back(&body);
@@ -84,10 +83,10 @@ void System::sortBodiesIntoGroups()
 
     } // Ending for-loop
 
-    std::cout << "Number of elements in bodies1: " << bodies1.size() << std::endl
-              << "Number of elements in bodies2: " << bodies2.size() << std::endl
-              << "Number of elements in bodies3: " << bodies3.size() << std::endl
-              << "Number of elements in bodies4: " << bodies4.size() << std::endl << std::endl;
+//    std::cout << "Number of elements in bodies1: " << bodies1.size() << std::endl
+//              << "Number of elements in bodies2: " << bodies2.size() << std::endl
+//              << "Number of elements in bodies3: " << bodies3.size() << std::endl
+//              << "Number of elements in bodies4: " << bodies4.size() << std::endl << std::endl;
 
 } // End sortBodiesIntoGroups-function
 
@@ -102,7 +101,7 @@ void System::addBody(vec3 position, vec3 velocity, double mass)
 
 void System::addBody(double x, double y, double z, double vx, double vy, double vz, double mass)
 { // Alternative way of adding a body, which is more intuitive and easy from, for instance, a main function
-  // using the former addBody-function to add a body to the system as before
+    // using the former addBody-function to add a body to the system as before
     addBody(vec3(x,y,z), vec3(vx, vy, vz), mass);
 } // End addBody-function
 
@@ -259,37 +258,7 @@ void System::calculateForcesUsingGR()
 
 } // Ending calculateForcesAndEnergy-function
 
-void System::calculateForcesAdaptively(int n)
-{ // Function calculating forces and energy (and angular momentum!) for the system
-    // Remembering to reset forces on the ones we calculate new forces on
-    if(n % 8 == 0){
-        for(int i = 0; i < int(bodies4.size()); i++){
-        CelestialBody *body4 = bodies4[i];
-        body4->resetForce();
-        actuallyCalculatingForces(*body4, n);
-        } // Ending for-loop
-    } // Ending if-statement
-    if(n % 4 == 0){
-        for(int i = 0; i < int(bodies3.size()); i++){
-        CelestialBody *body3 = bodies3[i];
-        body3->resetForce();
-        actuallyCalculatingForces(*body3, n);
-        } // Ending for-loop
-    } // Ending if-statement
-    if(n % 2 == 0){
-        for(int i = 0; i < int(bodies2.size()); i++){
-        CelestialBody *body2 = bodies2[i];
-        body2->resetForce();
-        actuallyCalculatingForces(*body2, n);
-        } // Ending for-loop
-    } // Ending if-statement
-    for(int i = 0; i < int(bodies1.size()); i++){
-        CelestialBody *body1 = bodies1[i];
-        body1->resetForce();
-        actuallyCalculatingForces(*body1, n);
-    } // Ending for-loop
 
-} // Ending calculateForcesAndEnergy-function
 
 
 void System::actuallyCalculatingForces(CelestialBody &body, int n)
@@ -322,11 +291,11 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
             // Updating gravitational force and potential energy experienced by celestial object
             body.force.addAndMultiply(deltaRVector, factor);                // Gravitational law
 
-            if(n == 8){ // Calculate energy if a time step has passed for all bodies
-            vec3 momentum    = allBodies.velocity*allBodies.mass;                       // p = m*v
-            angularMomentum.add(allBodies.position.cross(momentum));                    // L = r x p, updated for each body
-            kineticEnergy   += 0.5*allBodies.mass*allBodies.velocity.lengthSquared();   // k = mv^2/2, updated for each body
-            potentialEnergy -= factor*dr*dr;                                            // Definition of the potential energy
+            if(n == 7){ // Calculate energy if a time step has passed for all bodies
+                vec3 momentum    = allBodies.velocity*allBodies.mass;                       // p = m*v
+                angularMomentum.add(allBodies.position.cross(momentum));                    // L = r x p, updated for each body
+                kineticEnergy   += 0.5*allBodies.mass*allBodies.velocity.lengthSquared();   // k = mv^2/2, updated for each body
+                potentialEnergy -= factor*dr*dr;                                            // Definition of the potential energy
             } // Ending if-statement
 
         } // Ending if-statement

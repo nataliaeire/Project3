@@ -12,3 +12,8 @@ void CelestialBody::resetForce()
 {
     force.setToZero();
 }
+
+vec3 CelestialBody::acceleration()
+{
+    return force/mass;
+}
