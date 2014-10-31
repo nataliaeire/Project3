@@ -42,7 +42,7 @@ int main()
     //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
-    randomSystem(3, sphereRadius, 0.001, 0.25, true);
+    randomSystem(3, sphereRadius, 0.005, 0.25, true);
 
     return 0;
 }
@@ -327,7 +327,7 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
 
     double  time = 0;
     double  nextPrintTime = 0;
-    int     counter = 1;
+    int     counter = 1;    // Counter to keep track of time steps in output file
 
     while(time < runningTime){
         solvingSystem.VelocityVerlet(system,timeStep);
