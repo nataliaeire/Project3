@@ -18,7 +18,7 @@ private:
     void    VelocityVerletEvolve(System &system1, double dt);
     void    moveBodies(System &system);
     void    halfKickAdaptively(System &system);
-    void    afterKick(System &system);
+    void    fullKick(System &system);
     void    halfKick(std::vector<CelestialBody*> &bodies, double dt);
     void    calculateForcesForGroup(System &system, std::vector<CelestialBody*> &bodies);
 

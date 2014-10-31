@@ -12,7 +12,6 @@
 using namespace std;
 
 // Functions possible to include in main function
-void findError();
 void regularSystemRK4(double dt, double nSteps);
 void regularSystemV(double dt, double nSteps);
 void regularSystemVV(double dt, double nSteps);
@@ -22,10 +21,6 @@ void Mercury(double dt, double nSteps);
 
 int main()
 {
-    // findError() finds the error introduced by increasing the time step.
-    // Should be commented away if not being used, as the rest of the main function is ignored if it runs succesfully.
-    // findError();
-
     // Integration specifications
     double dt       = 0.05;
     double T        = 500;
@@ -46,87 +41,6 @@ int main()
 
     return 0;
 }
-
-
-void findError()
-{ // Function aiming to find a quantitative error for different time steps
-    // Creating file to write the errors to
-    ofstream errorFile;
-    errorFile.open("Error.txt");
-
-    // Preparing system
-    fstream     changingFile("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
-
-    if(!changingFile.is_open()) {
-        cout << "Could not find file: " << endl;
-        exit(1);
-    }
-
-    System      initialSystem;
-    initialSystem.addSystem(changingFile);
-    initialSystem.conserveMomentum();
-
-    // Quantities needed in the calculation
-    arma::vec   errorRK4;
-    arma::vec   errorVV;
-    errorRK4.zeros(7);
-    errorVV.zeros(7);
-    vec3        errorVecRK4;
-    vec3        errorVecVV;
-    vec3        rTrueRK4;
-    vec3        rTrueVV;
-    vec3        rDtRK4;
-    vec3        rDtVV;
-    double      dtChanging = 1e-7;
-    double      changingNSteps;
-
-    initialSystem.calculateForcesAndEnergy();
-    double      initialEnergy = initialSystem.totalEnergy();
-
-    // Computing error for different time step values
-    for(int i = 0; i<7; i++){
-        dtChanging     *= 10;
-        changingNSteps  = 1./dtChanging;
-
-        System changingSystemRK4 = initialSystem;
-        System changingSystemVV  = initialSystem;
-        Integrator  changingSolverRK4;
-        Integrator  changingSolverVV;
-
-        // Evolving the system for a year
-        for(int j = 0; j < changingNSteps; j++){
-            changingSolverRK4.RK4(changingSystemRK4, dtChanging);
-            changingSolverVV.Verlet(changingSystemVV,dtChanging);
-        } // Ending for-loop
-
-        CelestialBody earthRK4 = changingSystemRK4.bodies[1];
-        CelestialBody earthVV  = changingSystemVV.bodies[1];
-        rDtRK4 = earthRK4.position;
-        rDtVV  = earthVV.position;
-
-        // Defining the true value of the position of the Earth to be one where the time step was small
-        if(i==0){
-            rTrueRK4 = rDtRK4;
-            rTrueVV  = rDtVV;
-        } // Ending if-statement
-
-        // Computing the error
-        errorVecRK4 = rTrueRK4 - rDtRK4;
-        errorVecVV  = rTrueVV  - rDtVV;
-        //errorRK4(i) = errorVecRK4.length();
-        //errorVV(i)  = errorVecVV.length();
-        errorRK4(i) = changingSystemRK4.totalEnergy() - initialEnergy;
-        errorVV(i)  = changingSystemVV.totalEnergy()  - initialEnergy;
-
-    } // Ending for-loop
-
-    // Printing error tofile
-    errorFile << errorRK4.t();
-    errorFile << errorVV.t() << endl;
-
-    errorFile.close();
-    exit(0);            // Shut down the rest of the main function
-} // End of findError-function
 
 
 void regularSystemRK4(double dt, double nSteps)

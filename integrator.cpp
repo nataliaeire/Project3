@@ -4,16 +4,16 @@ using std::cout;
 using std::endl;
 
 Integrator::Integrator()
-{
+{ // Constructing integrator
     counter = 0; // Variable for accessing VerletInitialise
     adaptive_counter = 0;
     n = 0;
-}
+} // End of constructor
 
 
 // ============================================= RK4 ==================================================== /
 void Integrator::RK4(System &system, double dt)
-{
+{ // Function performing RK4 integration (by calling a new function to evolve systems inside)
     System k1 = system;
     k1.calculateForcesAndEnergy();
     //findDerivatives(k1); // f(t, y)
@@ -37,14 +37,14 @@ void Integrator::RK4(System &system, double dt)
         CelestialBody &body = system.bodies[i];
         body.position.addAndMultiply(k1.bodies[i].velocity + k2.bodies[i].velocity + k2.bodies[i].velocity + k3.bodies[i].velocity + k3.bodies[i].velocity + k4.bodies[i].velocity, dt/6);
         body.velocity.addAndMultiply(k1.bodies[i].force + k2.bodies[i].force + k2.bodies[i].force + k3.bodies[i].force + k3.bodies[i].force + k4.bodies[i].force, 1.0/6*dt/body.mass);
-    }
+    } // End for-loop
 
     system.calculateForcesAndEnergy();
-}
+} // End of RK4-function
 
 
 void Integrator::RK4GR(System &system, double dt)
-{
+{ // Function performing RK4 integration for GR case (by calling a new function to evolve systems inside)
     System k1 = system;
     k1.calculateForcesUsingGR();
     //findDerivatives(k1); // f(t, y)
@@ -68,38 +68,40 @@ void Integrator::RK4GR(System &system, double dt)
         CelestialBody &body = system.bodies[i];
         body.position.addAndMultiply(k1.bodies[i].velocity + k2.bodies[i].velocity + k2.bodies[i].velocity + k3.bodies[i].velocity + k3.bodies[i].velocity + k4.bodies[i].velocity, dt/6);
         body.velocity.addAndMultiply(k1.bodies[i].force + k2.bodies[i].force + k2.bodies[i].force + k3.bodies[i].force + k3.bodies[i].force + k4.bodies[i].force, 1.0/6*dt/body.mass);
-    }
+    } // End for-loop
 
     system.calculateForcesUsingGR();
-}
+} // End of RK4GR-function
 
 
 void Integrator::evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1, System &system2, double dt)
-{
+{ // Function evolving a system in time using values at previous time step
     for(int i=0; i<system1.numberOfBodies(); i++){
         CelestialBody &body1 = system1.bodies[i];
         CelestialBody &body2 = system2.bodies[i];
         body1.position.addAndMultiply(body2.velocity, dt);
         body1.velocity.addAndMultiply(body2.force, dt/body2.mass);
-    }
-}
+    } // End for-loop
+} // End of evolveSystem1InTimeUsingDerivativesFromSystem2-function
 
 
 // ============================================= VERLET ===================================================== //
 void Integrator::VerletInitialise(System &system, double dt)
 { // Creates the system at time -dt. This system is used the first time the Verlet algorithm is run
     oldSystem = system;
+
     for(int i=0; i < oldSystem.numberOfBodies(); i++){  // Loop changing all positions to what they were at time -dt
         CelestialBody &body1 = oldSystem.bodies[i];
         body1.position.addAndMultiply(body1.velocity, -dt);
-    }
+    } // End for-loop
+
     // Changing counter to avoid calling VerletInitialise next time Verlet is run
     counter = 1;
-} // End VerletInitialise-function
+} // End of VerletInitialise-function
 
 
 void Integrator::Verlet(System &system, double dt)
-{
+{ // Function performing Verlet integration
     // The first time Verlet() is run, VerletInitialise() is called
     if (counter == 0)   VerletInitialise(system, dt);
 
@@ -107,11 +109,11 @@ void Integrator::Verlet(System &system, double dt)
     system.calculateForcesAndEnergy();                  // Calculates the forces on the bodies
     VerletEvolve(system, dt);                           // Evolving the system according to the Verlet algorithm
     oldSystem = nextOldSystem;                          // Updating oldSystem
-}
+} // End of Verlet-function
 
 
 void Integrator::VerletEvolve(System &system, double dt)
-{
+{ // Function evolving the system for the Verlet integration
     for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
         CelestialBody &body = system.bodies[i];         // the body at time t
         CelestialBody &bodyOld = oldSystem.bodies[i];   // the body at time t-dt
@@ -125,14 +127,14 @@ void Integrator::VerletEvolve(System &system, double dt)
 
 // ======================================= VELOCITY VERLET ================================================== //
 void Integrator::VelocityVerlet(System &system, double dt)
-{
+{ // Function performing Velocity Verlet integration
     system.calculateForcesAndEnergy();                  // Calculates the forces on the bodies
     VelocityVerletEvolve(system, dt);                   // Evolving the system according to the Verlet algorithm
-}
+} // End of VelocityVerlet-function
 
 
 void Integrator::VelocityVerletEvolve(System &system, double dt)
-{
+{ // Function evolving the system for the Velocity Verlet integration
     for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
         CelestialBody &body = system.bodies[i];         // the body at time t
         vec3 velocity_dt_2;
@@ -153,13 +155,27 @@ double Integrator::adaptiveDt()
 } // Ending adaptiveDt-function
 
 
-void Integrator::adaptiveVelocityVerlet(System &system){
+void Integrator::initialiseAdaptiveVelocityVerlet(System &system)
+{ // Function for initialising Velocity Verlet, as the forces need to be calculated
+    for(int i = 0; i < int(system.numberOfBodies()); i++){
+        CelestialBody &body = system.bodies[i];
+        body.resetForce();
+        system.actuallyCalculatingForces(body, n);
+    } // End for-loop
+} // End of initialiseAdaptiveVelocityVerlet-function
+
+
+void Integrator::adaptiveVelocityVerlet(System &system)
+{ // Function performing Velocity Verlet integration with adaptive time steps
     vec3 bodyacc;              // Variable for easily accessing the acceleration vector of a body
     double temp_acceleration;  // Variable for easily accessing the acceleration of a body
     double max_acc;            // Variable for storing the largest acceleration
 
+    // Initialise for the very first time step (forces need to be calculated before starting
     if(adaptive_counter == 0)   initialiseAdaptiveVelocityVerlet(system);
-    if(adaptive_counter % int(5) == 0){ // Sort bodies every 1000nd step
+
+    // Sort bodies and change time step every 1000 steps
+    if(adaptive_counter % int(5) == 0){
         max_acc = 1e-7;                 // Sets an initial, very low acceleration
         system.sortBodiesIntoGroups();  // Updates bodies1, bodies2, etc.
 
@@ -172,27 +188,18 @@ void Integrator::adaptiveVelocityVerlet(System &system){
 
         adaptive_dt = 1/max_acc;        // Finds the time-step from the smallest acceleration in the system
         if(adaptive_dt < 1e-6) adaptive_dt = 1e-6;
-
     } // End if-statement
 
+    // The actual computations of Velocity Verlet
     for(n=0; n < 8; n++){
         halfKickAdaptively(system);
         moveBodies(system);
-        afterKick(system);
+        fullKick(system);
     } // End foor-loop
 
     adaptive_counter++;
+
 } // End adaptiveVelocityVerlet
-
-
-void Integrator::initialiseAdaptiveVelocityVerlet(System &system)
-{
-    for(int i = 0; i < int(system.numberOfBodies()); i++){
-        CelestialBody &body = system.bodies[i];
-        body.resetForce();
-        system.actuallyCalculatingForces(body, n);
-    }
-}
 
 
 void Integrator::halfKickAdaptively(System &system)
@@ -221,17 +228,17 @@ void Integrator::halfKickAdaptively(System &system)
 
 
 void Integrator::calculateForcesForGroup(System &system, std::vector<CelestialBody*> &bodies)
-{
+{ // Function to calculate the forces between a specific group and all bodies
     for(int i = 0; i < int(bodies.size()); i++){
         CelestialBody *body = bodies[i];
         body->resetForce();
         system.actuallyCalculatingForces(*body, n);
     } // Ending for-loop
-}
+} // End of calculateForcesForGroup-function
 
 
 void Integrator::moveBodies(System &system)
-{ // Moving bodies according to their velocity
+{ // Moving bodies according to their velocity (2nd step in Velocity Verlet)
     for(int i=0; i<int(system.bodies.size()); i++){
         CelestialBody &body = system.bodies[i];
         body.position.add(body.velocity*adaptive_dt);
@@ -239,8 +246,8 @@ void Integrator::moveBodies(System &system)
 } // Ending moveBodies-function
 
 
-void Integrator::afterKick(System &system)
-{
+void Integrator::fullKick(System &system)
+{ // Calculating forces and computing velocity at final time step (by calling halfKick)
     double dt;
 
     if((n+1) % 8 == 0){
@@ -268,7 +275,7 @@ void Integrator::afterKick(System &system)
 
 
 void Integrator::halfKick(std::vector<CelestialBody*> &bodies, double dt)
-{  // Calculating the velocity at time dt/2
+{ // Calculating the velocity (step 1 and 3)
     for(int i=0; i<int(bodies.size()); i++){  // Looping over all bodies in group
         CelestialBody *body = bodies[i];
         body->velocity = body->velocity + body->acceleration()*dt*0.5;
