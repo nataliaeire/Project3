@@ -333,34 +333,3 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
     }// Ending for-loop
 } // Ending actuallyCalculatingForces-function
 
-
-void System::actuallyCalculatingForcesSmoothing(CelestialBody &body, int n)
-{ // Function finding the forces between
-    // Initialising values
-    potentialEnergy = 0;
-    kineticEnergy   = 0;
-    angularMomentum.setToZero();
-
-    for(int i = 0; i < numberOfBodies(); i++){
-        CelestialBody &allBodies = bodies[i];
-
-        // Only calculate forces between different celestial bodies
-        if(body.index != allBodies.index){
-            // Variables simplifying the calculations
-            vec3   deltaRVector = allBodies.position - body.position;       // Spatial separation in all three directions
-            double dr           = deltaRVector.length();                    // Separation radius/length/distance
-            double factor       = G*allBodies.mass*body.mass / pow(dr,3);   // Reoccuring factor
-
-            // Updating gravitational force and potential energy experienced by celestial object
-            body.force.addAndMultiply(deltaRVector, factor);                // Gravitational law
-
-            if(n == 8){     // Calculate energy if a time step has passed for all bodies
-            // Variables simplifying the calculations
-            vec3 momentum    = allBodies.velocity*allBodies.mass;                       // p = m*v
-            angularMomentum.add(allBodies.position.cross(momentum));                    // L = r x p, updated for each body
-            kineticEnergy   += 0.5*allBodies.mass*allBodies.velocity.lengthSquared();   // k = mv^2/2, updated for each body
-            potentialEnergy -= factor*dr*dr;                                            // Definition of the potential energy
-            } // Ending if-statement
-        } // Ending if-statement
-    }// Ending for-loop
-} // Ending actuallyCalculatingForces-function

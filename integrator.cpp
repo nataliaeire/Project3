@@ -7,6 +7,8 @@ Integrator::Integrator()
     n = 0;
 }
 
+
+// ============================================= RK4 ==================================================== /
 void Integrator::RK4(System &system, double dt)
 {
     System k1 = system;
@@ -80,6 +82,7 @@ void Integrator::evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1,
 }
 
 
+// ============================================= VERLET ===================================================== //
 void Integrator::VerletInitialise(System &system, double dt)
 { // Creates the system at time -dt. This system is used the first time the Verlet algorithm is run
     oldSystem = system;
@@ -90,6 +93,7 @@ void Integrator::VerletInitialise(System &system, double dt)
     // Changing counter to avoid calling VerletInitialise next time Verlet is run
     counter = 1;
 } // End VerletInitialise-function
+
 
 void Integrator::Verlet(System &system, double dt)
 {
@@ -116,6 +120,7 @@ void Integrator::VerletEvolve(System &system, double dt)
 } // Ending VerletEvolve-function
 
 
+// ======================================= VELOCITY VERLET ================================================== //
 void Integrator::VelocityVerlet(System &system, double dt)
 {
     system.calculateForcesAndEnergy();                  // Calculates the forces on the bodies
@@ -138,63 +143,63 @@ void Integrator::VelocityVerletEvolve(System &system, double dt)
 } // Ending VerletEvolve-function
 
 
-void Integrator::adaptiveVelocityVerlet(System &system){
-    vec3 bodyacc;              // Variable for easily accessing the acceleration vector of a body
-    double temp_acceleration;  // Variable for easily accessing the acceleration of a body
-    double max_acc;            // Variable for storing the largest acceleration
-
-    if(adaptive_counter % int(1e3) == 0){
-        max_acc = 1e-7;
-        system.sortBodiesIntoGroups();  // Updates bodies1, bodies2, etc.
-        for(int j=0; j<system.bodies1.size();j++){
-            CelestialBody *body = system.bodies1[j];
-            bodyacc = body->acceleration;
-            temp_acceleration = bodyacc.length();
-            if(temp_acceleration > max_acc) max_acc = temp_acceleration;
-        } // End for-loop
-
-        adaptive_dt = 5/max_acc;        // Finds the time-step from the smallest acceleration in the system
-        if(adaptive_dt < 1e-4)     adaptive_dt = 1e-4;
-    } // End if-statement
-
-    for(n=1; n < 9; n++){
-        system.calculateForcesAdaptively(n);  // Calculating the forces on the bodies
-        moveBodies(system);
-        adaptiveVelocityVerletEvolve(system);            // Evolving the system according to the Verlet algorithm
-    } // End foor-loop
-
-    adaptive_counter += 1;
-} // End adaptiveVelocityVerlet
-
-
+// ====================================== ADAPTIVE VELOCITY VERLET =========================================== //
 double Integrator::adaptiveDt()
 { // Simply returning the time step
     return adaptive_dt;
 } // Ending adaptiveDt-function
 
 
+void Integrator::adaptiveVelocityVerlet(System &system){
+    vec3 bodyacc;              // Variable for easily accessing the acceleration vector of a body
+    double temp_acceleration;  // Variable for easily accessing the acceleration of a body
+    double max_acc;            // Variable for storing the largest acceleration
+
+    if(adaptive_counter % int(1e3) == 0){ // Sort bodies every 1000nd step
+        max_acc = 1e-7;                 // Sets an initial, very low acceleration
+        system.sortBodiesIntoGroups();  // Updates bodies1, bodies2, etc.
+
+        for(int j=0; j<int(system.bodies1.size()); j++){ // Finding the maximum acceleration in the system
+            CelestialBody *body = system.bodies1[j];
+            bodyacc = body->acceleration;
+            temp_acceleration = bodyacc.length();
+            if(temp_acceleration > max_acc) max_acc = temp_acceleration;
+        } // End for-loop
+
+        adaptive_dt = 5/max_acc;                    // Finds the time-step from the smallest acceleration in the system
+        if(adaptive_dt < 1e-4)  adaptive_dt = 1e-4; // Makes sure the time step doesn't get too small
+
+    } // End if-statement
+
+    for(n=1; n < 9; n++){
+        system.calculateForcesAdaptively(n);    // Calculating the forces on the bodies
+        if(n != 8)  moveBodies(system);         // Move correct set of bodies without calculating forces
+        adaptiveVelocityVerletEvolve(system);   // Evolving the system according to the Verlet algorithm
+    } // End foor-loop
+
+    adaptive_counter++;
+} // End adaptiveVelocityVerlet
+
+
 void Integrator::moveBodies(System &system)
 { // Function determining which bodies to move, but not calculate forces on
-
-    if(n != 8){
-        for(int i = 0; i < int(system.bodies4.size()); i++){
+    for(int i = 0; i < int(system.bodies4.size()); i++){
         CelestialBody *body4 = system.bodies4[i];
         moveBodiesLinearly(*body4);
-        } // Ending for-loop
-    } // Ending if-statement
-    if(n != 8 && n != 4){
+    } // Ending for-loop
+    if(n % 4 != 0){
         for(int i = 0; i < int(system.bodies3.size()); i++){
-        CelestialBody *body3 = system.bodies3[i];
-        moveBodiesLinearly(*body3);
+            CelestialBody *body3 = system.bodies3[i];
+            moveBodiesLinearly(*body3);
         } // Ending for-loop
     } // Ending if-statement
-    if(n != 8 && n != 6 && n != 4 && n != 2){
+    if(n % 2 != 0){
         for(int i = 0; i < int(system.bodies2.size()); i++){
-        CelestialBody *body2 = system.bodies2[i];
-        moveBodiesLinearly(*body2);
+            CelestialBody *body2 = system.bodies2[i];
+            moveBodiesLinearly(*body2);
         } // Ending for-loop
-      } // Ending if-statement
-    } // Ending calculateForcesAndEnergy-function
+    } // Ending if-statement
+} // Ending moveBodies-function
 
 
 void Integrator::moveBodiesLinearly(CelestialBody &body)
@@ -203,7 +208,8 @@ void Integrator::moveBodiesLinearly(CelestialBody &body)
 } // Ending moveBodiesLinearly
 
 
-void Integrator::adaptiveVelocityVerletEvolve(System &system){
+void Integrator::adaptiveVelocityVerletEvolve(System &system)
+{ // Function determining which bodies to move using forces
     if(n % 8 == 0){
         for(int i = 0; i < int(system.bodies4.size()); i++){
         CelestialBody *body4 = system.bodies4[i];
@@ -237,5 +243,6 @@ void Integrator::evolveRightBodies(System &system, CelestialBody &body)
     velocity_dt_2 = body.velocity + body.force/body.mass*adaptive_dt/2.;
     body.position = body.position + velocity_dt_2*adaptive_dt;              // Calculating the position
     system.calculateForcesAdaptively(n);
-    body.velocity = velocity_dt_2 + body.force/body.mass*adaptive_dt/2;  // Calculating the velocity
+    body.velocity = velocity_dt_2 + body.force/body.mass*adaptive_dt/2;     // Calculating the velocity
  } // Ending VerletEvolve-function
+
