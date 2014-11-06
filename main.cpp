@@ -25,7 +25,7 @@ int main()
     double dt       = 0.05;
     double T        = 500;
     double nSteps   = T/dt;
-    int    numberOfObjects = 100;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects = 250;      // Number of celestial bodies for a random generation of a system
     double sphereRadius    = 20;       // ly
 
     // Running the code for special cases
@@ -234,7 +234,7 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
     // Initialisation
     System      system;
     Integrator  solvingSystem;
-    Printing    printingSystem("RandomSystem100bodies");
+    Printing    printingSystem("RandomSystem");
 
     system.smoothing = smoothing;
     system.addRandomSystem(numberOfObjects,sphereRadius);
@@ -247,14 +247,14 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
 
     while(time < runningTime){
         numberOfTimestepsComputed++;
-        solvingSystem.adaptiveVelocityVerlet(system);
-        printingSystem.printingEnergyAngMom(system,true);
+        solvingSystem.adaptiveVelocityVerlet(system);        
 
         time += 8.*solvingSystem.adaptiveDt();
         //time += timeStep;
 
         if(time > nextPrintTime){
             printingSystem.printingPositionXYZ(system, counter);
+            printingSystem.printingEnergyAngMom(system,true);
             nextPrintTime += 0.02*runningTime;
             cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed, currently at " << numberOfTimestepsComputed << " timesteps, with " << solvingSystem.adaptiveDt() <<endl;
             counter++;
