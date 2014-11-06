@@ -186,9 +186,11 @@ void Integrator::adaptiveVelocityVerlet(System &system)
             if(temp_acceleration > max_acc) max_acc = temp_acceleration;
         } // End for-loop
 
-        adaptive_dt = 1/max_acc;        // Finds the time-step from the smallest acceleration in the system
-        if(adaptive_dt < 1e-6) adaptive_dt = 1e-6;
+        adaptive_dt = 1/max_acc;                    // Finds the time-step from the smallest acceleration in the system
+        if(adaptive_dt < 1e-6) adaptive_dt = 1e-6;  // Overwrites the smallest time step if the time step is too low
     } // End if-statement
+
+    system.resetEnergy();               // Reset energy of system
 
     // The actual computations of Velocity Verlet
     for(n=0; n < 8; n++){
