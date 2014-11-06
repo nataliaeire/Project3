@@ -15,6 +15,7 @@ public:
     double  PE;
     double  KE;
     vec3    angMom;
+    bool    gravitationallyBound;
 
     // Initialisation
     CelestialBody(int index, vec3 position, vec3 velocity, double mass);

@@ -6,6 +6,7 @@ CelestialBody::CelestialBody(int index, vec3 position, vec3 velocity, double mas
     this->position  = position;
     this->velocity  = velocity;
     this->mass      = mass;
+    gravitationallyBound = true;
 }
 
 void CelestialBody::resetForce()

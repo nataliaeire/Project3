@@ -248,7 +248,7 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
     while(time < runningTime){
         numberOfTimestepsComputed++;
         solvingSystem.adaptiveVelocityVerlet(system);
-        printingSystem.printingEnergyAngMom(system);
+        printingSystem.printingEnergyAngMom(system,true);
 
         time += 8.*solvingSystem.adaptiveDt();
         //time += timeStep;

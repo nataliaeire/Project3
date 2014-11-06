@@ -57,7 +57,28 @@ void Printing::printingEnergyAngMom(System &system)
     } // End if-statement opening an energy and angular momentum file
 
     energyAngMomFile << system.kineticEnergy << " " << system.potentialEnergy << " "
-                     << system.totalEnergy() << " " << system.angularMomentum.length() << std::endl;                                          // Insert a new line when finished
+                     << system.totalEnergy() << " " << system.angularMomentum.length() << std::endl; // Insert a new line when finished
+} // End printingEnergyAngMom-function
+
+
+void Printing::printingEnergyAngMom(System &system, bool virial)
+{ // Printing energy and angular momentum only
+    if(virial == true){
+        if(!energyAngMomFile.is_open()) {                                       // Open position file if it's not open
+            char *filename = new char[1000];                                    // File name has max 1000 characters
+            sprintf(filename, "%s_energyAngMom.txt", filenamePrefix.c_str() );  // Create filname w prefix and ending
+            energyAngMomFile.open(filename);
+            delete filename;
+        } // End if-statement opening an energy and angular momentum file
+
+        energyAngMomFile << system.kineticEnergy << " " << system.potentialEnergy << " "
+                         << system.totalEnergy() << " " << system.angularMomentum.length() << " "
+                         << system.virialKineticEnergy  << " " << system.virialPotentialEnergy << " "
+                         << system.boundKineticEnergy+system.boundPotentialEnergy  << " "
+                         << system.numberOfBoundBodies() << std::endl;
+    }else{
+        printingEnergyAngMom(system);
+    }
 } // End printingEnergyAngMom-function
 
 

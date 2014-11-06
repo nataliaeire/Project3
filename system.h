@@ -27,18 +27,25 @@ public:
 
     // Initialization of system
     void    conserveMomentum();
+    void    resetEnergy();
     void    sortBodiesIntoGroups();
 
     // Qualities of system
     int     numberOfBodies();
+    int     numberOfBoundBodies();
     double  G;
     double  totalMass;
     double  density;
     vec3    angularMomentum;
     vec3    momentum;
     double  totalEnergy();
+    void    virialEnergy();
     double  potentialEnergy;
     double  kineticEnergy;
+    double  boundKineticEnergy;
+    double  boundPotentialEnergy;
+    double  virialKineticEnergy;
+    double  virialPotentialEnergy;
 
     // Calculating qualities of the system
     void    calculateForcesAndEnergy();

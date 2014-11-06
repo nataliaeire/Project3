@@ -9,18 +9,46 @@
 System::System()
 { // Initialising some qualities when creating a system, regardless of number of particles
     setG(false);
-    potentialEnergy = 0;
-    kineticEnergy   = 0;
-    totalMass       = 0;
-    density         = 0;
-    smoothing       = false;
+    potentialEnergy         = 0;
+    kineticEnergy           = 0;
+    boundKineticEnergy      = 0;
+    boundPotentialEnergy    = 0;
+    virialKineticEnergy     = 0;
+    virialPotentialEnergy   = 0;
+    angularMomentum.setToZero();
+    totalMass               = 0;
+    density                 = 0;
+    smoothing               = false;
 } // End constructor
 
 
-void System::resetEnergy();
+void System::resetEnergy()
 {
-    potentialEnergy = 0;
-    kineticEnergy   = 0;
+    potentialEnergy         = 0;
+    kineticEnergy           = 0;
+    boundKineticEnergy      = 0;
+    boundPotentialEnergy    = 0;
+    virialKineticEnergy     = 0;
+    virialPotentialEnergy   = 0;
+    angularMomentum.setToZero();
+}
+
+
+int System::numberOfBoundBodies()
+{
+    int boundBodies = 0;
+    for(int i = 0; i < numberOfBodies(); i++){
+        CelestialBody &body = bodies[i];
+        if(body.gravitationallyBound == true) boundBodies ++;
+    }
+    return boundBodies;
+}
+
+
+void System::virialEnergy()
+{
+    virialKineticEnergy     = boundKineticEnergy/numberOfBoundBodies();
+    virialPotentialEnergy   = boundPotentialEnergy/numberOfBoundBodies();
 }
 
 
@@ -193,9 +221,7 @@ double System::totalEnergy()
 void System::calculateForcesAndEnergy()
 { // Function calculating forces and energy (and angular momentum!) for the system
     // Initialising values
-    potentialEnergy = 0;
-    kineticEnergy   = 0;
-    angularMomentum.setToZero();
+    resetEnergy();
 
     // Remembering to reset forces before we calculate new ones
     for(int i=0; i<numberOfBodies(); i++){
@@ -270,8 +296,8 @@ void System::calculateForcesUsingGR()
 void System::actuallyCalculatingForces(CelestialBody &body, int n)
 { // Function finding the forces between
     // Initialising values
-    angularMomentum.setToZero();
     body.resetEnergy();
+    body.resetForce();
 
     for(int i = 0; i < numberOfBodies(); i++){
         CelestialBody &allBodies = bodies[i];
@@ -303,12 +329,21 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
     }// Ending for-loop
 
     if(n == 7){ // Calculate energies etc only if a time step has passed for all bodies
-        vec3 momentum   = body.velocity*body.mass;              // p = m*v
-        body.angMom.add(body.position.cross(momentum));         // L = r x p
-        body.KE = 0.5*body.mass*body.velocity.lengthSquared();  // k = mv^2/2, updated for each body
+        vec3 momentum    = body.velocity*body.mass;                         // p = m*v
+        body.angMom      = body.position.cross(momentum);                   // L = r x p
+        body.KE          = 0.5*body.mass*body.velocity.lengthSquared();     // KE = mv^2/2, updated for each body
         kineticEnergy   += body.KE;
-        potentialEnergy += body.PE;
-        angularMomentum += body.angMom;
+        potentialEnergy += 0.5*body.PE;
+        angularMomentum.add(body.angMom);
+
+        if(body.totalEnergyOfBody()  <= 0.){
+            body.gravitationallyBound = true;
+            boundKineticEnergy       += body.KE;
+            boundPotentialEnergy     += 0.5*body.PE;
+        }else{
+            body.gravitationallyBound = false;
+        }
+        virialEnergy();     // Calculating virial energy from bound energy
     }
 
 } // Ending actuallyCalculatingForces-function
