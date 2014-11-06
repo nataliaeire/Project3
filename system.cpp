@@ -216,6 +216,38 @@ double System::totalEnergy()
     return potentialEnergy + kineticEnergy;
 } // End of totalEnergy-system
 
+double System::densityAsAFunctionOfRadius(double radius)   // Should this return the radial distribution of particles too
+{ // Function which calculates the particle density as a function of radius
+    // We should probably have a closer look at this when we are done with h)
+    double volume = 4./3*M_PI*pow(radius,3);  // Volume of sphere
+    int particles_in_sphere = 0;              // counter for number of particles in sphere
+
+    for(int i=0; i<numberOfBodies(); i++)     // Looping over all bodies in the system and checking how many are inside the given radius
+    {
+        CelestialBody &body = bodies[i];
+        if(body.position.length() <= radius) particles_in_sphere++; // Should we use center-of-mass-coordinates instead?
+                                                                    // Should we only count bound particles?
+    } // end for-loop
+
+   return particles_in_sphere/volume; // We divide an int by a double. No compilation error, but if anything
+                                      // goes wrong later on, we might check this
+} // End densityAsAFunctionOfRadius
+
+double System::deviationAndAverageDistanceBound() // should this be a double?
+{
+    double mean_distance;
+    double distance_sum = 0;
+    for(int i=0; i<numberOfBodies(); i++)
+    {
+        CelestialBody &body = bodies[i];
+        if(body.gravitationallyBound == true) distance_sum += body.position.length();
+    }
+
+    mean_distance = distance_sum/numberOfBoundBodies();
+
+    return meandistance; // This should return the deviation too
+}
+
 
 // =================================== CALCULATING FORCES & ENERGY ===================================== //
 void System::calculateForcesAndEnergy()

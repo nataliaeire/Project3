@@ -48,6 +48,8 @@ public:
     double  virialPotentialEnergy;
 
     // Calculating qualities of the system
+    double  densityAsAFunctionOfRadius(double radius);
+    double  deviationAndAverageDistanceBound();         // Not yet implemented
     void    calculateForcesAndEnergy();
     void    calculateForcesUsingGR();
     void    actuallyCalculatingForces(CelestialBody &body, int n);

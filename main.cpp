@@ -25,7 +25,7 @@ int main()
     double dt       = 0.05;
     double T        = 500;
     double nSteps   = T/dt;
-    int    numberOfObjects = 250;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects = 100;      // Number of celestial bodies for a random generation of a system
     double sphereRadius    = 20;       // ly
 
     // Running the code for special cases
@@ -234,7 +234,7 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
     // Initialisation
     System      system;
     Integrator  solvingSystem;
-    Printing    printingSystem("RandomSystem");
+    Printing    printingSystem("RandomSystem100bodies");
 
     system.smoothing = smoothing;
     system.addRandomSystem(numberOfObjects,sphereRadius);
