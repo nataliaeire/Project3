@@ -13,7 +13,19 @@ void CelestialBody::resetForce()
     force.setToZero();
 }
 
+void CelestialBody::resetEnergy()
+{
+    KE = 0;
+    PE = 0;
+    angMom.setToZero();
+}
+
 vec3 CelestialBody::acceleration()
 {
     return force/mass;
+}
+
+double CelestialBody::totalEnergyOfBody()
+{
+    return KE + PE;
 }

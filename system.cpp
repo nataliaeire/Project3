@@ -17,6 +17,12 @@ System::System()
 } // End constructor
 
 
+void System::resetEnergy();
+{
+    potentialEnergy = 0;
+    kineticEnergy   = 0;
+}
+
 
 void System::setG(bool cluster)
 { // Setting gravitational constant G based on the type of system
@@ -264,9 +270,8 @@ void System::calculateForcesUsingGR()
 void System::actuallyCalculatingForces(CelestialBody &body, int n)
 { // Function finding the forces between
     // Initialising values
-    potentialEnergy = 0;
-    kineticEnergy   = 0;
     angularMomentum.setToZero();
+    body.resetEnergy();
 
     for(int i = 0; i < numberOfBodies(); i++){
         CelestialBody &allBodies = bodies[i];
@@ -292,13 +297,18 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
             body.force.addAndMultiply(deltaRVector, factor);                // Gravitational law
 
             if(n == 7){ // Calculate energy if a time step has passed for all bodies
-                vec3 momentum    = allBodies.velocity*allBodies.mass;                       // p = m*v
+                vec3 momentum   = allBodies.velocity*allBodies.mass;                       // p = m*v
                 angularMomentum.add(allBodies.position.cross(momentum));                    // L = r x p, updated for each body
-                kineticEnergy   += 0.5*allBodies.mass*allBodies.velocity.lengthSquared();   // k = mv^2/2, updated for each body
-                potentialEnergy -= factor*dr*dr;                                            // Definition of the potential energy
+                body.PE        -= factor*dr*dr;                                             // Definition of the potential energy
             } // Ending if-statement
-
         } // Ending if-statement
     }// Ending for-loop
+
+    if(n == 7){ // Calculate energy only if a time step has passed for all bodies
+    body.KE = 0.5*body.mass*body.velocity.lengthSquared();// k = mv^2/2, updated for each body
+    kineticEnergy   += body.KE;
+    potentialEnergy += body.PE;
+    }
+
 } // Ending actuallyCalculatingForces-function
 
