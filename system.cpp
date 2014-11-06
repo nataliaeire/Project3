@@ -296,18 +296,19 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
             // Updating gravitational force and potential energy experienced by celestial object
             body.force.addAndMultiply(deltaRVector, factor);                // Gravitational law
 
-            if(n == 7){ // Calculate energy if a time step has passed for all bodies
-                vec3 momentum   = allBodies.velocity*allBodies.mass;                       // p = m*v
-                angularMomentum.add(allBodies.position.cross(momentum));                    // L = r x p, updated for each body
-                body.PE        -= factor*dr*dr;                                             // Definition of the potential energy
-            } // Ending if-statement
+            // Add contribution to potential energy if a time step has passed for all bodies
+            if(n == 7)  body.PE -= factor*dr*dr;                            // Definition of the potential energy
+
         } // Ending if-statement
     }// Ending for-loop
 
-    if(n == 7){ // Calculate energy only if a time step has passed for all bodies
-    body.KE = 0.5*body.mass*body.velocity.lengthSquared();// k = mv^2/2, updated for each body
-    kineticEnergy   += body.KE;
-    potentialEnergy += body.PE;
+    if(n == 7){ // Calculate energies etc only if a time step has passed for all bodies
+        vec3 momentum   = body.velocity*body.mass;              // p = m*v
+        body.angMom.add(body.position.cross(momentum));         // L = r x p
+        body.KE = 0.5*body.mass*body.velocity.lengthSquared();  // k = mv^2/2, updated for each body
+        kineticEnergy   += body.KE;
+        potentialEnergy += body.PE;
+        angularMomentum += body.angMom;
     }
 
 } // Ending actuallyCalculatingForces-function
