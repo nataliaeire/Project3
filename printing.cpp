@@ -125,6 +125,20 @@ void Printing::printingPositionXYZ(System &system, int counter)
     } // End the for-loop printing the position of each body
 } // End printingPosition-function
 
+void Printing::printingMasses(System &system)
+{ // Printing masses of the bodies
+    if(!massFile.is_open()){                                        // Open position file if it's not open
+        char *filename = new char[1000];                                // File name can have max 1000 characters
+        sprintf(filename, "%s_masses.txt", filenamePrefix.c_str() ); // Create filname with prefix and ending
+        massFile.open(filename);
+        delete filename;
+    } // End if-statement opening a position file
+    for(int i=0; i<system.numberOfBodies(); i++){
+        CelestialBody &body = system.bodies[i];
+        massFile << body.mass << std::endl;
+    } // End for-loop
+} // End printingMasses-function
+
 
 void Printing::printingAll(System &system, int counter, int n)
 { // Function printing only each n'th position, velocity, energy and angular momentum to file using previously created functions
@@ -137,6 +151,7 @@ void Printing::closeAllFiles()
     if(energyAngMomFile.is_open())  energyAngMomFile.close();
     if(positionFile.is_open())      positionFile.close();
     if(velocityFile.is_open())      velocityFile.close();
+    if(massFile.is_open())          massFile.close();
 } // End closeAllFiles-function
 
 

@@ -216,6 +216,7 @@ double System::totalEnergy()
     return potentialEnergy + kineticEnergy;
 } // End of totalEnergy-system
 
+/*
 double System::densityAsAFunctionOfRadius(double radius)   // Should this return the radial distribution of particles too
 { // Function which calculates the particle density as a function of radius
     // We should probably have a closer look at this when we are done with h)
@@ -248,7 +249,7 @@ double System::deviationAndAverageDistanceBound() // should this be a double?
     return meandistance; // This should return the deviation too
 }
 
-
+*/
 // =================================== CALCULATING FORCES & ENERGY ===================================== //
 void System::calculateForcesAndEnergy()
 { // Function calculating forces and energy (and angular momentum!) for the system
