@@ -234,7 +234,7 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
     // Initialisation
     System      system;
     Integrator  solvingSystem;
-    Printing    printingSystem("RandomSystem");
+    Printing    printingSystem("RandomSystem250bodies_2tcrunch_nov6");
 
     system.smoothing = smoothing;
     system.addRandomSystem(numberOfObjects,sphereRadius);
@@ -242,9 +242,9 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
 
     double  time = 0;
     double  nextPrintTime = 0;
-    int     counter = 1;    // Counter to keep track of time steps in output file
+    int     counter = 1;                   // Counter to keep track of time steps in output file
     int     numberOfTimestepsComputed = 0;
-
+    printingSystem.printingMasses(system); // Printing masses to file
     while(time < runningTime){
         numberOfTimestepsComputed++;
         solvingSystem.adaptiveVelocityVerlet(system);        
