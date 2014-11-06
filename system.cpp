@@ -323,8 +323,6 @@ void System::calculateForcesUsingGR()
 } // Ending calculateForcesAndEnergy-function
 
 
-
-
 void System::actuallyCalculatingForces(CelestialBody &body, int n)
 { // Function finding the forces between
     // Initialising values
@@ -379,4 +377,3 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
     }
 
 } // Ending actuallyCalculatingForces-function
-
