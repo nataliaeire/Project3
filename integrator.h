@@ -31,8 +31,9 @@ private:
     void    calculateForcesForGroup(System &system, std::vector<CelestialBody*> &bodies);
 
 public:
-
-    Integrator();  // Constructor
+    Integrator();
+    Integrator(int numThreads);  // Constructor
+    int     numThreads;
 
     // Integrators called in main
     void    RK4(System &system, double dt);             // Runge-Kutta 4

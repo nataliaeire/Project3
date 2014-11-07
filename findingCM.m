@@ -66,3 +66,12 @@ r  = 0:0.1:bc(length(bc));
 n = n0./(1+(r/r0).^4);
 hold on 
 plot(r,n,'k')
+
+rho0 = 0.15;
+rk = 15;
+rho = rho0./( (r/rk).*(1+ (r/rk).^2) );
+plot(r,rho)
+
+rhofit = fit(centersR', nElementsR', 'rho0./( (r/rk).*(1+ (r/rk).^2) )')
+plot
+

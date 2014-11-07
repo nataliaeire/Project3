@@ -11,7 +11,7 @@ private:
     void    setG(bool cluster);
 
 public:
-    std::vector<CelestialBody> bodies;
+    std::vector<CelestialBody>  bodies;
     std::vector<CelestialBody*> bodies1;
     std::vector<CelestialBody*> bodies2;
     std::vector<CelestialBody*> bodies3;
@@ -48,11 +48,11 @@ public:
     double  virialPotentialEnergy;
 
     // Calculating qualities of the system
-/*    double  densityAsAFunctionOfRadius(double radius);
-    double  deviationAndAverageDistanceBound();         // Not yet implemented */
     void    calculateForcesAndEnergy();
     void    calculateForcesUsingGR();
     void    actuallyCalculatingForces(CelestialBody &body, int n);
+    void    gatherEnergyFromBodiesInGroup(std::vector<CelestialBody*> &group);
+
 };  // End of System class declariation
 
 #endif // SYSTEM_H

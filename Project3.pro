@@ -14,7 +14,7 @@ SOURCES += \
     gaussiandeviate.cpp
 #LIBS += -larmadillo -llapack -lblas
 
-QMAKE_CXXFLAGS += -Wall
+#QMAKE_CXXFLAGS += -Wall
 
 HEADERS += \
     system.h \
@@ -23,3 +23,6 @@ HEADERS += \
     integrator.h \
     printing.h \
     gaussiandeviate.h
+
+QMAKE_CXXFLAGS += -fopenmp
+QMAKE_LFLAGS   += -fopenmp

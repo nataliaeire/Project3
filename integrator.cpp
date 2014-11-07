@@ -5,9 +5,18 @@ using std::endl;
 
 Integrator::Integrator()
 { // Constructing integrator
-    counter = 0; // Variable for accessing VerletInitialise
+    numThreads       = 1;
+    counter          = 0; // Variable for accessing VerletInitialise
     adaptive_counter = 0;
-    n = 0;
+    n                = 0;
+} // End of constructor
+
+Integrator::Integrator(int numThreads)
+{ // Constructing integrator
+    this->numThreads = numThreads;
+    counter          = 0; // Variable for accessing VerletInitialise
+    adaptive_counter = 0;
+    n                = 0;
 } // End of constructor
 
 
@@ -128,20 +137,26 @@ void Integrator::VerletEvolve(System &system, double dt)
 // ======================================= VELOCITY VERLET ================================================== //
 void Integrator::VelocityVerlet(System &system, double dt)
 { // Function performing Velocity Verlet integration
-    system.calculateForcesAndEnergy();                  // Calculates the forces on the bodies
+    if(counter == 0){
+        system.calculateForcesAndEnergy();              // Calculates the forces on the bodies
+        counter++;
+    } // End if-statement
     VelocityVerletEvolve(system, dt);                   // Evolving the system according to the Verlet algorithm
 } // End of VelocityVerlet-function
 
 
 void Integrator::VelocityVerletEvolve(System &system, double dt)
 { // Function evolving the system for the Velocity Verlet integration
+    vec3 velocity_dt_2;     // Predeclaring variable which should be private in parallelisation
+
+//#pragma omp parallel for private(velocity_dt_2) num_threads(numThreads)
     for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
         CelestialBody &body = system.bodies[i];         // the body at time t
-        vec3 velocity_dt_2;
+        //vec3 velocity_dt_2;
 
         // Calculating the velocity
         velocity_dt_2 = body.velocity + body.force/body.mass*dt/2.;
-        body.position = body.position + velocity_dt_2*dt;              // Calculating the position
+        body.position = body.position + velocity_dt_2*dt;           // Calculating the position
         system.calculateForcesAndEnergy();
         body.velocity = velocity_dt_2 + body.force/body.mass*dt/2;  // Calculating the velocity
     } // Ending for-loop
@@ -190,7 +205,7 @@ void Integrator::adaptiveVelocityVerlet(System &system)
         if(adaptive_dt < 1e-6) adaptive_dt = 1e-6;  // Overwrites the smallest time step if the time step is too low
     } // End if-statement
 
-    system.resetEnergy();               // Reset energy of system
+    system.resetEnergy();                           // Reset energy of system
 
     // The actual computations of Velocity Verlet
     for(n=0; n < 8; n++){
@@ -231,11 +246,17 @@ void Integrator::halfKickAdaptively(System &system)
 
 void Integrator::calculateForcesForGroup(System &system, std::vector<CelestialBody*> &bodies)
 { // Function to calculate the forces between a specific group and all bodies
+    CelestialBody *body = NULL; // Predeclaring variable (pointer) which should be private in parallelisation
+
+//#pragma omp parallel for private(body) num_threads(numThreads)
     for(int i = 0; i < int(bodies.size()); i++){
-        CelestialBody *body = bodies[i];
+        body = bodies[i];
         body->resetForce();
         system.actuallyCalculatingForces(*body, n);
     } // Ending for-loop
+
+    if(n == 7) system.gatherEnergyFromBodiesInGroup(bodies);
+
 } // End of calculateForcesForGroup-function
 
 

@@ -23,7 +23,7 @@ System::System()
 
 
 void System::resetEnergy()
-{
+{ // Resetting all energies and angular momentum of system
     potentialEnergy         = 0;
     kineticEnergy           = 0;
     boundKineticEnergy      = 0;
@@ -31,25 +31,25 @@ void System::resetEnergy()
     virialKineticEnergy     = 0;
     virialPotentialEnergy   = 0;
     angularMomentum.setToZero();
-}
+} // End of resetEnergy-function
 
 
 int System::numberOfBoundBodies()
-{
+{ // Finding number of bound celestial bodies in the system
     int boundBodies = 0;
     for(int i = 0; i < numberOfBodies(); i++){
         CelestialBody &body = bodies[i];
-        if(body.gravitationallyBound == true) boundBodies ++;
-    }
+        if(body.gravitationallyBound == true)   boundBodies ++;
+    } // Ending for-loop
     return boundBodies;
-}
+} // End of numberOfBoundBodies-function
 
 
 void System::virialEnergy()
-{
+{ // Finding the virial energy of the system from the energy of bound bodies in the system
     virialKineticEnergy     = boundKineticEnergy/numberOfBoundBodies();
     virialPotentialEnergy   = boundPotentialEnergy/numberOfBoundBodies();
-}
+} // End of virialEnergy-function
 
 
 void System::setG(bool cluster)
@@ -81,7 +81,7 @@ void System::conserveMomentum()
 
 
 void System::sortBodiesIntoGroups()
-{
+{ // Sorting bodies into groups based on their acceleration in order to perform adaptive steplength integration
     calculateForcesAndEnergy();
     arma::vec accelerations;
     accelerations.zeros(numberOfBodies());
@@ -114,13 +114,7 @@ void System::sortBodiesIntoGroups()
         }else{
             bodies1.push_back(&body);
         } // Ending if-statement
-
     } // Ending for-loop
-
-//    std::cout << "Number of elements in bodies1: " << bodies1.size() << std::endl
-//              << "Number of elements in bodies2: " << bodies2.size() << std::endl
-//              << "Number of elements in bodies3: " << bodies3.size() << std::endl
-//              << "Number of elements in bodies4: " << bodies4.size() << std::endl << std::endl;
 
 } // End sortBodiesIntoGroups-function
 
@@ -216,40 +210,7 @@ double System::totalEnergy()
     return potentialEnergy + kineticEnergy;
 } // End of totalEnergy-system
 
-/*
-double System::densityAsAFunctionOfRadius(double radius)   // Should this return the radial distribution of particles too
-{ // Function which calculates the particle density as a function of radius
-    // We should probably have a closer look at this when we are done with h)
-    double volume = 4./3*M_PI*pow(radius,3);  // Volume of sphere
-    int particles_in_sphere = 0;              // counter for number of particles in sphere
 
-    for(int i=0; i<numberOfBodies(); i++)     // Looping over all bodies in the system and checking how many are inside the given radius
-    {
-        CelestialBody &body = bodies[i];
-        if(body.position.length() <= radius) particles_in_sphere++; // Should we use center-of-mass-coordinates instead?
-                                                                    // Should we only count bound particles?
-    } // end for-loop
-
-   return particles_in_sphere/volume; // We divide an int by a double. No compilation error, but if anything
-                                      // goes wrong later on, we might check this
-} // End densityAsAFunctionOfRadius
-
-double System::deviationAndAverageDistanceBound() // should this be a double?
-{
-    double mean_distance;
-    double distance_sum = 0;
-    for(int i=0; i<numberOfBodies(); i++)
-    {
-        CelestialBody &body = bodies[i];
-        if(body.gravitationallyBound == true) distance_sum += body.position.length();
-    }
-
-    mean_distance = distance_sum/numberOfBoundBodies();
-
-    return meandistance; // This should return the deviation too
-}
-
-*/
 // =================================== CALCULATING FORCES & ENERGY ===================================== //
 void System::calculateForcesAndEnergy()
 { // Function calculating forces and energy (and angular momentum!) for the system
@@ -330,15 +291,17 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
     body.resetEnergy();
     body.resetForce();
 
+    vec3   deltaRVector;
+    double dr, factor;
+
     for(int i = 0; i < numberOfBodies(); i++){
         CelestialBody &allBodies = bodies[i];
 
         // Only calculate forces between different celestial bodies
         if(body.index != allBodies.index){
             // Variables simplifying the calculations
-            vec3   deltaRVector = allBodies.position - body.position;       // Spatial separation in all three directions
-            double dr           = deltaRVector.length();                    // Separation radius/length/distance
-            double factor;
+            deltaRVector = allBodies.position - body.position;       // Spatial separation in all three directions
+            dr           = deltaRVector.length();                    // Separation radius/length/distance
 
             // Reoccuring factor
             if(smoothing == false){
@@ -359,22 +322,31 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
         } // Ending if-statement
     }// Ending for-loop
 
-    if(n == 7){ // Calculate energies etc only if a time step has passed for all bodies
+    // Calculate kinetic energy and angular momentum if one large time step has passed
+    if(n == 7){
         vec3 momentum    = body.velocity*body.mass;                         // p = m*v
         body.angMom      = body.position.cross(momentum);                   // L = r x p
         body.KE          = 0.5*body.mass*body.velocity.lengthSquared();     // KE = mv^2/2, updated for each body
-        kineticEnergy   += body.KE;
-        potentialEnergy += 0.5*body.PE;
-        angularMomentum.add(body.angMom);
-
-        if(body.totalEnergyOfBody()  <= 0.){
-            body.gravitationallyBound = true;
-            boundKineticEnergy       += body.KE;
-            boundPotentialEnergy     += 0.5*body.PE;
-        }else{
-            body.gravitationallyBound = false;
-        }
-        virialEnergy();     // Calculating virial energy from bound energy
-    }
+    } // Ending if-statement
 
 } // Ending actuallyCalculatingForces-function
+
+
+void System::gatherEnergyFromBodiesInGroup(std::vector<CelestialBody*> &group)
+{ // Calculating energies for bodies and for system
+    for(int i = 0; i < int(group.size()); i++){
+        CelestialBody *body = group[i];
+        kineticEnergy      += body->KE;
+        potentialEnergy    += 0.5*body->PE;
+        angularMomentum.add(body->angMom);
+
+        if(body->totalEnergyOfBody() <= 0.){
+            body->gravitationallyBound  = true;
+            boundKineticEnergy         += body->KE;
+            boundPotentialEnergy       += 0.5*body->PE;
+        }else{
+            body->gravitationallyBound = false;
+        } // Ending if-statement
+        virialEnergy();  // Calculating virial energy from bound energy
+    } // Ending for-loop
+} // End of calculateEnergy-function

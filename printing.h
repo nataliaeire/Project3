@@ -15,7 +15,6 @@ public:
     ofstream    positionFile;
     ofstream    velocityFile;
     ofstream    energyAngMomFile;
-    ofstream    massFile;
     string      filenamePrefix;
     string      filenameEnding;
 
@@ -29,7 +28,6 @@ public:
     void printingVelocity(System &system);
     void printingEnergyAngMom(System &system);
     void printingEnergyAngMom(System &system, bool virial);
-    void printingMasses(System &system);
     void printingAll(System &system);
     void printingAll(System &system, int counter, int n);
     void printing3Vector(vec3 vector, string filenameEnding);

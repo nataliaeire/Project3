@@ -17,7 +17,7 @@ void Printing::printingPosition(System &system)
 { // Printing position only
     if(!positionFile.is_open()){                                        // Open position file if it's not open
         char *filename = new char[1000];                                // File name can have max 1000 characters
-        sprintf(filename, "%s_positions.txt", filenamePrefix.c_str() ); // Create filname with prefix and ending
+        sprintf(filename, "%s_positions.txt", filenamePrefix.c_str() ); // Create filename with prefix and ending
         positionFile.open(filename);
         delete filename;
     } // End if-statement opening a position file
@@ -34,7 +34,7 @@ void Printing::printingVelocity(System &system)
 { // Printing velocity only
     if(!velocityFile.is_open()) {                                       // Open position file if it's not open
         char *filename = new char[1000];                                // File name can have max 1000 character
-        sprintf(filename, "%s_velocities.txt", filenamePrefix.c_str() );// Create filname with prefix and ending
+        sprintf(filename, "%s_velocities.txt", filenamePrefix.c_str() );// Create filename with prefix and ending
         velocityFile.open(filename);
         delete filename;
     } // End if-statement opening a velocity file
@@ -49,15 +49,15 @@ void Printing::printingVelocity(System &system)
 
 void Printing::printingEnergyAngMom(System &system)
 { // Printing energy and angular momentum only
-    if(!energyAngMomFile.is_open()) {                                       // Open position file if it's not open
-        char *filename = new char[1000];                                    // File name has max 1000 characters
-        sprintf(filename, "%s_energyAngMom.txt", filenamePrefix.c_str() );  // Create filname w prefix and ending
+    if(!energyAngMomFile.is_open()) {                                           // Open position file if it's not open
+        char *filename = new char[1000];                                        // File name has max 1000 characters
+        sprintf(filename, "%s_energyAngMom.txt", filenamePrefix.c_str() );      // Create filename w prefix and ending
         energyAngMomFile.open(filename);
         delete filename;
     } // End if-statement opening an energy and angular momentum file
 
     energyAngMomFile << system.kineticEnergy << " " << system.potentialEnergy << " "
-                     << system.totalEnergy() << " " << system.angularMomentum.length() << std::endl; // Insert a new line when finished
+                     << system.totalEnergy() << " " << system.angularMomentum.length() << std::endl;
 } // End printingEnergyAngMom-function
 
 
@@ -66,7 +66,7 @@ void Printing::printingEnergyAngMom(System &system, bool virial)
     if(virial == true){
         if(!energyAngMomFile.is_open()) {                                       // Open position file if it's not open
             char *filename = new char[1000];                                    // File name has max 1000 characters
-            sprintf(filename, "%s_energyAngMom.txt", filenamePrefix.c_str() );  // Create filname w prefix and ending
+            sprintf(filename, "%s_energyAngMom.txt", filenamePrefix.c_str() );  // Create filename w prefix and ending
             energyAngMomFile.open(filename);
             delete filename;
         } // End if-statement opening an energy and angular momentum file
@@ -78,7 +78,7 @@ void Printing::printingEnergyAngMom(System &system, bool virial)
                          << system.numberOfBoundBodies() << std::endl;
     }else{
         printingEnergyAngMom(system);
-    }
+    } // Ending if-statement
 } // End printingEnergyAngMom-function
 
 
@@ -94,7 +94,7 @@ void Printing::printingPositionXYZ(System &system)
 { // Printing position only
     if(!positionFile.is_open()){                                        // Open position file if it's not open
         char *filename = new char[1000];                                // File name can have max 1000 characters
-        sprintf(filename, "%s_positions.xyz", filenamePrefix.c_str() ); // Create filname with prefix and ending
+        sprintf(filename, "%s_positions.xyz", filenamePrefix.c_str() ); // Create filename with prefix and ending
         positionFile.open(filename);
         delete filename;
     } // End if-statement opening a position file
@@ -112,7 +112,7 @@ void Printing::printingPositionXYZ(System &system, int counter)
 { // Printing position only
     if(!positionFile.is_open()){                                        // Open position file if it's not open
         char *filename = new char[1000];                                // File name can have max 1000 characters
-        sprintf(filename, "%s_positions.xyz", filenamePrefix.c_str() ); // Create filname with prefix and ending
+        sprintf(filename, "%s_positions.xyz", filenamePrefix.c_str() ); // Create filename with prefix and ending
         positionFile.open(filename);
         delete filename;
     } // End if-statement opening a position file
@@ -124,20 +124,6 @@ void Printing::printingPositionXYZ(System &system, int counter)
         positionFile << "Ar " << body.position[0] << " " << body.position[1] << " " << body.position[2] << std::endl;
     } // End the for-loop printing the position of each body
 } // End printingPosition-function
-
-void Printing::printingMasses(System &system)
-{ // Printing masses of the bodies
-    if(!massFile.is_open()){                                        // Open position file if it's not open
-        char *filename = new char[1000];                                // File name can have max 1000 characters
-        sprintf(filename, "%s_masses.txt", filenamePrefix.c_str() ); // Create filname with prefix and ending
-        massFile.open(filename);
-        delete filename;
-    } // End if-statement opening a position file
-    for(int i=0; i<system.numberOfBodies(); i++){
-        CelestialBody &body = system.bodies[i];
-        massFile << body.mass << std::endl;
-    } // End for-loop
-} // End printingMasses-function
 
 
 void Printing::printingAll(System &system, int counter, int n)
@@ -151,7 +137,6 @@ void Printing::closeAllFiles()
     if(energyAngMomFile.is_open())  energyAngMomFile.close();
     if(positionFile.is_open())      positionFile.close();
     if(velocityFile.is_open())      velocityFile.close();
-    if(massFile.is_open())          massFile.close();
 } // End closeAllFiles-function
 
 
@@ -160,11 +145,9 @@ void Printing::printing3Vector(vec3 vector, std::string filenameEnding)
     this->filenameEnding = filenameEnding;
     if(!vectorFile.is_open()){                                                              // Open position file if it's not open
         char *filename = new char[1000];                                                    // File name can have max 1000 characters
-        sprintf(filename, "%s_%s.txt", filenamePrefix.c_str(), filenameEnding.c_str() );    // Create filname with prefix and ending
+        sprintf(filename, "%s_%s.txt", filenamePrefix.c_str(), filenameEnding.c_str() );    // Create filename with prefix and ending
         vectorFile.open(filename);
         delete filename;
     } // End if-statement opening a position file
-
-    vectorFile << vector << " ";
-    vectorFile << std::endl;                                            // Insert a new line when finished
+    vectorFile << vector << " " << std::endl;
 } // End printingPosition-function
