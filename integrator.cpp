@@ -137,11 +137,15 @@ void Integrator::VerletEvolve(System &system, double dt)
 // ======================================= VELOCITY VERLET ================================================== //
 void Integrator::VelocityVerlet(System &system, double dt)
 { // Function performing Velocity Verlet integration
+
+    // Initialisation
     if(counter == 0){
-        system.calculateForcesAndEnergy();              // Calculates the forces on the bodies
-        counter++;
+        system.calculateForcesAndEnergy();            // Calculates the forces on the bodies
+        counter = 1;                                  // Updating the counter so that the if test is false
     } // End if-statement
-    VelocityVerletEvolve(system, dt);                   // Evolving the system according to the Verlet algorithm
+
+    VelocityVerletEvolve(system, dt);                 // Evolving the system according to the Verlet algorithm
+
 } // End of VelocityVerlet-function
 
 
@@ -194,6 +198,7 @@ void Integrator::adaptiveVelocityVerlet(System &system)
         max_acc = 1e-7;                 // Sets an initial, very low acceleration
         system.sortBodiesIntoGroups();  // Updates bodies1, bodies2, etc.
 
+        // Finding the smallest time step:
         for(int j=0; j<int(system.bodies1.size()); j++){ // Finding the maximum acceleration in the system
             CelestialBody *body = system.bodies1[j];
             bodyacc = body->acceleration();
