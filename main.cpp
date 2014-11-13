@@ -284,7 +284,7 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
     // Initialisation
     System      system;
     Integrator  solvingSystem(1);
-    Printing    printingSystem("test_adaptive");
+    Printing    printingSystem("RandomSystemAdaptive");
 
     system.smoothing = smoothing;
     system.addRandomSystem(numberOfObjects,sphereRadius);
@@ -304,8 +304,7 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
         time += 8.*solvingSystem.adaptiveDt();
 
         if(time > nextPrintTime){
-            printingSystem.printingPositionXYZ(system, counter);
-            printingSystem.printingEnergyAngMom(system,true);
+            printingSystem.printingAll(system, counter, true);
             nextPrintTime += 0.002*runningTime;
             cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed, currently at "
                  << numberOfTimestepsComputed << " timesteps, with time step " << solvingSystem.adaptiveDt()
