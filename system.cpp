@@ -75,7 +75,7 @@ void System::conserveMomentum()
         momentumTemp = body.velocity*body.mass;
         momentum.add(momentumTemp);
     } // Ending for-loop
-    CelestialBody &sun = bodies.at(0);
+    CelestialBody &sun = bodies[0];
     sun.velocity = momentum/(-1*sun.mass);
 } // End of conserveMomentum-function
 
@@ -234,7 +234,7 @@ void System::calculateForcesAndEnergy()
             double dr           = deltaRVector.length();                    // Separation radius/length/distance
             double factor       = G*body1.mass*body2.mass / pow(dr,3);      // Reoccuring factor
 
-            // Updating gravitational force and potential energy experienced by celestial object
+            // Updating the potential energy of the system and the gravitational force experienced by celestial object
             potentialEnergy -= factor*dr*dr;                                // Definition of the potential energy
             // Finding all components of the force
             body1.force.addAndMultiply(deltaRVector, -factor);              // Law of gravity
@@ -267,17 +267,17 @@ void System::calculateForcesUsingGR()
             CelestialBody &body2 = bodies[j];
 
             // Variables simplifying the calculations
-            vec3   deltaRVector     = body1.position - body2.position;                  // Spatial separation in all three directions
-            double dr               = deltaRVector.length();                            // Separation radius/length/distance
+            vec3   deltaRVector     = body1.position - body2.position;                  // Spatial separation in 3D
+            double dr               = deltaRVector.length();                            // Separation
             double NewtonianFactor  = G*body1.mass*body2.mass / pow(dr,3);              // Reoccuring factor
-            vec3   angMomPerMass    = body2.position.cross(body2.velocity);             // L/m = r x v, updated for each body
+            vec3   angMomPerMass    = body2.position.cross(body2.velocity);             // L/m = r x v
             double GRFactor         = 1+(3*angMomPerMass.lengthSquared())/(dr*dr*c*c);  // Reoccuring factor
             double factor           = NewtonianFactor*GRFactor;
 
             // Updating gravitational force experienced by celestial object
             // Finding all components of the force
-            body1.force.addAndMultiply(deltaRVector, -factor);                  // Law of gravity
-            body2.force.addAndMultiply(deltaRVector, factor);                   // N3
+            body1.force.addAndMultiply(deltaRVector, -factor);                          // Law of gravity
+            body2.force.addAndMultiply(deltaRVector, factor);                           // N3
         }   // Ending for-loop computing force and potential energy
 
     }   // Ending for-loop going over all celestial bodies
@@ -291,24 +291,20 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
     body.resetEnergy();
     body.resetForce();
 
-    vec3   deltaRVector;
-    double dr, factor;
-
     for(int i = 0; i < numberOfBodies(); i++){
         CelestialBody &allBodies = bodies[i];
 
         // Only calculate forces between different celestial bodies
         if(body.index != allBodies.index){
             // Variables simplifying the calculations
-            deltaRVector = allBodies.position - body.position;       // Spatial separation in all three directions
-            dr           = deltaRVector.length();                    // Separation radius/length/distance
+            vec3   deltaRVector = allBodies.position - body.position;       // Spatial separation in all three directions
+            double dr           = deltaRVector.length();                    // Separation radius/length/distance
+            double factor;
 
             // Reoccuring factor
-            if(smoothing == false){
-                // No smoothing
+            if(smoothing == false){ // No smoothing
                 factor = G*allBodies.mass*body.mass / pow(dr,3);
-            }else{
-                // Smoothing
+            }else { // Smoothing
                 double epsilon = 0.1;
                 factor = G*allBodies.mass*body.mass / ((dr*dr + epsilon*epsilon)*dr);
             } // Ending if-statement
@@ -318,15 +314,15 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
 
             // Add contribution to potential energy if a time step has passed for all bodies
             if(n == 7)  body.PE -= factor*dr*dr;                            // Definition of the potential energy
-
         } // Ending if-statement
+
     }// Ending for-loop
 
     // Calculate kinetic energy and angular momentum if one large time step has passed
     if(n == 7){
-        vec3 momentum    = body.velocity*body.mass;                         // p = m*v
-        body.angMom      = body.position.cross(momentum);                   // L = r x p
-        body.KE          = 0.5*body.mass*body.velocity.lengthSquared();     // KE = mv^2/2, updated for each body
+        vec3 momentum   = body.velocity*body.mass;                          // p = m*v
+        body.angMom     = body.position.cross(momentum);                    // L = r x p
+        body.KE         = 0.5*body.mass*body.velocity.lengthSquared();      // KE = mv^2/2
     } // Ending if-statement
 
 } // Ending actuallyCalculatingForces-function
@@ -345,8 +341,9 @@ void System::gatherEnergyFromBodiesInGroup(std::vector<CelestialBody*> &group)
             boundKineticEnergy         += body->KE;
             boundPotentialEnergy       += 0.5*body->PE;
         }else{
-            body->gravitationallyBound = false;
+            body->gravitationallyBound  = false;
         } // Ending if-statement
         virialEnergy();  // Calculating virial energy from bound energy
     } // Ending for-loop
 } // End of calculateEnergy-function
+

@@ -226,7 +226,7 @@ void Integrator::adaptiveVelocityVerlet(System &system)
 
 void Integrator::halfKickAdaptively(System &system)
 { // Function calculating forces and energy (and angular momentum!) for the system
-    // Remembering to reset forces on the ones we calculate new forces on
+
     double dt;
     if(n % 8 == 0){
         dt = 8*adaptive_dt;
@@ -253,7 +253,7 @@ void Integrator::calculateForcesForGroup(System &system, std::vector<CelestialBo
 { // Function to calculate the forces between a specific group and all bodies
     CelestialBody *body = NULL; // Predeclaring variable (pointer) which should be private in parallelisation
 
-//#pragma omp parallel for private(body) num_threads(numThreads)
+#pragma omp parallel for private(body) num_threads(numThreads)
     for(int i = 0; i < int(bodies.size()); i++){
         body = bodies[i];
         body->resetForce();
