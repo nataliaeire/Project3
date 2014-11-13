@@ -29,9 +29,9 @@ int main()
 
     // Specifics for cold collapse
     double timeStep         = 0.005;    // tcrunch
-    double runningTime      = 0.5;        // tcrunch
+    double runningTime      = 2;        // tcrunch
     double sphereRadius     = 20;       // ly
-    int    numberOfObjects  = 500;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects  = 250;      // Number of celestial bodies for a random generation of a system
     bool   smoothing        = true;
 
     // Running the code for special cases
@@ -41,11 +41,11 @@ int main()
 
     //regularSystemRK4(dt, nSteps);       // Running the code using RK4
     //regularSystemV(dt, nSteps);         // Running the code using Verlet
-    //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
+    regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
     //Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
     //randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
-    randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
+    //randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
 
     return 0;
 }
@@ -130,7 +130,7 @@ void regularSystemVV(double dt, double nSteps)
     // Qualities of the system we will be exploring are read from file
     fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
-        cout << "CCould not find file to open." << endl;
+        cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
     }
 
