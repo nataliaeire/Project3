@@ -31,7 +31,7 @@ int main()
     double timeStep         = 0.005;    // tcrunch
     double runningTime      = 5;        // tcrunch
     double sphereRadius     = 20;       // ly
-    int    numberOfObjects  = 250;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects  = 100;      // Number of celestial bodies for a random generation of a system
     bool   smoothing        = true;
 
     // Running the code for special cases
@@ -283,8 +283,9 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
 { // Doing calculations for a randomly generated system
     // Initialisation
     System      system;
-    Integrator  solvingSystem(1);
-    Printing    printingSystem("RandomSystemAdaptive");
+    Integrator  solvingSystem(4);
+    Printing    printingSystem("test_adaptive");
+
 
     system.smoothing = smoothing;
     system.addRandomSystem(numberOfObjects,sphereRadius);
@@ -314,7 +315,7 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
     } // End while-loop
     double finish = clock();
     double operationTime = (finish - start)/(double) CLOCKS_PER_SEC; // Calculating time in seconds
-    cout << "Operation time: " << operationTime << " s" << endl << endl;
+    cout << endl << "Operation time: " << operationTime << " s" << endl;
     cout << "Parallelisation/Number of threads: " << solvingSystem.numThreads << endl;
 
 } // End of randomSystem-function
