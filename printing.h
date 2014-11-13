@@ -13,6 +13,7 @@ class Printing
 public:
     ofstream    vectorFile;
     ofstream    positionFile;
+    ofstream    positionxyzFile;
     ofstream    velocityFile;
     ofstream    energyAngMomFile;
     string      filenamePrefix;
@@ -29,8 +30,8 @@ public:
     void printingEnergyAngMom(System &system);
     void printingEnergyAngMom(System &system, bool virial);
     void printingAll(System &system);
-    void printingAll(System &system, int i);
     void printingAll(System &system, int counter, int n);
+    void printingAll(System &system, int counter, bool virial);
     void printing3Vector(vec3 vector, string filenameEnding);
     void printingPositionXYZ(System &system);
     void printingPositionXYZ(System &system, int counter);
