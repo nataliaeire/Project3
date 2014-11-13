@@ -90,6 +90,21 @@ void Printing::printingAll(System &system)
 } // End printingAll-function
 
 
+void Printing::printingAll(System &system, int counter, int n)
+{ // Function printing only each n'th position, velocity, energy and angular momentum to file using previously created functions
+    if (counter % n == 0)           printingAll(system);
+} // End printingAll-function
+
+
+void Printing::printingAll(System &system, int i)
+{ // Function printing position, velocity, energy and angular momentum to file using previously created functions
+    // using the virial theorem
+    printingPosition(system);
+    printingVelocity(system);
+    printingEnergyAngMom(system, i);
+} // End printingAll-function
+
+
 void Printing::printingPositionXYZ(System &system)
 { // Printing position only
     if(!positionFile.is_open()){                                        // Open position file if it's not open
@@ -124,12 +139,6 @@ void Printing::printingPositionXYZ(System &system, int counter)
         positionFile << "Ar " << body.position[0] << " " << body.position[1] << " " << body.position[2] << std::endl;
     } // End the for-loop printing the position of each body
 } // End printingPosition-function
-
-
-void Printing::printingAll(System &system, int counter, int n)
-{ // Function printing only each n'th position, velocity, energy and angular momentum to file using previously created functions
-    if (counter % n == 0)           printingAll(system);
-} // End printingAll-function
 
 
 void Printing::closeAllFiles()
