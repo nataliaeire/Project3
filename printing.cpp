@@ -107,7 +107,7 @@ void Printing::printingAll(System &system, int counter, bool virial)
 
 void Printing::printingPositionXYZ(System &system)
 { // Printing position only
-    if(!positionxyzFile.is_open()){                                        // Open position file if it's not open
+    if(!positionxyzFile.is_open()){                                     // Open position file if it's not open
         char *filename = new char[1000];                                // File name can have max 1000 characters
         sprintf(filename, "%s_positions.xyz", filenamePrefix.c_str() ); // Create filename with prefix and ending
         positionxyzFile.open(filename);
@@ -125,7 +125,7 @@ void Printing::printingPositionXYZ(System &system)
 
 void Printing::printingPositionXYZ(System &system, int counter)
 { // Printing position only
-    if(!positionxyzFile.is_open()){                                        // Open position file if it's not open
+    if(!positionxyzFile.is_open()){                                     // Open position file if it's not open
         char *filename = new char[1000];                                // File name can have max 1000 characters
         sprintf(filename, "%s_positions.xyz", filenamePrefix.c_str() ); // Create filename with prefix and ending
         positionxyzFile.open(filename);
@@ -145,7 +145,7 @@ void Printing::closeAllFiles()
 { // Function closing all open files
     if(energyAngMomFile.is_open())  energyAngMomFile.close();
     if(positionFile.is_open())      positionFile.close();
-    if(positionxyzFile.is_open())      positionFile.close();
+    if(positionxyzFile.is_open())   positionFile.close();
     if(velocityFile.is_open())      velocityFile.close();
 } // End closeAllFiles-function
 
