@@ -178,9 +178,8 @@ void Integrator::VelocityVerletEvolve(System &system, double dt)
         //vec3 velocity_dt_2;
 
         // Calculating the velocity
-        vec3 velocity_dt_2 = body.velocity;
-        velocity_dt_2.addAndMultiply(body.force, 0.5*dt/body.mass); // DOUBLE CHECK THIS!
-        body.position.addAndMultiply(velocity_dt_2, dt);            // Calculating the position
+        body.velocity.addAndMultiply(body.force, 0.5*dt/body.mass);
+        body.position.addAndMultiply(body.velocity, dt);            // Calculating the position
         system.calculateForcesAndEnergy();
         body.velocity.addAndMultiply(body.force, 0.5*dt/body.mass); // Calculating the velocity
     } // Ending for-loop
