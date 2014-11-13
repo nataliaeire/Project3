@@ -16,7 +16,8 @@ void regularSystemRK4(double dt, double nSteps);
 void regularSystemV(double dt, double nSteps);
 void regularSystemVV(double dt, double nSteps);
 void regularSystemVVadaptive(double nSteps);
-void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, double runningTime, bool smoothing);
+void randomSystemNonAdaptive(int numberOfObjects, double sphereRadius, double timeStep, double runningTime, bool smoothing);
+void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runningTime, bool smoothing);
 void Mercury(double dt, double nSteps);
 
 int main()
@@ -28,7 +29,7 @@ int main()
 
     // Specifics for cold collapse
     double timeStep         = 0.005;    // tcrunch
-    double runningTime      = 2;        // tcrunch
+    double runningTime      = 5;        // tcrunch
     double sphereRadius     = 20;       // ly
     int    numberOfObjects  = 250;      // Number of celestial bodies for a random generation of a system
     bool   smoothing        = true;
@@ -40,10 +41,11 @@ int main()
 
     //regularSystemRK4(dt, nSteps);       // Running the code using RK4
     //regularSystemV(dt, nSteps);         // Running the code using Verlet
-    //regularSystemVV(dt, nSteps); // Running the code using Velocity Verlet
-    //regularSystemVVadaptive(nSteps); // Running the code using Velocity Verlet
+    //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
+    //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
     // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
-    randomSystem(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
+    //randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
+    randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
 
     return 0;
 }
@@ -235,7 +237,7 @@ void Mercury(double dt, double nSteps)
 } // End of Mercury-function
 
 
-void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, double runningTime, bool smoothing)
+void randomSystemNonAdaptive(int numberOfObjects, double sphereRadius, double timeStep, double runningTime, bool smoothing)
 { // Doing calculations for a randomly generated system
     // Initialisation
     System      system;
@@ -251,12 +253,13 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
     int     counter = 1;                                // Counter to keep track of time steps in output file
     int     numberOfTimestepsComputed = 0;
 
+    double start = clock();
+    // Evolving system
     while(time < runningTime){
         numberOfTimestepsComputed++;
-        solvingSystem.adaptiveVelocityVerlet(system);        
+        solvingSystem.VelocityVerlet(system, timeStep);
 
-        time += 8.*solvingSystem.adaptiveDt();
-        //time += timeStep;
+        time += timeStep;
 
         if(time > nextPrintTime){
             printingSystem.printingPositionXYZ(system, counter);
@@ -268,4 +271,51 @@ void randomSystem(int numberOfObjects, double sphereRadius, double timeStep, dou
             counter++;
         } // Ending if-statement
     } // End while-loop
+    double finish = clock();
+    double operationTime = (finish - start)/(double) CLOCKS_PER_SEC; // Calculating time in seconds
+    cout << "Operation time: " << operationTime << " s" << endl << endl;
+    cout << "Parallelisation:" << solvingSystem.numThreads << endl;
+
+} // End of randomSystem-function
+
+
+void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runningTime, bool smoothing)
+{ // Doing calculations for a randomly generated system
+    // Initialisation
+    System      system;
+    Integrator  solvingSystem(1);
+    Printing    printingSystem("test_adaptive");
+
+    system.smoothing = smoothing;
+    system.addRandomSystem(numberOfObjects,sphereRadius);
+    printingSystem.printingPositionXYZ(system);
+
+    double  time = 0;
+    double  nextPrintTime = 0;
+    int     counter = 1;                                // Counter to keep track of time steps in output file
+    int     numberOfTimestepsComputed = 0;
+
+    double start = clock();
+    // Evolving system
+    while(time < runningTime){
+        numberOfTimestepsComputed++;
+        solvingSystem.adaptiveVelocityVerlet(system);
+
+        time += 8.*solvingSystem.adaptiveDt();
+
+        if(time > nextPrintTime){
+            printingSystem.printingPositionXYZ(system, counter);
+            printingSystem.printingEnergyAngMom(system,true);
+            nextPrintTime += 0.002*runningTime;
+            cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed, currently at "
+                 << numberOfTimestepsComputed << " timesteps, with time step " << solvingSystem.adaptiveDt()
+                 << "." << endl;
+            counter++;
+        } // Ending if-statement
+    } // End while-loop
+    double finish = clock();
+    double operationTime = (finish - start)/(double) CLOCKS_PER_SEC; // Calculating time in seconds
+    cout << "Operation time: " << operationTime << " s" << endl << endl;
+    cout << "Parallelisation/Number of threads: " << solvingSystem.numThreads << endl;
+
 } // End of randomSystem-function
