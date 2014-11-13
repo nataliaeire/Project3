@@ -172,18 +172,16 @@ void Integrator::VelocityVerlet(System &system, double dt)
 
 void Integrator::VelocityVerletEvolve(System &system, double dt)
 { // Function evolving the system for the Velocity Verlet integration
-    vec3 velocity_dt_2;     // Predeclaring variable which should be private in parallelisation
-
-//#pragma omp parallel for private(velocity_dt_2) num_threads(numThreads)
+//#pragma omp parallel for num_threads(numThreads)
     for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
         CelestialBody &body = system.bodies[i];         // the body at time t
         //vec3 velocity_dt_2;
 
         // Calculating the velocity
-        velocity_dt_2 = body.velocity + body.force/body.mass*dt/2.;
-        body.position = body.position + velocity_dt_2*dt;           // Calculating the position
+        body.velocity.addAndMultiply(body.force, 0.5*dt/body.mass);
+        body.position.addAndMultiply(body.velocity, dt);            // Calculating the position
         system.calculateForcesAndEnergy();
-        body.velocity = velocity_dt_2 + body.force/body.mass*dt/2;  // Calculating the velocity
+        body.velocity.addAndMultiply(body.force, 0.5*dt/body.mass); // Calculating the velocity
     } // Ending for-loop
 } // Ending VerletEvolve-function
 
