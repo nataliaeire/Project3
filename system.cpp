@@ -230,9 +230,10 @@ void System::calculateForcesAndEnergy()
             CelestialBody &body2 = bodies[j];
 
             // Variables simplifying the calculations
-            vec3   deltaRVector = body1.position - body2.position;          // Spatial separation in all three directions
-            double dr           = deltaRVector.length();                    // Separation radius/length/distance
-            double factor       = G*body1.mass*body2.mass / (dr*dr*dr);     // Reoccuring factor
+            vec3   deltaRVector = body1.position;                           // Initialising vector to speed up code
+            deltaRVector.addAndMultiply(body2.position,-1);                 // Spatial separation in all three directions
+            double dr       = deltaRVector.length();                        // Separation radius/length/distance
+            double factor   = G*body1.mass*body2.mass / (dr*dr*dr);         // Reoccuring factor
 
             // Updating the potential energy of the system and the gravitational force experienced by celestial object
             potentialEnergy -= factor*dr*dr;                                // Definition of the potential energy
@@ -268,9 +269,10 @@ void System::calculateForcesUsingGR()
             CelestialBody &body2 = bodies[j];
 
             // Variables simplifying the calculations
-            vec3   deltaRVector     = body1.position - body2.position;                  // Spatial separation in 3D
+            vec3   deltaRVector     = body1.position;           // Initialising vector to speed up code
+            deltaRVector.addAndMultiply(body2.position,-1);      // Spatial separation in all three directions
             double dr               = deltaRVector.length();                            // Separation
-            double NewtonianFactor  = G*body1.mass*body2.mass / (dr*dr*dr);              // Reoccuring factor
+            double NewtonianFactor  = G*body1.mass*body2.mass / (dr*dr*dr);             // Reoccuring factor
             vec3   angMomPerMass    = body2.position.cross(body2.velocity);             // L/m = r x v
             double GRFactor         = 1+(3*angMomPerMass.lengthSquared())/(dr*dr*c*c);  // Reoccuring factor
             double factor           = NewtonianFactor*GRFactor;
@@ -297,10 +299,14 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
 
         // Only calculate forces between different celestial bodies
         if(body.index != allBodies.index){
+            // Initialising reocurring vectors and factors
+            vec3 deltaRVector;
+            double dr, factor;
+
             // Variables simplifying the calculations
-            vec3   deltaRVector = allBodies.position - body.position;       // Spatial separation in all three directions
-            double dr           = deltaRVector.length();                    // Separation radius/length/distance
-            double factor;
+            deltaRVector = allBodies.position;              // Initialising vector to speed up code
+            deltaRVector.addAndMultiply(body.position,-1);  // Spatial separation in all three directions
+            dr = deltaRVector.length();                     // Separation radius/length/distance
 
             // Reoccuring factor
             if(smoothing == false){ // No smoothing

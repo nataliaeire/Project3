@@ -305,7 +305,7 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
         time += 8.*solvingSystem.adaptiveDt();
 
         if(time > nextPrintTime){
-            printingSystem.printingAll(system, counter, true);
+            //printingSystem.printingAll(system, counter, true);
             nextPrintTime += 0.002*runningTime;
             cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed, currently at "
                  << numberOfTimestepsComputed << " timesteps, with time step " << solvingSystem.adaptiveDt()

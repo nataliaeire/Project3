@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <cmath>
 
 class vec3
 {
@@ -39,7 +40,6 @@ public:
     }
     vec3 cross(vec3 &rhs);
     float dot(vec3 &rhs);
-    float length();
     void normalize();
     void setToZero();
     void randomGaussian(float mean, float standardDeviation);
@@ -51,6 +51,7 @@ public:
     inline float &operator[](int index) { return m_vec[index]; }
     inline float operator[](int index) const { return m_vec[index]; }
     inline float lengthSquared() { return m_vec[0]*m_vec[0] + m_vec[1]*m_vec[1] + m_vec[2]*m_vec[2]; }
+    inline float length() { return sqrt(lengthSquared()); }
     inline void subtract(const vec3 &v1, const vec3 &v2) { m_vec[0] = v1[0] - v2[0]; m_vec[1] = v1[1] - v2[1]; m_vec[2] = v1[2] - v2[2]; }
 
 private:

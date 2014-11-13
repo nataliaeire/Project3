@@ -131,10 +131,6 @@ vec3 vec3::cross(vec3 &rhs) {
                  m_vec[0] * rhs.y() - m_vec[1] * rhs.x());
 }
 
-float vec3::length() {
-    return sqrt(lengthSquared());
-}
-
 void vec3::normalize() {
     float myLength = length();
     if(myLength > 0) { // Don't divide by zero...
