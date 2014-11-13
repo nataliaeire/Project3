@@ -1,4 +1,5 @@
 #include "integrator.h"
+#include "cpelapsedtimer.h"
 #include <stdlib.h>
 using std::cout;
 using std::endl;
@@ -196,7 +197,9 @@ void Integrator::adaptiveVelocityVerlet(System &system)
     // Sort bodies and change time step every 1000 steps
     if(adaptive_counter % int(5) == 0){
         max_acc = 1e-7;                 // Sets an initial, very low acceleration
+        CPElapsedTimer::sortBodies().start();
         system.sortBodiesIntoGroups();  // Updates bodies1, bodies2, etc.
+        CPElapsedTimer::sortBodies().stop();
 
         // Finding the smallest time step:
         for(int j=0; j<int(system.bodies1.size()); j++){ // Finding the maximum acceleration in the system
@@ -251,16 +254,20 @@ void Integrator::halfKickAdaptively(System &system)
 
 void Integrator::calculateForcesForGroup(System &system, std::vector<CelestialBody*> &bodies)
 { // Function to calculate the forces between a specific group and all bodies
-    CelestialBody *body = NULL; // Predeclaring variable (pointer) which should be private in parallelisation
+    int size = int(bodies.size());
 
-#pragma omp parallel for private(body) num_threads(numThreads)
-    for(int i = 0; i < int(bodies.size()); i++){
-        body = bodies[i];
+    CPElapsedTimer::calculateForces().start();
+#pragma omp parallel for shared(system, bodies, size) num_threads(numThreads)
+    for(int i = 0; i < size; i++){
+        CelestialBody *body = bodies[i];
         body->resetForce();
         system.actuallyCalculatingForces(*body, n);
     } // Ending for-loop
+    CPElapsedTimer::calculateForces().stop();
 
+    CPElapsedTimer::gatherEnergies().start();
     if(n == 7) system.gatherEnergyFromBodiesInGroup(bodies);
+    CPElapsedTimer::gatherEnergies().stop();
 
 } // End of calculateForcesForGroup-function
 

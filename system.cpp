@@ -232,7 +232,7 @@ void System::calculateForcesAndEnergy()
             // Variables simplifying the calculations
             vec3   deltaRVector = body1.position - body2.position;          // Spatial separation in all three directions
             double dr           = deltaRVector.length();                    // Separation radius/length/distance
-            double factor       = G*body1.mass*body2.mass / pow(dr,3);      // Reoccuring factor
+            double factor       = G*body1.mass*body2.mass / (dr*dr*dr);     // Reoccuring factor
 
             // Updating the potential energy of the system and the gravitational force experienced by celestial object
             potentialEnergy -= factor*dr*dr;                                // Definition of the potential energy
@@ -269,7 +269,7 @@ void System::calculateForcesUsingGR()
             // Variables simplifying the calculations
             vec3   deltaRVector     = body1.position - body2.position;                  // Spatial separation in 3D
             double dr               = deltaRVector.length();                            // Separation
-            double NewtonianFactor  = G*body1.mass*body2.mass / pow(dr,3);              // Reoccuring factor
+            double NewtonianFactor  = G*body1.mass*body2.mass / (dr*dr*dr);              // Reoccuring factor
             vec3   angMomPerMass    = body2.position.cross(body2.velocity);             // L/m = r x v
             double GRFactor         = 1+(3*angMomPerMass.lengthSquared())/(dr*dr*c*c);  // Reoccuring factor
             double factor           = NewtonianFactor*GRFactor;
@@ -303,7 +303,7 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
 
             // Reoccuring factor
             if(smoothing == false){ // No smoothing
-                factor = G*allBodies.mass*body.mass / pow(dr,3);
+                factor = G*allBodies.mass*body.mass / (dr*dr*dr);
             }else { // Smoothing
                 double epsilon = 0.1;
                 factor = G*allBodies.mass*body.mass / ((dr*dr + epsilon*epsilon)*dr);

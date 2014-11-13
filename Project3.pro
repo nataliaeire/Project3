@@ -11,7 +11,8 @@ SOURCES += \
     vec3.cpp \
     printing.cpp \
     integrator.cpp \
-    gaussiandeviate.cpp
+    gaussiandeviate.cpp \
+    cpelapsedtimer.cpp
 #LIBS += -larmadillo -llapack -lblas
 
 #QMAKE_CXXFLAGS += -Wall
@@ -22,7 +23,8 @@ HEADERS += \
     vec3.h \
     integrator.h \
     printing.h \
-    gaussiandeviate.h
+    gaussiandeviate.h \
+    cpelapsedtimer.h
 
 QMAKE_CXXFLAGS += -fopenmp
 QMAKE_LFLAGS   += -fopenmp

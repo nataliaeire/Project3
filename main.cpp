@@ -29,9 +29,9 @@ int main()
 
     // Specifics for cold collapse
     double timeStep         = 0.005;    // tcrunch
-    double runningTime      = 5;        // tcrunch
+    double runningTime      = 0.5;        // tcrunch
     double sphereRadius     = 20;       // ly
-    int    numberOfObjects  = 100;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects  = 500;      // Number of celestial bodies for a random generation of a system
     bool   smoothing        = true;
 
     // Running the code for special cases
@@ -43,7 +43,7 @@ int main()
     //regularSystemV(dt, nSteps);         // Running the code using Verlet
     //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
-    // Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
+    //Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
     //randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
     randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
 
@@ -241,7 +241,7 @@ void randomSystemNonAdaptive(int numberOfObjects, double sphereRadius, double ti
 { // Doing calculations for a randomly generated system
     // Initialisation
     System      system;
-    Integrator  solvingSystem(4);
+    Integrator  solvingSystem(1);
     Printing    printingSystem("test");
 
     system.smoothing = smoothing;
@@ -288,7 +288,7 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
 
     system.smoothing = smoothing;
     system.addRandomSystem(numberOfObjects,sphereRadius);
-    printingSystem.printingPositionXYZ(system);
+    //printingSystem.printingPositionXYZ(system);
 
     double  time = 0;
     double  nextPrintTime = 0;
@@ -304,8 +304,8 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
         time += 8.*solvingSystem.adaptiveDt();
 
         if(time > nextPrintTime){
-            printingSystem.printingPositionXYZ(system, counter);
-            printingSystem.printingEnergyAngMom(system,true);
+            //printingSystem.printingPositionXYZ(system, counter);
+            //printingSystem.printingEnergyAngMom(system,true);
             nextPrintTime += 0.002*runningTime;
             cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed, currently at "
                  << numberOfTimestepsComputed << " timesteps, with time step " << solvingSystem.adaptiveDt()
