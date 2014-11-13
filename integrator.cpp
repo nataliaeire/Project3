@@ -45,8 +45,17 @@ void Integrator::RK4(System &system, double dt)
 
     for(int i=0; i<system.numberOfBodies(); i++){
         CelestialBody &body = system.bodies[i];
-        body.position.addAndMultiply(k1.bodies[i].velocity + k2.bodies[i].velocity + k2.bodies[i].velocity + k3.bodies[i].velocity + k3.bodies[i].velocity + k4.bodies[i].velocity, dt/6);
-        body.velocity.addAndMultiply(k1.bodies[i].force + k2.bodies[i].force + k2.bodies[i].force + k3.bodies[i].force + k3.bodies[i].force + k4.bodies[i].force, 1.0/6*dt/body.mass);
+        double dt6 = dt/6;
+        body.position.addAndMultiply(k1.bodies[i].velocity, dt6);
+        body.position.addAndMultiply(k2.bodies[i].velocity, 2*dt6);
+        body.position.addAndMultiply(k3.bodies[i].velocity, 2*dt6);
+        body.position.addAndMultiply(k4.bodies[i].velocity, dt6);
+
+        double dt6mass = dt6/body.mass;
+        body.velocity.addAndMultiply(k1.bodies[i].force, dt6mass);
+        body.velocity.addAndMultiply(k2.bodies[i].force, 2*dt6mass);
+        body.velocity.addAndMultiply(k3.bodies[i].force, 2*dt6mass);
+        body.velocity.addAndMultiply(k4.bodies[i].force, dt6mass);
     } // End for-loop
 
     system.calculateForcesAndEnergy();
@@ -76,9 +85,19 @@ void Integrator::RK4GR(System &system, double dt)
 
     for(int i=0; i<system.numberOfBodies(); i++){
         CelestialBody &body = system.bodies[i];
-        body.position.addAndMultiply(k1.bodies[i].velocity + k2.bodies[i].velocity + k2.bodies[i].velocity + k3.bodies[i].velocity + k3.bodies[i].velocity + k4.bodies[i].velocity, dt/6);
-        body.velocity.addAndMultiply(k1.bodies[i].force + k2.bodies[i].force + k2.bodies[i].force + k3.bodies[i].force + k3.bodies[i].force + k4.bodies[i].force, 1.0/6*dt/body.mass);
+        double dt6 = dt/6;
+        body.position.addAndMultiply(k1.bodies[i].velocity, dt6);
+        body.position.addAndMultiply(k2.bodies[i].velocity, 2*dt6);
+        body.position.addAndMultiply(k3.bodies[i].velocity, 2*dt6);
+        body.position.addAndMultiply(k4.bodies[i].velocity, dt6);
+
+        double dt6mass = dt6/body.mass;
+        body.velocity.addAndMultiply(k1.bodies[i].force, dt6mass);
+        body.velocity.addAndMultiply(k2.bodies[i].force, 2*dt6mass);
+        body.velocity.addAndMultiply(k3.bodies[i].force, 2*dt6mass);
+        body.velocity.addAndMultiply(k4.bodies[i].force, dt6mass);
     } // End for-loop
+
 
     system.calculateForcesUsingGR();
 } // End of RK4GR-function
@@ -128,9 +147,10 @@ void Integrator::VerletEvolve(System &system, double dt)
         CelestialBody &body = system.bodies[i];         // the body at time t
         CelestialBody &bodyOld = oldSystem.bodies[i];   // the body at time t-dt
 
-        body.position.add(body.position-bodyOld.position);
+        vec3 tempPosDiff = body.position-bodyOld.position;
+        body.position.add(tempPosDiff);
         body.position.addAndMultiply(body.force, dt*dt/body.mass);     // body.position is now at t+dt
-        body.velocity = (body.position - bodyOld.position)*1./(2*dt);  // Calculating the velocity
+        body.velocity = (body.position - bodyOld.position)/(2*dt);  // Calculating the velocity
     } // Ending for-loop
 } // Ending VerletEvolve-function
 
@@ -276,7 +296,7 @@ void Integrator::moveBodies(System &system)
 { // Moving bodies according to their velocity (2nd step in Velocity Verlet)
     for(int i=0; i<int(system.bodies.size()); i++){
         CelestialBody &body = system.bodies[i];
-        body.position.add(body.velocity*adaptive_dt);
+        body.position.addAndMultiply(body.velocity,adaptive_dt);
     } // Ending for-loop
 } // Ending moveBodies-function
 

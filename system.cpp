@@ -243,7 +243,8 @@ void System::calculateForcesAndEnergy()
 
         // Variables simplifying the calculations
         vec3 momentum   = body1.velocity*body1.mass;                        // p = m*v
-        angularMomentum.add(body1.position.cross(momentum));                // L = r x p, updated for each body
+        vec3 tempAngMom = body1.position.cross(momentum);
+        angularMomentum.add(tempAngMom);                                    // L = r x p, updated for each body
         kineticEnergy  += 0.5*body1.mass*body1.velocity.lengthSquared();    // k = mv^2/2, updated for each body
     }   // Ending for-loop going over all celestial bodies
 
