@@ -7,7 +7,7 @@ vec3::vec3()
     setToZero();
 }
 
-vec3::vec3(float x, float y, float z)
+vec3::vec3(double x, double y, double z)
 {
     set(x,y,z);
 }
@@ -68,59 +68,59 @@ vec3 &vec3::operator/=(vec3 rhs) {
     return *this;
 }
 
-vec3 vec3::operator+(float scalar) {
+vec3 vec3::operator+(double scalar) {
     return vec3(m_vec[0] + scalar,
                 m_vec[1] + scalar,
                 m_vec[2] + scalar);
 }
 
-vec3 &vec3::operator+=(float scalar) {
+vec3 &vec3::operator+=(double scalar) {
     m_vec[0] += scalar;
     m_vec[1] += scalar;
     m_vec[2] += scalar;
     return *this;
 }
 
-vec3 vec3::operator-(float scalar) {
+vec3 vec3::operator-(double scalar) {
     return vec3(m_vec[0] - scalar,
                 m_vec[1] - scalar,
                 m_vec[2] - scalar);
 }
 
-vec3 &vec3::operator-=(float scalar) {
+vec3 &vec3::operator-=(double scalar) {
     m_vec[0] -= scalar;
     m_vec[1] -= scalar;
     m_vec[2] -= scalar;
     return *this;
 }
 
-vec3 vec3::operator*(float scalar) {
+vec3 vec3::operator*(double scalar) {
     return vec3(m_vec[0] * scalar,
                 m_vec[1] * scalar,
                 m_vec[2] * scalar);
 }
 
-vec3 &vec3::operator*=(float scalar) {
+vec3 &vec3::operator*=(double scalar) {
     m_vec[0] *= scalar;
     m_vec[1] *= scalar;
     m_vec[2] *= scalar;
     return *this;
 }
 
-vec3 vec3::operator/(float scalar) {
+vec3 vec3::operator/(double scalar) {
     return vec3(m_vec[0] / scalar,
                 m_vec[1] / scalar,
             m_vec[2] / scalar);
 }
 
-vec3 &vec3::operator/=(float scalar) {
+vec3 &vec3::operator/=(double scalar) {
     m_vec[0] /= scalar;
     m_vec[1] /= scalar;
     m_vec[2] /= scalar;
     return *this;
 }
 
-float vec3::dot(vec3 &rhs) {
+double vec3::dot(vec3 &rhs) {
     return (m_vec[0] * rhs.x() +
             m_vec[1] * rhs.y() +
             m_vec[2] * rhs.z());
@@ -133,7 +133,7 @@ vec3 vec3::cross(vec3 &rhs) {
 }
 
 void vec3::normalize() {
-    float myLength = length();
+    double myLength = length();
     if(myLength > 0) { // Don't divide by zero...
         m_vec[0] /= myLength;
         m_vec[1] /= myLength;
@@ -147,7 +147,7 @@ void vec3::setToZero()
 }
 
 
-void vec3::set(float x, float y, float z)
+void vec3::set(double x, double y, double z)
 {
     m_vec[0] = x;
     m_vec[1] = y;
@@ -156,5 +156,5 @@ void vec3::set(float x, float y, float z)
 
 
 std::ostream& operator<<(std::ostream &stream, vec3 vec) {
-    return stream << std::setprecision(15) << vec.x() << " " << vec.y() << " " << vec.z();
+    return stream << std::setprecision(16) << vec.x() << " " << vec.y() << " " << vec.z();
 }
