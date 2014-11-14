@@ -23,7 +23,8 @@ void Mercury(double dt, double nSteps);
 int main()
 {
     // Integration specifications for Solar System
-    double dt       = 1e-1;
+
+    double dt       = 1e-5;
     double T        = 1;
     double nSteps   = T/dt;
 
@@ -54,7 +55,7 @@ int main()
 void regularSystemRK4(double dt, double nSteps)
 { // Function analysing the given system using RK4
     // Qualities of the system we will be exploring are read from file
-    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/solarsystemNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -62,14 +63,17 @@ void regularSystemRK4(double dt, double nSteps)
     // Initialisation
     System      SolarSystem;                        // Preparing system
     Integrator  solving;                            // Preparing for allowing the system to develop
-    Printing    printer("SunEarthNASARK4oneyeardtexp_minus1pnfexp0");         // Preparing for printing details about system to file
 
-    SolarSystem.addSystem(file);                    // Creating system
+    Printing    printer("SolarSystemNASARK4dtexp_minus6pnf1e4");         // Preparing for printing details about system to file
+
+    //SolarSystem.addSystem(file);                    // Creating system
+    SolarSystem.addBody(0,0,0,0,0,0,1);
+    SolarSystem.addBody(1,0,0, 0, 2*M_PI, 0, 3e-6);
     SolarSystem.conserveMomentum();                 // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);               // Printing intitial values to file
 
+    int printNFrames = 1e3;                           // Counter for printing only each n'th frame
 
-    int printNFrames = 1;                           // Counter for printing only each n'th frame
 
     double start = clock();
     // Performing RK4 on the system
@@ -90,7 +94,7 @@ void regularSystemRK4(double dt, double nSteps)
 void regularSystemV(double dt, double nSteps)
 { // Function analysing the given system using Verlet
     // Qualities of the system we will be exploring are read from file
-    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/SunEarthNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -99,13 +103,20 @@ void regularSystemV(double dt, double nSteps)
     // Initialisation
     System      solarSystemVerlet;
     Integrator  verletsolver;
+<<<<<<< HEAD
     Printing    printerv("SunEarthNASAVerletoneyeardtexp_minus1pnfexp0");
+=======
+    Printing    printerv("SunEarthNASAVerletbubblebath");
+>>>>>>> abec4eda4e6eabc9c5adbf238a2f390a111aeae7
 
-    solarSystemVerlet.addSystem(file);
+
+    //solarSystemVerlet.addSystem(file);
+    solarSystemVerlet.addBody(0,0,0,0,0,0,1);
+    solarSystemVerlet.addBody(1,0,0, 0, 2*M_PI, 0, 3e-6);
     solarSystemVerlet.conserveMomentum();
     printerv.printingAll(solarSystemVerlet);
 
-    int printNFrames = 1;                           // Counter for printing only each n'th frame
+    int printNFrames = 1e3;                          // Counter for printing only each n'th frame
 
     double start = clock();
     // Performing Verlet on the system
@@ -114,7 +125,7 @@ void regularSystemV(double dt, double nSteps)
         printerv.printingAll(solarSystemVerlet, i, printNFrames);
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % int(1e3) == 0)     cout << 100*((double)i) / nSteps << " % of the Verlet integration is performed" << endl;
+        if(i % int(1e3) == 0)     cout << 100*((double)i) / nSteps << " % of the Verlet integration is performed\r";
     }
     double finish = clock();
     double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
@@ -125,7 +136,7 @@ void regularSystemV(double dt, double nSteps)
 void regularSystemVV(double dt, double nSteps)
 { // Function analysing the given system using Velocity Verlet
     // Qualities of the system we will be exploring are read from file
-    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/SunEarthNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -161,7 +172,7 @@ void regularSystemVV(double dt, double nSteps)
 void regularSystemVVadaptive( double nSteps)
 { // Function analysing the given system using Velocity Verlet
     // Qualities of the system we will be exploring are read from file
-    fstream file("/home/ubu/FYS3150/projects/Project3/solarsystemNASA.txt",ios_base::in);
+    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/solarsystemNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "CCould not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -197,7 +208,7 @@ void regularSystemVVadaptive( double nSteps)
 void Mercury(double dt, double nSteps)
 { // Function performing the evolution of Mercury using a GR contribution
     // Qualities of the system we will be exploring are read from file
-    fstream MercuryFile("/home/ubu/FYS3150/projects/Project3/Mercury.txt",ios_base::in);
+    fstream MercuryFile("/uio/hume/student-u67/kineoha/FYS3150/Project3/Mercury.txt",ios_base::in);
     if(!MercuryFile.is_open()) {    // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program

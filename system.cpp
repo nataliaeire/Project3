@@ -233,6 +233,7 @@ void System::calculateForcesAndEnergy()
             vec3   deltaRVector = body1.position;                           // Initialising vector to speed up code
             deltaRVector.addAndMultiply(body2.position,-1);                 // Spatial separation in all three directions
             double dr       = deltaRVector.length();                        // Separation radius/length/distance
+            //std::cout << dr << std::endl;
             double factor   = G*body1.mass*body2.mass / (dr*dr*dr);         // Reoccuring factor
 
             // Updating the potential energy of the system and the gravitational force experienced by celestial object
