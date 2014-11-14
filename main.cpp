@@ -29,9 +29,9 @@ int main()
 
     // Specifics for cold collapse
     double timeStep         = 0.005;    // tcrunch
-    double runningTime      = 1;        // tcrunch
+    double runningTime      = 5;        // tcrunch
     double sphereRadius     = 20;       // ly
-    int    numberOfObjects  = 250;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects  = 750;      // Number of celestial bodies for a random generation of a system
     bool   smoothing        = true;
 
     // Running the code for special cases
@@ -284,7 +284,7 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
     // Initialisation
     System      system;
     Integrator  solvingSystem(4);
-    Printing    printingSystem("blah");
+    Printing    printingSystem("VirialTest");
 
     // Variables to be used in the integration
     double  time = 0;
@@ -295,7 +295,8 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
     // Creating a specific system and saving intials to file
     system.smoothing = smoothing;
     system.addRandomSystem(numberOfObjects,sphereRadius);
-    printingSystem.printingAll(system, counter, true);
+    printingSystem.printingPosition(system, true);
+    printingSystem.printingPositionXYZ(system, counter);
 
     double start = clock();
     // Evolving system

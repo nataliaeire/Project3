@@ -157,7 +157,7 @@ void System::addSystem(std::fstream &file)
 void System::addRandomSystem(int numberOfObjects, double sphereRadius)
 { // Adding system using random number generators
     double u, v, w, r, theta, phi, x, y, z, vx, vy, vz, massDeviation, mass;
-    long int seed = 27;  // Seed to start random number generator
+    long int seed = 3;  // Seed to start random number generator
     totalMass = density = 0;
 
     // Loop to generate numberOfObjects celestial objects with random positions and mass
@@ -312,7 +312,7 @@ void System::actuallyCalculatingForces(CelestialBody &body, int n)
             if(smoothing == false){ // No smoothing
                 factor = G*allBodies.mass*body.mass / (dr*dr*dr);
             }else { // Smoothing
-                double epsilon = 0.2;
+                double epsilon = 0.1;
                 factor = G*allBodies.mass*body.mass / ((dr*dr + epsilon*epsilon)*dr);
             } // Ending if-statement
 
