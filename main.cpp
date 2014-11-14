@@ -23,8 +23,8 @@ void Mercury(double dt, double nSteps);
 int main()
 {
     // Integration specifications for Solar System
-    double dt       = 0.05;
-    double T        = 500;
+    double dt       = 1e-1;
+    double T        = 1;
     double nSteps   = T/dt;
 
     // Specifics for cold collapse
@@ -39,13 +39,13 @@ int main()
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
 
-    //regularSystemRK4(dt, nSteps);       // Running the code using RK4
-    //regularSystemV(dt, nSteps);         // Running the code using Verlet
+    regularSystemRK4(dt, nSteps);       // Running the code using RK4
+    regularSystemV(dt, nSteps);         // Running the code using Verlet
     //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
     //Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
     //randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
-    randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
+    //randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
 
     return 0;
 }
@@ -62,15 +62,12 @@ void regularSystemRK4(double dt, double nSteps)
     // Initialisation
     System      SolarSystem;                        // Preparing system
     Integrator  solving;                            // Preparing for allowing the system to develop
-    Printing    printer("SunEarthNASARK4");         // Preparing for printing details about system to file
+    Printing    printer("SunEarthNASARK4oneyeardtexp_minus1pnfexp0");         // Preparing for printing details about system to file
 
     SolarSystem.addSystem(file);                    // Creating system
     SolarSystem.conserveMomentum();                 // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);               // Printing intitial values to file
 
-    //SolarSystem.sortBodiesIntoGroups();
-    //SolarSystem.calculateForcesAdaptively(8);
-    // NNNNNNNNNNNNNNNNNNNNNBBBBBBBBBBBBBBBBBBBBBBB!
 
     int printNFrames = 1;                           // Counter for printing only each n'th frame
 
@@ -102,7 +99,7 @@ void regularSystemV(double dt, double nSteps)
     // Initialisation
     System      solarSystemVerlet;
     Integrator  verletsolver;
-    Printing    printerv("SunEarthNASAV");
+    Printing    printerv("SunEarthNASAVerletoneyeardtexp_minus1pnfexp0");
 
     solarSystemVerlet.addSystem(file);
     solarSystemVerlet.conserveMomentum();
