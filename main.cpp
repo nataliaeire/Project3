@@ -29,7 +29,7 @@ int main()
 
     // Specifics for cold collapse
     double timeStep         = 0.005;    // tcrunch
-    double runningTime      = 2;        // tcrunch
+    double runningTime      = 1;        // tcrunch
     double sphereRadius     = 20;       // ly
     int    numberOfObjects  = 250;      // Number of celestial bodies for a random generation of a system
     bool   smoothing        = true;
@@ -41,11 +41,11 @@ int main()
 
     //regularSystemRK4(dt, nSteps);       // Running the code using RK4
     //regularSystemV(dt, nSteps);         // Running the code using Verlet
-    regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
+    //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
     //Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
     //randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
-    //randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
+    randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
 
     return 0;
 }
@@ -284,17 +284,18 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
     // Initialisation
     System      system;
     Integrator  solvingSystem(4);
-    Printing    printingSystem("test_adaptive");
+    Printing    printingSystem("blah");
 
-
-    system.smoothing = smoothing;
-    system.addRandomSystem(numberOfObjects,sphereRadius);
-    //printingSystem.printingPositionXYZ(system);
-
+    // Variables to be used in the integration
     double  time = 0;
     double  nextPrintTime = 0;
     int     counter = 1;                                // Counter to keep track of time steps in output file
     int     numberOfTimestepsComputed = 0;
+
+    // Creating a specific system and saving intials to file
+    system.smoothing = smoothing;
+    system.addRandomSystem(numberOfObjects,sphereRadius);
+    printingSystem.printingAll(system, counter, true);
 
     double start = clock();
     // Evolving system
@@ -305,7 +306,7 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
         time += 8.*solvingSystem.adaptiveDt();
 
         if(time > nextPrintTime){
-            //printingSystem.printingAll(system, counter, true);
+            printingSystem.printingAll(system, counter, true);
             nextPrintTime += 0.002*runningTime;
             cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed, currently at "
                  << numberOfTimestepsComputed << " timesteps, with time step " << solvingSystem.adaptiveDt()

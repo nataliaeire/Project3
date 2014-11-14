@@ -26,6 +26,7 @@ public:
 
     // Printing functions
     void printingPosition(System &system);
+    void printingPosition(System &system, bool virial);
     void printingVelocity(System &system);
     void printingEnergyAngMom(System &system);
     void printingEnergyAngMom(System &system, bool virial);

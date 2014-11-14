@@ -30,6 +30,27 @@ void Printing::printingPosition(System &system)
 } // End printingPosition-function
 
 
+void Printing::printingPosition(System &system, bool virial)
+{ // Printing position only
+    if(virial == true){
+    if(!positionFile.is_open()){                                        // Open position file if it's not open
+        char *filename = new char[1000];                                // File name can have max 1000 characters
+        sprintf(filename, "%s_positions.txt", filenamePrefix.c_str() ); // Create filename with prefix and ending
+        positionFile.open(filename);
+        delete filename;
+    } // End if-statement opening a position file
+
+    for(int i=0; i < system.numberOfBodies(); i++){                     // Print the position of each body
+        CelestialBody &body = system.bodies[i];
+        positionFile << body.position << " " << body.gravitationallyBound << " ";
+    } // End the for-loop printing the position of each body
+    positionFile << std::endl;                                          // Insert a new line when finished
+    }else{
+        printingPosition(system);
+    }// End if-statement
+} // End printingPosition-function
+
+
 void Printing::printingVelocity(System &system)
 { // Printing velocity only
     if(!velocityFile.is_open()) {                                       // Open position file if it's not open
@@ -100,7 +121,7 @@ void Printing::printingAll(System &system, int counter, bool virial)
 { // Function printing position, velocity, energy and angular momentum to file using previously created functions
     // using the virial theorem
     printingPositionXYZ(system, counter);
-    printingPosition(system);
+    printingPosition(system, virial);
     printingEnergyAngMom(system, virial);
 } // End printingAll-function
 
@@ -160,4 +181,4 @@ void Printing::printing3Vector(vec3 vector, std::string filenameEnding)
         delete filename;
     } // End if-statement opening a position file
     vectorFile << vector << " " << std::endl;
-} // End printingPosition-function
+} // End printing3Vector-function
