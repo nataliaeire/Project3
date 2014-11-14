@@ -56,6 +56,7 @@ void Integrator::RK4(System &system, double dt)
         body.velocity.addAndMultiply(k2.bodies[i].force, 2*dt6mass);
         body.velocity.addAndMultiply(k3.bodies[i].force, 2*dt6mass);
         body.velocity.addAndMultiply(k4.bodies[i].force, dt6mass);
+
     } // End for-loop
 
     system.calculateForcesAndEnergy();
@@ -118,10 +119,11 @@ void Integrator::evolveSystem1InTimeUsingDerivativesFromSystem2(System &system1,
 void Integrator::VerletInitialise(System &system, double dt)
 { // Creates the system at time -dt. This system is used the first time the Verlet algorithm is run
     oldSystem = system;
-
+    oldSystem.calculateForcesAndEnergy();
     for(int i=0; i < oldSystem.numberOfBodies(); i++){  // Loop changing all positions to what they were at time -dt
         CelestialBody &body1 = oldSystem.bodies[i];
         body1.position.addAndMultiply(body1.velocity, -dt);
+        body1.position.addAndMultiply(body1.force, 0.5*dt*dt/body1.mass);
     } // End for-loop
 
     // Changing counter to avoid calling VerletInitialise next time Verlet is run
@@ -149,10 +151,11 @@ void Integrator::VerletEvolve(System &system, double dt)
 
         vec3 tempPosDiff = body.position-bodyOld.position;
         body.position.add(tempPosDiff);
-        body.position.addAndMultiply(body.force, dt*dt/body.mass);     // body.position is now at t+dt
+        body.position.addAndMultiply(body.force, dt*dt/body.mass);  // body.position is now at t+dt
         body.velocity = (body.position - bodyOld.position)/(2*dt);  // Calculating the velocity
     } // Ending for-loop
 } // Ending VerletEvolve-function
+
 
 
 // ======================================= VELOCITY VERLET ================================================== //
