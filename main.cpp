@@ -27,12 +27,13 @@ int main()
     double dt       = 1e-5;
     double T        = 1;
     double nSteps   = T/dt;
+    //double nSteps   = (T+dt)/dt; // Something like this fixes the problem with the Earth not completing its orbit in one year
 
     // Specifics for cold collapse
     double timeStep         = 0.005;    // tcrunch
-    double runningTime      = 1;        // tcrunch
+    double runningTime      = 5;        // tcrunch
     double sphereRadius     = 20;       // ly
-    int    numberOfObjects  = 250;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects  = 750;      // Number of celestial bodies for a random generation of a system
     bool   smoothing        = true;
 
     // Running the code for special cases
@@ -55,7 +56,7 @@ int main()
 void regularSystemRK4(double dt, double nSteps)
 { // Function analysing the given system using RK4
     // Qualities of the system we will be exploring are read from file
-    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/solarsystemNASA.txt",ios_base::in);
+    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/SunEarthNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -63,8 +64,12 @@ void regularSystemRK4(double dt, double nSteps)
     // Initialisation
     System      SolarSystem;                        // Preparing system
     Integrator  solving;                            // Preparing for allowing the system to develop
+<<<<<<< HEAD
 
     Printing    printer("SolarSystemNASARK4dtexp_minus6pnf1e4");         // Preparing for printing details about system to file
+=======
+    Printing    printer("SolarSystemNASAbubblebath");         // Preparing for printing details about system to file
+>>>>>>> 3444baf9ab1d8f04243cd872bf13b10afe935499
 
     //SolarSystem.addSystem(file);                    // Creating system
     SolarSystem.addBody(0,0,0,0,0,0,1);
@@ -292,7 +297,7 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
     // Initialisation
     System      system;
     Integrator  solvingSystem(4);
-    Printing    printingSystem("blah");
+    Printing    printingSystem("VirialTest");
 
     // Variables to be used in the integration
     double  time = 0;
@@ -303,7 +308,8 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
     // Creating a specific system and saving intials to file
     system.smoothing = smoothing;
     system.addRandomSystem(numberOfObjects,sphereRadius);
-    printingSystem.printingAll(system, counter, true);
+    printingSystem.printingPosition(system, true);
+    printingSystem.printingPositionXYZ(system, counter);
 
     double start = clock();
     // Evolving system
