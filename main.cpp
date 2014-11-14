@@ -26,6 +26,7 @@ int main()
     double dt       = 1e-5;
     double T        = 1;
     double nSteps   = T/dt;
+    //double nSteps   = (T+dt)/dt; // Something like this fixes the problem with the Earth not completing its orbit in one year
 
     // Specifics for cold collapse
     double timeStep         = 0.005;    // tcrunch
@@ -39,7 +40,7 @@ int main()
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
 
-    //regularSystemRK4(dt, nSteps);       // Running the code using RK4
+    regularSystemRK4(dt, nSteps);       // Running the code using RK4
     regularSystemV(dt, nSteps);         // Running the code using Verlet
     //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
@@ -54,7 +55,7 @@ int main()
 void regularSystemRK4(double dt, double nSteps)
 { // Function analysing the given system using RK4
     // Qualities of the system we will be exploring are read from file
-    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/solarsystemNASA.txt",ios_base::in);
+    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/SunEarthNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -62,7 +63,7 @@ void regularSystemRK4(double dt, double nSteps)
     // Initialisation
     System      SolarSystem;                        // Preparing system
     Integrator  solving;                            // Preparing for allowing the system to develop
-    Printing    printer("SolarSystemNASARK4dtexp_minus6pnf1e4");         // Preparing for printing details about system to file
+    Printing    printer("SolarSystemNASAbubblebath");         // Preparing for printing details about system to file
 
     //SolarSystem.addSystem(file);                    // Creating system
     SolarSystem.addBody(0,0,0,0,0,0,1);
