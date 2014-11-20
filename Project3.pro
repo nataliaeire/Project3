@@ -12,7 +12,8 @@ SOURCES += \
     printing.cpp \
     integrator.cpp \
     gaussiandeviate.cpp \
-    cpelapsedtimer.cpp
+    cpelapsedtimer.cpp \
+    oldmain.cpp
 #LIBS += -larmadillo -llapack -lblas
 
 #QMAKE_CXXFLAGS += -Wall

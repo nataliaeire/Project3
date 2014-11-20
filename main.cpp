@@ -23,9 +23,14 @@ void Mercury(double dt, double nSteps);
 int main()
 {
     // Integration specifications for Solar System
+<<<<<<< HEAD
 
     double dt       = 1e-6;
     double T        = 200;
+=======
+    double dt       = 1e-1;
+    double T        = 300;
+>>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
     double nSteps   = T/dt;
     //double nSteps   = (T+2*dt)/dt; // Something like this fixes the problem with the Earth not completing its orbit in one year
 
@@ -41,9 +46,9 @@ int main()
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
 
-    regularSystemRK4(dt, nSteps);       // Running the code using RK4
-    regularSystemV(dt, nSteps);         // Running the code using Verlet
-    //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
+    //regularSystemRK4(dt, nSteps);       // Running the code using RK4
+    //regularSystemV(dt, nSteps);         // Running the code using Verlet
+    regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
     //Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
     //randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
@@ -56,7 +61,11 @@ int main()
 void regularSystemRK4(double dt, double nSteps)
 { // Function analysing the given system using RK4
     // Qualities of the system we will be exploring are read from file
+<<<<<<< HEAD
     fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthJupiterNASA.txt",ios_base::in);
+=======
+    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/SunEarth1000xJupiterNASA.txt",ios_base::in);
+>>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -64,8 +73,12 @@ void regularSystemRK4(double dt, double nSteps)
     // Initialisation
     System      SolarSystem;                        // Preparing system
     Integrator  solving;                            // Preparing for allowing the system to develop
+<<<<<<< HEAD
     Printing    printer("SunEarthJupiterNASARK4200years_dtemin6pnfe6");         // Preparing for printing details about system to file
     //Printing    printer("SunEarthRK4100years_dtemin1pnfe0");
+=======
+    Printing    printer("SunEarthx1000JupiterNASARK4300years_dtemin6pnf4");         // Preparing for printing details about system to file
+>>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
 
     SolarSystem.addSystem(file);                    // Creating system
     //SolarSystem.addBody(0,0,0,0,0,0,1);
@@ -73,8 +86,12 @@ void regularSystemRK4(double dt, double nSteps)
     SolarSystem.conserveMomentum();                 // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);               // Printing intitial values to file
 
+<<<<<<< HEAD
     int printNFrames = 1e6;                           // Counter for printing only each n'th frame
 
+=======
+    int printNFrames = 1e4;                           // Counter for printing only each n'th frame
+>>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
 
     double start = clock();
     // Performing RK4 on the system
@@ -95,7 +112,11 @@ void regularSystemRK4(double dt, double nSteps)
 void regularSystemV(double dt, double nSteps)
 { // Function analysing the given system using Verlet
     // Qualities of the system we will be exploring are read from file
+<<<<<<< HEAD
     fstream file("/home/ubu/FYS3150/projects/Project3/solarsystemNASA.txt",ios_base::in);
+=======
+    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/SunEarth1000xJupiterNASA.txt",ios_base::in);
+>>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -104,8 +125,12 @@ void regularSystemV(double dt, double nSteps)
     // Initialisation
     System      solarSystemVerlet;
     Integrator  verletsolver;
+<<<<<<< HEAD
     Printing    printerv("SunEarthJupiterNASAVerlet200years_dtemin6pnfe6");
     //Printing    printerv("SunEarthVerlet100years_dtemin1pnfe0");
+=======
+    Printing    printerv("SunEarth1000xJupiterNASAVerlet300years_dtemin6pnf4");
+>>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
 
 
     solarSystemVerlet.addSystem(file);
@@ -114,7 +139,11 @@ void regularSystemV(double dt, double nSteps)
     solarSystemVerlet.conserveMomentum();
     printerv.printingAll(solarSystemVerlet);
 
+<<<<<<< HEAD
     int printNFrames = 1e6;                          // Counter for printing only each n'th frame
+=======
+    int printNFrames = 1e2;                          // Counter for printing only each n'th frame
+>>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
 
     double start = clock();
     // Performing Verlet on the system
@@ -143,13 +172,13 @@ void regularSystemVV(double dt, double nSteps)
     // Initialisation
     System      solarSystemVelocityVerlet;
     Integrator  velocityverletsolver;
-    Printing    printervv("solarsystemNASAVV");
+    Printing    printervv("solarsystemNASAVV300years_dtemin1pnf0");
 
     solarSystemVelocityVerlet.addSystem(file);
     solarSystemVelocityVerlet.conserveMomentum();
     printervv.printingAll(solarSystemVelocityVerlet);
 
-    int printNFrames = 1;                           // Counter for printing only each n'th frame
+    int printNFrames = 1e0;                           // Counter for printing only each n'th frame
 
     double start = clock();
     // Performing Verlet on the system
