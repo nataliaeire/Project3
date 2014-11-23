@@ -45,6 +45,7 @@ void Integrator::RK4(System &system, double dt)
 
     for(int i=0; i<system.numberOfBodies(); i++){
         CelestialBody &body = system.bodies[i];
+
         double dt6 = dt/6;
         body.position.addAndMultiply(k1.bodies[i].velocity, dt6);
         body.position.addAndMultiply(k2.bodies[i].velocity, 2*dt6);
@@ -178,12 +179,16 @@ void Integrator::VelocityVerletEvolve(System &system, double dt)
 //#pragma omp parallel for num_threads(numThreads)
     for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
         CelestialBody &body = system.bodies[i];         // the body at time t
-        //vec3 velocity_dt_2;
 
         // Calculating the velocity
         body.velocity.addAndMultiply(body.force, 0.5*dt/body.mass);
         body.position.addAndMultiply(body.velocity, dt);            // Calculating the position
-        system.calculateForcesAndEnergy();
+    } // Ending for-loop
+
+    system.calculateForcesAndEnergy();                  // Calculating the forces with new positions
+
+    for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
+        CelestialBody &body = system.bodies[i];         // the body at time t+dt (velocity at time t)
         body.velocity.addAndMultiply(body.force, 0.5*dt/body.mass); // Calculating the velocity
     } // Ending for-loop
 } // Ending VerletEvolve-function
