@@ -32,7 +32,7 @@ int main()
     double timeStep         = 0.005;    // tcrunch
     double runningTime      = 5;        // tcrunch
     double sphereRadius     = 20;       // ly
-    int    numberOfObjects  = 750;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects  = 100;      // Number of celestial bodies for a random generation of a system
     bool   smoothing        = true;
 
     // Running the code for special cases
@@ -40,13 +40,13 @@ int main()
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
 
-    regularSystemRK4(dt, nSteps);       // Running the code using RK4
-    regularSystemV(dt, nSteps);         // Running the code using Verlet
+    //regularSystemRK4(dt, nSteps);       // Running the code using RK4
+    //regularSystemV(dt, nSteps);         // Running the code using Verlet
     //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
     //Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
     //randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
-    //randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
+    randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
 
     return 0;
 }

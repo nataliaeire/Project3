@@ -157,7 +157,7 @@ void System::addSystem(std::fstream &file)
 void System::addRandomSystem(int numberOfObjects, double sphereRadius)
 { // Adding system using random number generators
     double u, v, w, r, theta, phi, x, y, z, vx, vy, vz, massDeviation, mass;
-    long int seed = 3;  // Seed to start random number generator
+    long int seed = 59;  // Seed to start random number generator
     totalMass = density = 0;
 
     // Loop to generate numberOfObjects celestial objects with random positions and mass
@@ -185,9 +185,9 @@ void System::addRandomSystem(int numberOfObjects, double sphereRadius)
         vx = vy = vz = 0;
 
         // Generating random mass (normal distribution)
-        massDeviation = gaussian_deviate(&seed);    // mean = 0, std = 1
-        mass = 10. + massDeviation;                 // 10 solar masses + randomly drawn gaussian deviation
-        totalMass += mass;                          // updating the total mass of the system
+        massDeviation = gaussian_deviate(&seed);                                        // mean = 0, std = 1
+        mass = 10.*(250./numberOfObjects) + massDeviation*sqrt(250./numberOfObjects);   // 10 solar masses + randomly drawn std
+        totalMass += mass;                                                              // updating the total mass of the system
 
         // Adding body to system using previously created function
         addBody(x, y, z, vx, vy, vz, mass);
