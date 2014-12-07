@@ -32,7 +32,7 @@ int main()
     double timeStep         = 0.005;    // tcrunch
     double runningTime      = 5;        // tcrunch
     double sphereRadius     = 20;       // ly
-    int    numberOfObjects  = 750;      // Number of celestial bodies for a random generation of a system
+    int    numberOfObjects  = 100;      // Number of celestial bodies for a random generation of a system
     bool   smoothing        = true;
 
     // Running the code for special cases
@@ -41,12 +41,12 @@ int main()
     // of the main function at a time
 
     regularSystemRK4(dt, nSteps);       // Running the code using RK4
-    //regularSystemV(dt, nSteps);         // Running the code using Verlet
-    //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
-    //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
-    //Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
-    //randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
-    //randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
+    regularSystemV(dt, nSteps);         // Running the code using Verlet
+    regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
+    regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
+    Mercury(dt, nSteps);                // Running the code for the GR case for Mercury
+    randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
+    randomSystemAdaptive(numberOfObjects, sphereRadius, runningTime, smoothing);
 
     return 0;
 }
@@ -64,7 +64,6 @@ void regularSystemRK4(double dt, double nSteps)
     System      SolarSystem;                        // Preparing system
     Integrator  solving;                            // Preparing for allowing the system to develop
     Printing    printer("solarsystemNASARK4300years_dtemin4pnfe1");         // Preparing for printing details about system to file
-    //Printing    printer("SunEarthRK4100years_dtemin1pnfe0");
 
     SolarSystem.addSystem(file);                    // Creating system
     //SolarSystem.addBody(0,0,0,0,0,0,1);           // Adding bodies for two dimensional system, if desired
@@ -72,7 +71,7 @@ void regularSystemRK4(double dt, double nSteps)
     SolarSystem.conserveMomentum();                 // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);               // Printing intitial values to file
 
-    int printNFrames = 1e1;                           // Counter for printing only each n'th frame
+    int printNFrames = 1e1;                         // Counter for printing only each n'th frame
 
     double start = clock();
     // Performing RK4 on the system
@@ -102,9 +101,7 @@ void regularSystemV(double dt, double nSteps)
     // Initialisation
     System      solarSystemVerlet;
     Integrator  verletsolver;
-    Printing    printerv("solarsystemNASAVerlet300years_dtemin6pnfe4");
-    //Printing    printerv("SunEarthVerlet100years_dtemin1pnfe0");
-
+    Printing    printerv("solarsystemNASAVerlet300years_dtemin4pnf2");
 
     solarSystemVerlet.addSystem(file);
     //solarSystemVerlet.addBody(0,0,0,0,0,0,1);
@@ -112,7 +109,7 @@ void regularSystemV(double dt, double nSteps)
     solarSystemVerlet.conserveMomentum();
     printerv.printingAll(solarSystemVerlet);
 
-    int printNFrames = 1e4;                          // Counter for printing only each n'th frame
+    int printNFrames = 1e2;                          // Counter for printing only each n'th frame
 
     double start = clock();
     // Performing Verlet on the system
@@ -252,10 +249,10 @@ void randomSystemNonAdaptive(int numberOfObjects, double sphereRadius, double ti
     system.addRandomSystem(numberOfObjects,sphereRadius);
     printingSystem.printingPositionXYZ(system);
 
-    double  time = 0;
-    double  nextPrintTime = 0;
-    int     counter = 1;                                // Counter to keep track of time steps in output file
-    int     numberOfTimestepsComputed = 0;
+    double  time = 0;                       // Total time simulated
+    double  nextPrintTime = 0;              // To keep printing with approximately the same time intervals for different time steps
+    int     counter = 1;                    // Counter to keep track of time steps in output file
+    int     numberOfTimestepsComputed = 0;  // Counter to keep track of time steps for cout-ing
 
     double start = clock();
     // Evolving system
@@ -291,10 +288,10 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
     Printing    printingSystem("VirialTest");
 
     // Variables to be used in the integration
-    double  time = 0;
-    double  nextPrintTime = 0;
-    int     counter = 1;                                // Counter to keep track of time steps in output file
-    int     numberOfTimestepsComputed = 0;
+    double  time = 0;                       // Total time simulated
+    double  nextPrintTime = 0;              // To keep printing with approximately the same time intervals for different time steps
+    int     counter = 1;                    // Counter to keep track of time steps in output file
+    int     numberOfTimestepsComputed = 0;  // Counter to keep track of time steps for cout-ing
 
     // Creating a specific system and saving intials to file
     system.smoothing = smoothing;

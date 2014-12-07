@@ -107,9 +107,9 @@ void System::sortBodiesIntoGroups()
         CelestialBody &body  = bodies[i];
         if(log(body.acceleration().length()) < minAcc + deltaAcc){
             bodies4.push_back(&body);
-        }else if(log(body.acceleration().length()) >= minAcc + deltaAcc && log(body.acceleration().length()) < minAcc + 2*deltaAcc){
+        }else if(log(body.acceleration().length()) >= minAcc +    deltaAcc && log(body.acceleration().length()) < minAcc + 2.*deltaAcc){
             bodies3.push_back(&body);
-        }else if(log(body.acceleration().length()) >= minAcc + 2*deltaAcc && log(body.acceleration().length()) < minAcc + 3*deltaAcc){
+        }else if(log(body.acceleration().length()) >= minAcc + 2.*deltaAcc && log(body.acceleration().length()) < minAcc + 3.*deltaAcc){
             bodies2.push_back(&body);
         }else{
             bodies1.push_back(&body);
@@ -157,7 +157,7 @@ void System::addSystem(std::fstream &file)
 void System::addRandomSystem(int numberOfObjects, double sphereRadius)
 { // Adding system using random number generators
     double u, v, w, r, theta, phi, x, y, z, vx, vy, vz, massDeviation, mass;
-    long int seed = 3;  // Seed to start random number generator
+    long int seed = 59;  // Seed to start random number generator
     totalMass = density = 0;
 
     // Loop to generate numberOfObjects celestial objects with random positions and mass
@@ -185,15 +185,15 @@ void System::addRandomSystem(int numberOfObjects, double sphereRadius)
         vx = vy = vz = 0;
 
         // Generating random mass (normal distribution)
-        massDeviation = gaussian_deviate(&seed);    // mean = 0, std = 1
-        mass = 10. + massDeviation;                 // 10 solar masses + randomly drawn gaussian deviation
-        totalMass += mass;                          // updating the total mass of the system
+        massDeviation = gaussian_deviate(&seed);                                        // mean = 0, std = 1
+        mass = 10.*(250./numberOfObjects) + massDeviation*sqrt(250./numberOfObjects);   // 10 solar masses + randomly drawn std
+        totalMass += mass;                                                              // updating the total mass of the system
 
         // Adding body to system using previously created function
         addBody(x, y, z, vx, vy, vz, mass);
     } // Ending for-loop
 
-    density = 3*totalMass / (4*M_PI*pow(sphereRadius,3));   // Density of the system
+    density = 3.*totalMass / (4.*M_PI*pow(sphereRadius,3));   // Density of the system
     setG(true);
 
 } // End of addRandomSystem-function
@@ -270,8 +270,8 @@ void System::calculateForcesUsingGR()
             CelestialBody &body2 = bodies[j];
 
             // Variables simplifying the calculations
-            vec3   deltaRVector     = body1.position;           // Initialising vector to speed up code
-            deltaRVector.addAndMultiply(body2.position,-1);      // Spatial separation in all three directions
+            vec3   deltaRVector     = body1.position;                                   // Initialising vector to speed up code
+            deltaRVector.addAndMultiply(body2.position,-1);                             // Spatial separation in all three directions
             double dr               = deltaRVector.length();                            // Separation
             double NewtonianFactor  = G*body1.mass*body2.mass / (dr*dr*dr);             // Reoccuring factor
             vec3   angMomPerMass    = body2.position.cross(body2.velocity);             // L/m = r x v
