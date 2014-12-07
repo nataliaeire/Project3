@@ -167,4 +167,4 @@ void energyAndAngMom(vec &positionAndVelocity, ofstream* file)
           << setw(20) << setprecision(15) << EP
           << setw(20) << setprecision(15) << Etot
           << setw(20) << setprecision(15) << angMom;
-}
+} // End of energyAndAngMom-function
