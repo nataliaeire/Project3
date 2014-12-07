@@ -137,7 +137,7 @@ void Integrator::Verlet(System &system, double dt)
     // The first time Verlet() is run, VerletInitialise() is called
     if (counter == 0)   VerletInitialise(system, dt);
 
-    System nextOldSystem = system;                      // Copying the system at time t to update old_system later on
+    System nextOldSystem = system;                      // Copying the system at time t to update oldSystem later on
     system.calculateForcesAndEnergy();                  // Calculates the forces on the bodies
     VerletEvolve(system, dt);                           // Evolving the system according to the Verlet algorithm
     oldSystem = nextOldSystem;                          // Updating oldSystem
@@ -176,7 +176,6 @@ void Integrator::VelocityVerlet(System &system, double dt)
 
 void Integrator::VelocityVerletEvolve(System &system, double dt)
 { // Function evolving the system for the Velocity Verlet integration
-//#pragma omp parallel for num_threads(numThreads)
     for(int i=0; i < system.numberOfBodies(); i++){     // Looping over all bodies
         CelestialBody &body = system.bodies[i];         // the body at time t
 
@@ -217,12 +216,12 @@ void Integrator::adaptiveVelocityVerlet(System &system)
     double temp_acceleration;  // Variable for easily accessing the acceleration of a body
     double max_acc;            // Variable for storing the largest acceleration
 
-    // Initialise for the very first time step (forces need to be calculated before starting
+    // Initialise for the very first time step (forces need to be calculated before starting)
     if(adaptive_counter == 0)   initialiseAdaptiveVelocityVerlet(system);
 
     // Sort bodies and change time step every 1000 steps
     if(adaptive_counter % int(5) == 0){
-        max_acc = 1e-7;                 // Sets an initial, very low acceleration
+        max_acc = 1e-10;                 // Sets an initial, very low acceleration
         CPElapsedTimer::sortBodies().start();
         system.sortBodiesIntoGroups();  // Updates bodies1, bodies2, etc.
         CPElapsedTimer::sortBodies().stop();
@@ -231,7 +230,7 @@ void Integrator::adaptiveVelocityVerlet(System &system)
         for(int j=0; j<int(system.bodies1.size()); j++){ // Finding the maximum acceleration in the system
             CelestialBody *body = system.bodies1[j];
             bodyacc = body->acceleration();
-            temp_acceleration = bodyacc.length();
+            temp_acceleration = bodyacc.length();        // Returns the absolute value of the acceleration
             if(temp_acceleration > max_acc) max_acc = temp_acceleration;
         } // End for-loop
 
@@ -336,7 +335,7 @@ void Integrator::fullKick(System &system)
 
 
 void Integrator::halfKick(std::vector<CelestialBody*> &bodies, double dt)
-{ // Calculating the velocity (step 1 and 3)
+{ // Calculating the velocity (step 1 and 3 of Velocity Verlet)
     for(int i=0; i<int(bodies.size()); i++){  // Looping over all bodies in group
         CelestialBody *body = bodies[i];
         body->velocity = body->velocity + body->acceleration()*dt*0.5;

@@ -23,16 +23,10 @@ void Mercury(double dt, double nSteps);
 int main()
 {
     // Integration specifications for Solar System
-<<<<<<< HEAD
 
-    double dt       = 1e-6;
-    double T        = 200;
-=======
-    double dt       = 1e-1;
+    double dt       = 1e-4;
     double T        = 300;
->>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
     double nSteps   = T/dt;
-    //double nSteps   = (T+2*dt)/dt; // Something like this fixes the problem with the Earth not completing its orbit in one year
 
     // Specifics for cold collapse
     double timeStep         = 0.005;    // tcrunch
@@ -46,9 +40,9 @@ int main()
     // as well as easily being able to run only some special cases, without having to comment away huge chunks
     // of the main function at a time
 
-    //regularSystemRK4(dt, nSteps);       // Running the code using RK4
+    regularSystemRK4(dt, nSteps);       // Running the code using RK4
     //regularSystemV(dt, nSteps);         // Running the code using Verlet
-    regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
+    //regularSystemVV(dt, nSteps);        // Running the code using Velocity Verlet
     //regularSystemVVadaptive(nSteps);    // Running the code using Velocity Verlet
     //Mercury(dt, nSteps);             // Running the code for the GR case for Mercury
     //randomSystemNonAdaptive(numberOfObjects, sphereRadius, timeStep, runningTime, smoothing);
@@ -61,11 +55,7 @@ int main()
 void regularSystemRK4(double dt, double nSteps)
 { // Function analysing the given system using RK4
     // Qualities of the system we will be exploring are read from file
-<<<<<<< HEAD
-    fstream file("/home/ubu/FYS3150/projects/Project3/SunEarthJupiterNASA.txt",ios_base::in);
-=======
-    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/SunEarth1000xJupiterNASA.txt",ios_base::in);
->>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
+    fstream file("/home/ubu/FYS3150/projects/Project3/solarsystemNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -73,25 +63,16 @@ void regularSystemRK4(double dt, double nSteps)
     // Initialisation
     System      SolarSystem;                        // Preparing system
     Integrator  solving;                            // Preparing for allowing the system to develop
-<<<<<<< HEAD
-    Printing    printer("SunEarthJupiterNASARK4200years_dtemin6pnfe6");         // Preparing for printing details about system to file
+    Printing    printer("solarsystemNASARK4300years_dtemin4pnfe1");         // Preparing for printing details about system to file
     //Printing    printer("SunEarthRK4100years_dtemin1pnfe0");
-=======
-    Printing    printer("SunEarthx1000JupiterNASARK4300years_dtemin6pnf4");         // Preparing for printing details about system to file
->>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
 
     SolarSystem.addSystem(file);                    // Creating system
-    //SolarSystem.addBody(0,0,0,0,0,0,1);
+    //SolarSystem.addBody(0,0,0,0,0,0,1);           // Adding bodies for two dimensional system, if desired
     //SolarSystem.addBody(1,0,0, 0, 2*M_PI, 0, 3e-6);
     SolarSystem.conserveMomentum();                 // Ensuring momentum is conserved for the system
     printer.printingAll(SolarSystem);               // Printing intitial values to file
 
-<<<<<<< HEAD
-    int printNFrames = 1e6;                           // Counter for printing only each n'th frame
-
-=======
-    int printNFrames = 1e4;                           // Counter for printing only each n'th frame
->>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
+    int printNFrames = 1e1;                           // Counter for printing only each n'th frame
 
     double start = clock();
     // Performing RK4 on the system
@@ -100,7 +81,7 @@ void regularSystemRK4(double dt, double nSteps)
         printer.printingAll(SolarSystem, i, printNFrames);    // Printing everything to file
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % int(1e3) == 0)     cout << 100*((double)i) / nSteps << " % of the RK4 integration is performed" << endl;
+        if(i % int(1e5) == 0)     cout << 100*((double)i) / nSteps << " % of the RK4 integration is performed" << endl;
     }
     double finish = clock();
     double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
@@ -112,11 +93,7 @@ void regularSystemRK4(double dt, double nSteps)
 void regularSystemV(double dt, double nSteps)
 { // Function analysing the given system using Verlet
     // Qualities of the system we will be exploring are read from file
-<<<<<<< HEAD
     fstream file("/home/ubu/FYS3150/projects/Project3/solarsystemNASA.txt",ios_base::in);
-=======
-    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/SunEarth1000xJupiterNASA.txt",ios_base::in);
->>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -125,12 +102,8 @@ void regularSystemV(double dt, double nSteps)
     // Initialisation
     System      solarSystemVerlet;
     Integrator  verletsolver;
-<<<<<<< HEAD
-    Printing    printerv("SunEarthJupiterNASAVerlet200years_dtemin6pnfe6");
+    Printing    printerv("solarsystemNASAVerlet300years_dtemin6pnfe4");
     //Printing    printerv("SunEarthVerlet100years_dtemin1pnfe0");
-=======
-    Printing    printerv("SunEarth1000xJupiterNASAVerlet300years_dtemin6pnf4");
->>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
 
 
     solarSystemVerlet.addSystem(file);
@@ -139,11 +112,7 @@ void regularSystemV(double dt, double nSteps)
     solarSystemVerlet.conserveMomentum();
     printerv.printingAll(solarSystemVerlet);
 
-<<<<<<< HEAD
-    int printNFrames = 1e6;                          // Counter for printing only each n'th frame
-=======
-    int printNFrames = 1e2;                          // Counter for printing only each n'th frame
->>>>>>> 88a82965b96b3de77f19f63b8f6b30dc3b977332
+    int printNFrames = 1e4;                          // Counter for printing only each n'th frame
 
     double start = clock();
     // Performing Verlet on the system
@@ -152,7 +121,7 @@ void regularSystemV(double dt, double nSteps)
         printerv.printingAll(solarSystemVerlet, i, printNFrames);
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % int(1e3) == 0)     cout << 100*((double)i) / nSteps << " % of the Verlet integration is performed" << endl;
+        if(i % int(1e5) == 0)     cout << 100*((double)i) / nSteps << " % of the Verlet integration is performed" << endl;
     }
     double finish = clock();
     double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
@@ -163,7 +132,7 @@ void regularSystemV(double dt, double nSteps)
 void regularSystemVV(double dt, double nSteps)
 { // Function analysing the given system using Velocity Verlet
     // Qualities of the system we will be exploring are read from file
-    fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/SunEarthNASA.txt",ios_base::in);
+    fstream file("/home/ubu/FYS3150/projects/Project3/solarsystemNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
         cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
@@ -172,7 +141,7 @@ void regularSystemVV(double dt, double nSteps)
     // Initialisation
     System      solarSystemVelocityVerlet;
     Integrator  velocityverletsolver;
-    Printing    printervv("solarsystemNASAVV300years_dtemin1pnf0");
+    Printing    printervv("solarsystemNASAVV300years_dtemin4pnf2");
 
     solarSystemVelocityVerlet.addSystem(file);
     solarSystemVelocityVerlet.conserveMomentum();
@@ -187,7 +156,7 @@ void regularSystemVV(double dt, double nSteps)
         printervv.printingAll(solarSystemVelocityVerlet, i, printNFrames);
 
         // Printing a message to screen to let the user know how far the program has come
-        if(i % int(1e3) == 0)     cout << 100*((double)i) / nSteps << " % of the Velocity Verlet integration is performed" << endl;
+        if(i % int(1e5) == 0)     cout << 100*((double)i) / nSteps << " % of the Velocity Verlet integration is performed" << endl;
     }
     double finish = clock();
     double operationTime = (finish - start)/(double) CLOCKS_PER_SEC/nSteps; // Calculating time in seconds
@@ -201,7 +170,7 @@ void regularSystemVVadaptive( double nSteps)
     // Qualities of the system we will be exploring are read from file
     fstream file("/uio/hume/student-u67/kineoha/FYS3150/Project3/solarsystemNASA.txt",ios_base::in);
     if(!file.is_open()) {       // Printing error message about not being able to find file (at said location)
-        cout << "CCould not find file to open." << endl;
+        cout << "Could not find file to open." << endl;
         exit(1);                                    // Cancelling the rest of the program
     }
 
@@ -244,7 +213,7 @@ void Mercury(double dt, double nSteps)
     // Intialisation
     System      MercurySystem;                      // Preparing system
     Integrator  solvingMercury;                     // Preparing for allowing the system to develop
-    Printing    printerMercury("Mercury_Initials_dtemin1");          // Preparing for printing details about system to file
+    Printing    printerMercury("Mercury_Initials"); // Preparing for printing details about system to file
 
     MercurySystem.addSystem(MercuryFile);           // Creating system
     MercurySystem.conserveMomentum();               // Ensuring momentum is conserved for the system
@@ -294,12 +263,12 @@ void randomSystemNonAdaptive(int numberOfObjects, double sphereRadius, double ti
         numberOfTimestepsComputed++;
         solvingSystem.VelocityVerlet(system, timeStep);
 
-        time += timeStep;
+        time += timeStep;                               // Updating the time
 
-        if(time > nextPrintTime){
+        if(time > nextPrintTime){                       // Print to file only for a set time interval
             printingSystem.printingPositionXYZ(system, counter);
             printingSystem.printingEnergyAngMom(system,true);
-            nextPrintTime += 0.002*runningTime;
+            nextPrintTime += 0.002*runningTime;         // Setting next time to print to file
             cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed, currently at "
                  << numberOfTimestepsComputed << " timesteps, with time step " << solvingSystem.adaptiveDt()
                  << "." << endl;
@@ -339,11 +308,11 @@ void randomSystemAdaptive(int numberOfObjects, double sphereRadius, double runni
         numberOfTimestepsComputed++;
         solvingSystem.adaptiveVelocityVerlet(system);
 
-        time += 8.*solvingSystem.adaptiveDt();
+        time += 8.*solvingSystem.adaptiveDt();      // Updating the time
 
-        if(time > nextPrintTime){
+        if(time > nextPrintTime){                   // Loop for only printing to file for a set time interval
             printingSystem.printingAll(system, counter, true);
-            nextPrintTime += 0.002*runningTime;
+            nextPrintTime += 0.002*runningTime;     // Setting the next time to print to file
             cout << 100*(time/runningTime) << " % of the Velocity Verlet integration is performed, currently at "
                  << numberOfTimestepsComputed << " timesteps, with time step " << solvingSystem.adaptiveDt()
                  << "." << endl;

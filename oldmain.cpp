@@ -53,7 +53,7 @@ int oldmain()
 
     // Getting the system at the previous time step for Verlet
     vec oldPositionAndVelocity = verletInitialise(positionAndVelocityVerlet, h);
-    vec oldPositionAndVel;
+    vec oldPositionAndVel;                                             // Declaring variable to be used in loop
 
     for(int i=0; i<n; i++){
         energyAndAngMom(positionAndVelocity, &energyOut);              // Running RK4
@@ -61,7 +61,7 @@ int oldmain()
 
         energyAndAngMom(positionAndVelocityVerlet, &energyOutVerlet);  // Running Verlet
         oldPositionAndVel = verlet(positionAndVelocityVerlet, oldPositionAndVelocity, h, &posVelOutVerlet);
-        oldPositionAndVelocity = oldPositionAndVel;
+        oldPositionAndVelocity = oldPositionAndVel;                    // Saving system for next time step
 
     }
 
@@ -70,6 +70,7 @@ int oldmain()
 
     return 0;
 }   // End of main function
+
 
 // Function performing the Runge-Kutta 4 method
 void rk4(double h, vec &positionAndVelocity, ofstream* file)
@@ -87,9 +88,10 @@ void rk4(double h, vec &positionAndVelocity, ofstream* file)
     // Writing position and velocity to file
     *file << setiosflags(ios::showpoint | ios:: uppercase);
     *file << setw(20) << setprecision(15) << positionAndVelocity.t();
-}
+}   // End of RK4-function
 
 
+// Function for setting the initial conditions for Verlet
 vec verletInitialise(vec positionAndVelocity, double dt)
 {   // Using relation between position, velocity and acceleration when the acceleration is constant
     // to approximate the system at a time t-h
@@ -107,8 +109,10 @@ vec verletInitialise(vec positionAndVelocity, double dt)
 
 
     return oldPositionAndVelocity;
-}
+}   //End of verletInitialise
 
+
+// Function performing the Verlet method
 vec verlet(vec &positionAndVelocity, vec oldPositionAndVelocity, double dt, ofstream *file)
 {
     vec next_old_posvel = positionAndVelocity;
@@ -126,7 +130,8 @@ vec verlet(vec &positionAndVelocity, vec oldPositionAndVelocity, double dt, ofst
     *file << setw(20) << setprecision(15) << positionAndVelocity.t();
 
    return oldPositionAndVelocity;
-}
+}  // End of Verlet-function
+
 
 // Function setting the differential equations
 vec diffEq(vec positionAndVelocity)
@@ -142,6 +147,8 @@ vec diffEq(vec positionAndVelocity)
     return posVel;
 }   // End of diffEq-function
 
+
+// Function calculating the energy
 void energyAndAngMom(vec &positionAndVelocity, ofstream* file)
 {
     // Computing velocity squared and radius

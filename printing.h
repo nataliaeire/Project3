@@ -36,7 +36,7 @@ public:
     void printing3Vector(vec3 vector, string filenameEnding);
     void printingPositionXYZ(System &system);
     void printingPositionXYZ(System &system, int counter);
-};
+};   // End of Printing class declaration
 
 
 #endif // PRINTING_H

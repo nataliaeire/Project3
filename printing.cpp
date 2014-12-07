@@ -162,15 +162,6 @@ void Printing::printingPositionXYZ(System &system, int counter)
 } // End printingPosition-function
 
 
-void Printing::closeAllFiles()
-{ // Function closing all open files
-    if(energyAngMomFile.is_open())  energyAngMomFile.close();
-    if(positionFile.is_open())      positionFile.close();
-    if(positionxyzFile.is_open())   positionFile.close();
-    if(velocityFile.is_open())      velocityFile.close();
-} // End closeAllFiles-function
-
-
 void Printing::printing3Vector(vec3 vector, std::string filenameEnding)
 { // Printing position only
     this->filenameEnding = filenameEnding;
@@ -182,3 +173,13 @@ void Printing::printing3Vector(vec3 vector, std::string filenameEnding)
     } // End if-statement opening a position file
     vectorFile << vector << " " << std::endl;
 } // End printing3Vector-function
+
+
+void Printing::closeAllFiles()
+{ // Function closing all open files
+    if(energyAngMomFile.is_open())  energyAngMomFile.close();
+    if(positionFile.is_open())      positionFile.close();
+    if(positionxyzFile.is_open())   positionFile.close();
+    if(velocityFile.is_open())      velocityFile.close();
+    if(vectorFile.is_open())        vectorFile.close();
+} // End closeAllFiles-function

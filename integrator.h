@@ -44,6 +44,6 @@ public:
 
     double  adaptiveDt();                               // Function returning the value of adaptive_dt (a private variable)
 
-};
+};  // End of Integrator class declaration
 
 #endif // RK4_H
